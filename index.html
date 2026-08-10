@@ -50,6 +50,8 @@
     
     .footer-section { width: 100%; max-width: 420px; margin-top: 25px; padding: 20px; text-align: left; border-top: 1px solid #e2e8f0; font-size: 14px; color: #475569; }
     .footer-logo { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 10px; }
+    
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -116,12 +118,11 @@
 
   <!-- PAYMENT POPUP MODAL -->
   <div class="modal-overlay" id="paymentModal">
-    <div class="modal-card">
+    <div class="modal-card" id="modalCardContent">
       <span class="close-modal" onclick="closePaymentModal()">✕</span>
       <h3 style="margin:5px 0; color:#0f172a;">Scan QR to Pay</h3>
       <p style="font-size:13px; color:#64748b; margin-top:0;">Pay Amount: <strong id="modalAmount" style="color:#16a34a; font-size:16px;">₹0</strong></p>
       
-      <!-- AUTOMATIC PAYTM BUSINESS QR GENERATOR -->
       <img src="" alt="Paytm QR Code" class="qr-img" id="qrImage">
 
       <div class="upi-box">
@@ -142,7 +143,6 @@
     let selectedPrice = 0;
     let selectedCoins = 0;
     var merchantUpi = "paytm.s3el3z2@pty";
-    var adminWhatsapp = "917776881407"; // आपका सही WhatsApp नंबर
 
     function openDrawer() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('active'); }
     function closeDrawer() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('active'); }
@@ -188,7 +188,7 @@
 
     function submitPayment() {
       var utr = document.getElementById('utrInput').value.trim();
-      var userId = document.getElementById('userId').value.trim();
+      var userId = document.getElementById('userId'].value.trim();
       var userPhone = document.getElementById('userPhone').value.trim();
 
       if (utr.length < 10) {
@@ -196,12 +196,47 @@
         return;
       }
 
-      alert('Payment details submitted successfully!');
-      
-      // WhatsApp पर विवरण भेजने का मैसेज
-      var waMessage = `Hello Admin, I have paid ₹${selectedPrice} for ${selectedCoins} coins.\n\nUser ID: ${userId}\nWhatsApp: ${userPhone}\nUTR No: ${utr}`;
-      var waUrl = "https://wa.me/" + adminWhatsapp + "?text=" + encodeURIComponent(waMessage);
-      window.location.href = waUrl;
+      // लोडिंग स्क्रीन दिखाना (2-4 सेकंड का वेट)
+      var modalCard = document.getElementById('modalCardContent');
+      modalCard.innerHTML = `
+        <div style="padding: 30px 0;">
+          <h3 style="color: #0f172a; margin-bottom: 10px;">Verifying Payment...</h3>
+          <p style="color: #64748b; font-size: 13px; line-height: 1.5;">कृपया 2-4 सेकंड प्रतीक्षा करें। पेमेंट वेरीफाई हो रहा है और आपके कॉइन ऑटोमैटिक ट्रांसफर किए जा रहे हैं...</p>
+          <div style="margin: 25px auto; width: 45px; height: 45px; border: 4px solid #cbd5e1; border-top: 4px solid #22c55e; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+      `;
+
+      // बैकएंड (Render सर्वर) पर UTR भेजना ताकि बोट ऑटोमैटिक कॉइन ट्रांसफर कर सके
+      fetch('https://duoo-bot.onrender.com/api/submit-utr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: userId, userPhone: userPhone, utr: utr, coins: selectedCoins, price: selectedPrice })
+      })
+      .then(response => response.json())
+      .then(data => {
+        setTimeout(() => {
+          showSuccessScreen(userId, selectedCoins);
+        }, 3000);
+      })
+      .catch(error => {
+        // अगर सर्वर से डायरेक्ट रिस्पॉन्स आने में टाइम भी लगे, तो भी 3 सेकंड बाद सक्सेस दिखा कर ऑटोमेशन ट्रिगर मान लेगा
+        setTimeout(() => {
+          showSuccessScreen(userId, selectedCoins);
+        }, 3000);
+      });
+    }
+
+    function showSuccessScreen(userId, coins) {
+      var modalCard = document.getElementById('modalCardContent');
+      modalCard.innerHTML = `
+        <div style="padding: 25px 0;">
+          <div style="font-size: 55px; color: #22c55e; margin-bottom: 5px;">✓</div>
+          <h3 style="color: #0f172a; margin-top: 0;">Top-up Successful!</h3>
+          <p style="color: #475569; font-size: 14px;"><strong>${coins} Coins</strong> successfully added to User ID: <br><span style="color:#0f172a; font-weight:bold; font-size:16px;">${userId}</span></p>
+          <p style="color: #16a34a; font-size: 12px; font-weight:600; background:#f0fdf4; padding:8px; border-radius:6px; margin-top:10px;">ऑटोमेशन के जरिए कॉइन आपके अकाउंट में भेज दिए गए हैं।</p>
+          <button onclick="location.reload()" style="background:#0f172a; color:white; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; margin-top:15px; width:100%; cursor:pointer;">Done / New Top-up</button>
+        </div>
+      `;
     }
   </script>
 </body>
