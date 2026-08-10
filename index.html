@@ -5,238 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Coin Top-up</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-    .top-header { width: 100%; background: #ffffff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box; border-bottom: 1px solid #e2e8f0; }
-    .header-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-    .menu-icon { font-size: 26px; color: #334155; cursor: pointer; }
-    
-    .side-drawer { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background-color: #ffffff; box-shadow: -4px 0 15px rgba(0,0,0,0.15); transition: right 0.3s ease-in-out; z-index: 100; }
-    .side-drawer.open { right: 0; }
-    .drawer-header { background-color: #0f172a; color: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-    .drawer-content { padding: 20px 15px; }
-    .drawer-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-weight: 600; }
-    .drawer-overlay { position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 90; }
-    .drawer-overlay.active { display: block; }
-    
-    .container { width: 100%; max-width: 420px; padding: 20px 15px; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    .top-header { width: 100%; background: #ffffff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .container { width: 100%; max-width: 420px; padding: 20px 15px; }
     .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
-    .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #dfb15b; margin-bottom: 10px; }
-    .brand-title { font-size: 22px; font-weight: bold; color: #0f172a; }
-    .sub-title { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 15px; }
-    
-    label { display: block; margin-top: 14px; font-weight: 600; color: #334155; text-align: left; font-size: 14px; }
-    .id-group { display: flex; gap: 8px; }
-    input[type="text"], input[type="tel"], input[type="number"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
-    .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    #verifyResult { margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 13px; display: none; text-align: left; }
-    .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-    
-    .plans-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; justify-content: center; }
-    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; width: 45%; cursor: pointer; transition: 0.2s; }
+    .id-group { display: flex; gap: 8px; margin-top: 10px; }
+    input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+    .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; }
+    .plans-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; justify-content: center; }
+    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; width: 45%; cursor: pointer; transition: 0.2s; pointer-events: auto; }
     .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
-    .plan-coins { font-size: 14px; font-weight: bold; color: #334155; }
-    .plan-price { font-size: 16px; font-weight: bold; color: #16a34a; margin-top: 4px; }
-    
-    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
-    
-    /* PAYMENT MODAL (POPUP) */
-    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:200; padding: 15px; box-sizing: border-box; }
-    .modal-card { background:white; padding:20px; border-radius:12px; max-width:380px; width:100%; text-align:center; position:relative; max-height: 90vh; overflow-y: auto; }
-    .close-modal { position:absolute; top:10px; right:15px; font-size:22px; cursor:pointer; color:#64748b; font-weight:bold; }
-    .qr-img { width: 220px; height: auto; border: 1px solid #e2e8f0; border-radius: 8px; margin: 10px 0; }
-    .upi-box { background: #f1f5f9; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; color: #334155; margin-bottom: 12px; }
-    .copy-btn { background: #0f172a; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-    .submit-utr-btn { width:100%; background:#002970; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:15px; margin-top:10px; cursor:pointer; }
-    
-    .footer-section { width: 100%; max-width: 420px; margin-top: 25px; padding: 20px; text-align: left; border-top: 1px solid #e2e8f0; font-size: 14px; color: #475569; }
-    .footer-logo { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 10px; }
-    
+    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; pointer-events: auto; }
+    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:200; }
+    .modal-card { background:white; padding:20px; border-radius:12px; width:90%; max-width:350px; text-align:center; }
+    .qr-img { width: 200px; height: 200px; margin: 10px 0; }
+    .submit-utr-btn { width:100%; background:#002970; color:white; border:none; padding:12px; border-radius:8px; margin-top:10px; cursor:pointer; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-  <div class="side-drawer" id="sideDrawer">
-    <div class="drawer-header">Menu <span onclick="closeDrawer()" style="cursor:pointer">✕</span></div>
-    <div class="drawer-content">
-      <div class="drawer-item" onclick="closeDrawer()">Home</div>
-      <div class="drawer-item">Terms & Conditions</div>
-      <div class="drawer-item">Contact Support</div>
-    </div>
-  </div>
-
   <div class="top-header">
-    <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="header-logo">
-    <div class="menu-icon" onclick="openDrawer()">☰</div>
+    <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" style="width:45px; height:45px; border-radius:50%;">
   </div>
 
   <div class="container">
     <div class="card">
-      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-      <div class="brand-title">Ali Dreamwork</div>
-      <div class="sub-title">Coin Top-up Panel</div>
-
-      <label>Enter your User ID:</label>
+      <h3>Ali Dreamwork</h3>
+      <label>User ID:</label>
       <div class="id-group">
         <input type="text" id="userId" placeholder="Enter User ID">
-        <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
+        <button class="verify-btn" onclick="alert('Verified!')">Verify</button>
       </div>
-      <div id="verifyResult"></div>
 
-      <label>Select your Coin Plan:</label>
+      <label style="margin-top:15px; display:block;">Select Plan:</label>
       <div class="plans-grid">
-        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
-            <div class="plan-coins">14,600 Coins</div>
-            <div class="plan-price">₹200</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
-            <div class="plan-coins">21,900 Coins</div>
-            <div class="plan-price">₹300</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
-            <div class="plan-coins">36,500 Coins</div>
-            <div class="plan-price">₹500</div>
-        </div>
+        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">14,600 Coins - ₹200</div>
+        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">21,900 Coins - ₹300</div>
+        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">36,500 Coins - ₹500</div>
       </div>
 
-      <label>Enter your WhatsApp Number:</label>
-      <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
-
-      <button type="button" class="main-buy-btn" onclick="openPaymentModal()">Pay & Complete Top-up</button>
-    </div>
-
-    <div class="footer-section">
-      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="footer-logo">
-      <p>Your trusted official gateway for Duoo & Doran coin top-ups. Fast, seamless, and 100% secure.</p>
-      <strong>SUPPORT:</strong><br>
-      Email: alidreamwork@gmail.com<br>
-      Phone: +91 77768 81407<br>
-      <div style="text-align:center; margin-top:15px; font-size:12px;">© 2026 Ali Dreamwork.</div>
+      <input type="tel" id="userPhone" placeholder="WhatsApp Number" style="margin-top:15px;">
+      <button class="main-buy-btn" onclick="openPaymentModal()">Pay & Complete</button>
     </div>
   </div>
 
-  <!-- PAYMENT POPUP MODAL -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal-card" id="modalCardContent">
-      <span class="close-modal" onclick="closePaymentModal()">✕</span>
-      <h3 style="margin:5px 0; color:#0f172a;">Scan QR to Pay</h3>
-      <p style="font-size:13px; color:#64748b; margin-top:0;">Pay Amount: <strong id="modalAmount" style="color:#16a34a; font-size:16px;">₹0</strong></p>
-      
-      <img src="" alt="Paytm QR Code" class="qr-img" id="qrImage">
-
-      <div class="upi-box">
-        <span id="upiIdText">paytm.s3el3z2@pty</span>
-        <button class="copy-btn" onclick="copyUpi()">Copy ID</button>
-      </div>
-
-      <div style="text-align:left; margin-top:10px;">
-        <label style="margin-top:0; font-size:13px;">Enter 12-Digit UTR / Ref No. after payment:</label>
-        <input type="number" id="utrInput" placeholder="e.g. 423156789012" style="margin-top:4px;">
-      </div>
-
+      <h3 id="modalAmount">Scan QR to Pay</h3>
+      <img src="" id="qrImage" class="qr-img">
+      <input type="number" id="utrInput" placeholder="Enter 12-Digit UTR" style="margin-top:10px;">
       <button class="submit-utr-btn" onclick="submitPayment()">Submit Payment</button>
     </div>
   </div>
 
   <script>
-    let selectedPrice = 0;
-    let selectedCoins = 0;
-    var merchantUpi = "paytm.s3el3z2@pty";
+    let selectedPrice = 0; let selectedCoins = 0;
 
-    function openDrawer() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('active'); }
-    function closeDrawer() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('active'); }
-
-    function verifyUser() {
-      var idInput = document.getElementById('userId').value.trim();
-      var resBox = document.getElementById('verifyResult');
-      if (!idInput) { resBox.style.display="block"; resBox.innerHTML="❌ Invalid ID!"; return; }
-      resBox.style.display="block"; resBox.className="verify-success"; resBox.innerHTML="✓ Verified User: " + idInput;
-    }
-
-    function selectPlan(element, coins, price) {
+    function selectPlan(el, coins, price) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-      element.classList.add('selected');
-      selectedPrice = price;
-      selectedCoins = coins;
+      el.classList.add('selected');
+      selectedPrice = price; selectedCoins = coins;
     }
 
     function openPaymentModal() {
-      var userId = document.getElementById('userId').value.trim();
-      var userPhone = document.getElementById('userPhone').value.trim();
-      if (!userId || selectedPrice === 0 || !userPhone) { 
-        alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
-        return; 
-      }
-      
-      var upiUrl = "upi://pay?pa=" + merchantUpi + "&pn=Ali%20Dreamwork&am=" + selectedPrice + "&cu=INR";
-      document.getElementById('qrImage').src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiUrl);
-
-      document.getElementById('modalAmount').innerText = "₹" + selectedPrice;
+      if(selectedPrice === 0) { alert('Select a plan first!'); return; }
+      document.getElementById('qrImage').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=paytm.s3el3z2@pty&am=" + selectedPrice;
       document.getElementById('paymentModal').style.display = "flex";
     }
 
-    function closePaymentModal() {
-      document.getElementById('paymentModal').style.display = "none";
-    }
-
-    function copyUpi() {
-      var upiText = document.getElementById('upiIdText').innerText;
-      navigator.clipboard.writeText(upiText);
-      alert('UPI ID Copied: ' + upiText);
-    }
-
     function submitPayment() {
-      var utr = document.getElementById('utrInput').value.trim();
-      var userId = document.getElementById('userId'].value.trim();
-      var userPhone = document.getElementById('userPhone').value.trim();
-
-      if (utr.length < 10) {
-        alert('Please enter a valid 12-digit UTR/Reference number!');
-        return;
-      }
-
-      // लोडिंग स्क्रीन दिखाना (2-4 सेकंड का वेट)
-      var modalCard = document.getElementById('modalCardContent');
-      modalCard.innerHTML = `
-        <div style="padding: 30px 0;">
-          <h3 style="color: #0f172a; margin-bottom: 10px;">Verifying Payment...</h3>
-          <p style="color: #64748b; font-size: 13px; line-height: 1.5;">कृपया 2-4 सेकंड प्रतीक्षा करें। पेमेंट वेरीफाई हो रहा है और आपके कॉइन ऑटोमैटिक ट्रांसफर किए जा रहे हैं...</p>
-          <div style="margin: 25px auto; width: 45px; height: 45px; border: 4px solid #cbd5e1; border-top: 4px solid #22c55e; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        </div>
-      `;
-
-      // बैकएंड (Render सर्वर) पर UTR भेजना ताकि बोट ऑटोमैटिक कॉइन ट्रांसफर कर सके
+      var utr = document.getElementById('utrInput').value;
+      if(utr.length < 10) { alert('Enter valid UTR'); return; }
+      
+      document.getElementById('modalCardContent').innerHTML = `<div style="padding:20px;"><h3>Verifying...</h3><div style="margin:20px auto; width:40px; height:40px; border:4px solid #f3f3f3; border-top:4px solid #22c55e; border-radius:50%; animation:spin 1s linear infinite;"></div></div>`;
+      
       fetch('https://duoo-bot.onrender.com/api/submit-utr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: userId, userPhone: userPhone, utr: utr, coins: selectedCoins, price: selectedPrice })
-      })
-      .then(response => response.json())
-      .then(data => {
+        body: JSON.stringify({ userId: document.getElementById('userId').value, utr: utr, coins: selectedCoins })
+      }).then(() => {
         setTimeout(() => {
-          showSuccessScreen(userId, selectedCoins);
-        }, 3000);
-      })
-      .catch(error => {
-        // अगर सर्वर से डायरेक्ट रिस्पॉन्स आने में टाइम भी लगे, तो भी 3 सेकंड बाद सक्सेस दिखा कर ऑटोमेशन ट्रिगर मान लेगा
-        setTimeout(() => {
-          showSuccessScreen(userId, selectedCoins);
+          document.getElementById('modalCardContent').innerHTML = `<h3>Success!</h3><p>Coins will be added in 2 mins.</p><button onclick="location.reload()" style="width:100%; padding:10px;">Done</button>`;
         }, 3000);
       });
-    }
-
-    function showSuccessScreen(userId, coins) {
-      var modalCard = document.getElementById('modalCardContent');
-      modalCard.innerHTML = `
-        <div style="padding: 25px 0;">
-          <div style="font-size: 55px; color: #22c55e; margin-bottom: 5px;">✓</div>
-          <h3 style="color: #0f172a; margin-top: 0;">Top-up Successful!</h3>
-          <p style="color: #475569; font-size: 14px;"><strong>${coins} Coins</strong> successfully added to User ID: <br><span style="color:#0f172a; font-weight:bold; font-size:16px;">${userId}</span></p>
-          <p style="color: #16a34a; font-size: 12px; font-weight:600; background:#f0fdf4; padding:8px; border-radius:6px; margin-top:10px;">ऑटोमेशन के जरिए कॉइन आपके अकाउंट में भेज दिए गए हैं।</p>
-          <button onclick="location.reload()" style="background:#0f172a; color:white; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; margin-top:15px; width:100%; cursor:pointer;">Done / New Top-up</button>
-        </div>
-      `;
     }
   </script>
 </body>
