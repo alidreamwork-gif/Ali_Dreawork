@@ -1,92 +1,62 @@
-require('dotenv').config();
 const express = require('express');
-const axios = require('axios');
-const puppeteer = require('puppeteer');
-const bodyParser = require('body-parser');
-
+const fetch = require('node-fetch'); // अगर node-fetch इंस्टॉल न हो, तो ध्यान रखना (या नेटिव fetch यूज़ होगा)
 const app = express();
-app.use(bodyParser.json());
-app.use(express.static('.'));
 
-// यह लाइन तेरी index.html वेबसाइट को ब्राउज़र पर दिखाएगी
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Порт (Port) सेट करना जो Render ऑटोमैटिक देता है
+const PORT = process.env.PORT || 3000;
+
+// बेसिक टेस्ट रूट
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    sendResponse = "Bot and Payment Server is Running!";
+    res.send(sendResponse);
 });
 
-app.post('/api/pay', async (req, res) => {
+// ==========================================
+// KwikUPI Payment Link Generator Route
+// ==========================================
+app.post('/api/create-payment', async (req, res) => {
+    const { userId, userPhone, coins, amount } = req.body;
+    
     try {
-        const { amount, userId } = req.body;
-        const response = await axios.post('https://kwikupi.com/api/create-payment', {
-            amount: amount,
-            order_id: 'ORD_' + Date.now(),
-            customer_name: userId,
-            redirect_url: 'https://yourwebsite.com/success.html'
-        }, {
-            headers: {
-                'X-API-KEY': process.env.KWIKUPI_KEY,
-                'X-API-SECRET': process.env.KWIKUPI_SECRET,
-                'Content-Type': 'application/json'
-            }
+        const response = await fetch('https://api.kwikupi.com/v1/create-order', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer YOUR_KWIKUPI_API_KEY' // <--- यहाँ अपनी असली KwikUPI API Key डाल देना!
+            },
+            body: JSON.stringify({
+                amount: amount,
+                order_id: "ORD_" + Date.now(),
+                customer_phone: userPhone,
+                callback_url: "https://duoo-bot.onrender.com/api/payment-success"
+            })
         });
 
-        res.json({ success: true, payment_url: response.data.payment_url });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Payment initiation failed' });
-    }
-});
+        const data = await response.json();
 
-app.post('/api/webhook', async (req, res) => {
-    const { status, customer_name, amount } = req.body;
-
-    if (status === 'SUCCESS' || status === 'COMPLETED') {
-        console.log(`Payment Verified! User: ${customer_name}, Amount: ${amount}`);
-        
-        let coinsToSend = 0;
-        if (amount == 200) coinsToSend = 14600;
-        else if (amount == 300) coinsToSend = 21900;
-        else if (amount == 500) coinsToSend = 36500;
-
-        if (coinsToSend > 0) {
-            transferCoinsOnDuoo(customer_name, coinsToSend);
+        if (data.status === 'success' || data.payment_link) {
+            res.json({ payment_url: data.payment_link || data.data.payment_url });
+        } else {
+            res.status(500).json({ message: data.message || 'Gateway error' });
         }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server connection error' });
     }
-    res.sendStatus(200);
 });
 
-async function transferCoinsOnDuoo(targetUserId, coins) {
-    console.log(`[BOT] Starting coin transfer of ${coins} to ID: ${targetUserId}`);
-    
-    const browser = await puppeteer.launch({ 
-        headless: true, 
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-    });
-    const page = await browser.newPage();
+// पेमेंट सक्सेस होने पर यहाँ रिक्वेस्ट आएगी (Webhook)
+app.post('/api/payment-success', (req, res) => {
+    // यहाँ कॉइन ऑटोमैटिक यूजर को भेजने का लॉजिक आएगा
+    console.log("Payment Success Callback Received:", req.body);
+    res.status(200).send("Success");
+});
 
-    try {
-        await page.goto('https://agent.duoo.live/#/login');
-        
-        await page.waitForSelector('input[type="text"]', { timeout: 10000 });
-        await page.type('input[type="text"]', process.env.DUOO_USER);
-        await page.type('input[type="password"]', process.env.DUOO_PASS);
-        await page.click('button[type="submit"]');
-
-        await page.waitForTimeout(3000);
-        await page.goto('https://agent.duoo.live/#/coin/management');
-        await page.waitForSelector('.coins-sale-btn');
-        await page.click('.coins-sale-btn');
-
-        await page.type('#customer_id_input', targetUserId);
-        await page.type('#coins_quantity_input', coins.toString());
-
-        await page.click('#submit_transfer_btn');
-        console.log(`[SUCCESS] Transferred ${coins} coins to ${targetUserId}!`);
-
-    } catch (err) {
-        console.error('[ERROR] Automation failed:', err.message);
-    } finally {
-        await browser.close();
-    }
-}
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// सर्वर स्टार्ट करना
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
