@@ -26,7 +26,7 @@
     
     label { display: block; margin-top: 14px; font-weight: 600; color: #334155; text-align: left; font-size: 14px; }
     .id-group { display: flex; gap: 8px; }
-    input[type="text"], input[type="tel"], input[type="number"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
+    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
     .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     #verifyResult { margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 13px; display: none; text-align: left; }
     .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
@@ -38,15 +38,6 @@
     .plan-price { font-size: 16px; font-weight: bold; color: #16a34a; margin-top: 4px; }
     
     .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; pointer-events: auto !important; }
-    
-    /* PAYMENT MODAL (POPUP) */
-    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:200; padding: 15px; box-sizing: border-box; }
-    .modal-card { background:white; padding:20px; border-radius:12px; max-width:380px; width:100%; text-align:center; position:relative; max-height: 90vh; overflow-y: auto; }
-    .close-modal { position:absolute; top:10px; right:15px; font-size:22px; cursor:pointer; color:#64748b; font-weight:bold; }
-    .qr-img { width: 220px; height: auto; border: 1px solid #e2e8f0; border-radius: 8px; margin: 10px 0; }
-    .upi-box { background: #f1f5f9; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; color: #334155; margin-bottom: 12px; }
-    .copy-btn { background: #0f172a; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-    .submit-utr-btn { width:100%; background:#002970; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:15px; margin-top:10px; cursor:pointer; }
     
     .footer-section { width: 100%; max-width: 420px; margin-top: 25px; padding: 20px; text-align: left; border-top: 1px solid #e2e8f0; font-size: 14px; color: #475569; }
     .footer-logo { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 10px; }
@@ -72,7 +63,7 @@
   </div>
 
   <div class="container">
-    <div class="card">
+    <div class="card" id="mainCard">
       <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
       <div class="brand-title">Ali Dreamwork</div>
       <div class="sub-title">Coin Top-up Panel</div>
@@ -103,7 +94,7 @@
       <label>Enter your WhatsApp Number:</label>
       <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
 
-      <button type="button" class="main-buy-btn" onclick="openPaymentModal()">Pay & Complete Top-up</button>
+      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">Proceed to Pay</button>
     </div>
 
     <div class="footer-section">
@@ -116,33 +107,9 @@
     </div>
   </div>
 
-  <!-- PAYMENT POPUP MODAL -->
-  <div class="modal-overlay" id="paymentModal">
-    <div class="modal-card" id="modalCardContent">
-      <span class="close-modal" onclick="closePaymentModal()">✕</span>
-      <h3 style="margin:5px 0; color:#0f172a;">Scan QR to Pay</h3>
-      <p style="font-size:13px; color:#64748b; margin-top:0;">Pay Amount: <strong id="modalAmount" style="color:#16a34a; font-size:16px;">₹0</strong></p>
-      
-      <img src="" alt="Paytm QR Code" class="qr-img" id="qrImage">
-
-      <div class="upi-box">
-        <span id="upiIdText">paytm.s3el3z2@pty</span>
-        <button class="copy-btn" onclick="copyUpi()">Copy ID</button>
-      </div>
-
-      <div style="text-align:left; margin-top:10px;">
-        <label style="margin-top:0; font-size:13px;">Enter 12-Digit UTR / Ref No. after payment:</label>
-        <input type="number" id="utrInput" placeholder="e.g. 423156789012" style="margin-top:4px;">
-      </div>
-
-      <button class="submit-utr-btn" onclick="submitPayment()">Submit Payment</button>
-    </div>
-  </div>
-
   <script>
     let selectedPrice = 0;
     let selectedCoins = 0;
-    var merchantUpi = "paytm.s3el3z2@pty";
 
     function openDrawer() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('active'); }
     function closeDrawer() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('active'); }
@@ -161,79 +128,50 @@
       selectedCoins = coins;
     }
 
-    function openPaymentModal() {
+    function initiateGatewayPayment() {
       var userId = document.getElementById('userId').value.trim();
       var userPhone = document.getElementById('userPhone').value.trim();
+      
       if (!userId || selectedPrice === 0 || !userPhone) { 
         alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
         return; 
       }
-      
-      var upiUrl = "upi://pay?pa=" + merchantUpi + "&pn=Ali%20Dreamwork&am=" + selectedPrice + "&cu=INR";
-      document.getElementById('qrImage').src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiUrl);
 
-      document.getElementById('modalAmount').innerText = "₹" + selectedPrice;
-      document.getElementById('paymentModal').style.display = "flex";
-    }
-
-    function closePaymentModal() {
-      document.getElementById('paymentModal').style.display = "none";
-    }
-
-    function copyUpi() {
-      var upiText = document.getElementById('upiIdText').innerText;
-      navigator.clipboard.writeText(upiText);
-      alert('UPI ID Copied: ' + upiText);
-    }
-
-    function submitPayment() {
-      var utr = document.getElementById('utrInput').value.trim();
-      var userId = document.getElementById('userId').value.trim();
-      var userPhone = document.getElementById('userPhone').value.trim();
-
-      if (utr.length < 10) {
-        alert('Please enter a valid 12-digit UTR/Reference number!');
-        return;
-      }
-
-      var modalCard = document.getElementById('modalCardContent');
-      modalCard.innerHTML = `
-        <div style="padding: 30px 0;">
-          <h3 style="color: #0f172a; margin-bottom: 10px;">Verifying Payment...</h3>
-          <p style="color: #64748b; font-size: 13px; line-height: 1.5;">कृपया 2-4 सेकंड प्रतीक्षा करें। पेमेंट वेरीफाई हो रहा है और आपके कॉइन ऑटोमैटिक ट्रांसफर किए जा रहे हैं...</p>
+      // लोडिंग स्क्रीन दिखाना जब तक पेमेंट गेटवे लिंक जनरेट हो रही है
+      var mainCard = document.getElementById('mainCard');
+      mainCard.innerHTML = `
+        <div style="padding: 40px 0;">
+          <h3 style="color: #0f172a; margin-bottom: 10px;">Creating Secure Link...</h3>
+          <p style="color: #64748b; font-size: 13px;">कृपया प्रतीक्षा करें, पेमेंट पेज पर रीडायरेक्ट किया जा रहा है...</p>
           <div style="margin: 25px auto; width: 45px; height: 45px; border: 4px solid #cbd5e1; border-top: 4px solid #22c55e; border-radius: 50%; animation: spin 1s linear infinite;"></div>
         </div>
       `;
 
-      fetch('https://duoo-bot.onrender.com/api/submit-utr', {
+      // बैकएंड सर्वर को रिक्वेस्ट भेजना जो पेमेंट गेटवे (जैसे KwikUPI/Cashfree) से लिंक जनरेट करेगा
+      fetch('https://duoo-bot.onrender.com/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: userId, userPhone: userPhone, utr: utr, coins: selectedCoins, price: selectedPrice })
+        body: JSON.stringify({ 
+          userId: userId, 
+          userPhone: userPhone, 
+          coins: selectedCoins, 
+          amount: selectedPrice 
+        })
       })
       .then(response => response.json())
       .then(data => {
-        setTimeout(() => {
-          showSuccessScreen(userId, selectedCoins);
-        }, 3000);
+        if (data.payment_url) {
+          // यूजर को डायरेक्ट पेमेंट गेटवे के पेज पर रीडायरेक्ट कर देना
+          window.location.href = data.payment_url;
+        } else {
+          alert('Payment Gateway Error: ' + (data.message || 'Could not generate link'));
+          location.reload();
+        }
       })
       .catch(error => {
-        setTimeout(() => {
-          showSuccessScreen(userId, selectedCoins);
-        }, 3000);
+        alert('Server connection error. Please try again.');
+        location.reload();
       });
-    }
-
-    function showSuccessScreen(userId, coins) {
-      var modalCard = document.getElementById('modalCardContent');
-      modalCard.innerHTML = `
-        <div style="padding: 25px 0;">
-          <div style="font-size: 55px; color: #22c55e; margin-bottom: 5px;">✓</div>
-          <h3 style="color: #0f172a; margin-top: 0;">Top-up Successful!</h3>
-          <p style="color: #475569; font-size: 14px;"><strong>${coins} Coins</strong> successfully added to User ID: <br><span style="color:#0f172a; font-weight:bold; font-size:16px;">${userId}</span></p>
-          <p style="color: #16a34a; font-size: 12px; font-weight:600; background:#f0fdf4; padding:8px; border-radius:6px; margin-top:10px;">ऑटोमेशन के जरिए कॉइन आपके अकाउंट में भेज दिए गए हैं।</p>
-          <button onclick="location.reload()" style="background:#0f172a; color:white; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; margin-top:15px; width:100%; cursor:pointer;">Done / New Top-up</button>
-        </div>
-      `;
     }
   </script>
 </body>
