@@ -32,12 +32,12 @@
     .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
     
     .plans-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; justify-content: center; }
-    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; width: 45%; cursor: pointer; transition: 0.2s; pointer-events: auto !important; }
+    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; width: 45%; cursor: pointer; transition: 0.2s; }
     .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
     .plan-coins { font-size: 14px; font-weight: bold; color: #334155; }
     .plan-price { font-size: 16px; font-weight: bold; color: #16a34a; margin-top: 4px; }
     
-    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; pointer-events: auto !important; }
+    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
     
     .footer-section { width: 100%; max-width: 420px; margin-top: 25px; padding: 20px; text-align: left; border-top: 1px solid #e2e8f0; font-size: 14px; color: #475569; }
     .footer-logo { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 10px; }
@@ -147,10 +147,9 @@
         </div>
       `;
 
-      // यहाँ सीधा KwikUPI का पेमेंट लिंक डाल दिया है (बिना किसी सर्वर एरर के डायरेक्ट खुलेगा)
+      // सीधा KwikUPI के असली पेमेंट पेज पर रीडायरेक्ट करना
       setTimeout(() => {
-        // अगर चाहो तो नीचे अपना असली KwikUPI पेमेंट लिंक डाल सकते हो
-        window.location.href = "https://kwikupi.com"; 
+        window.location.href = "https://kwikupi.com/pay/YOUR_PAYMENT_LINK_ID"; // <--- यहाँ अपने 'View Page' वाला असली लिंक डाल देना
       }, 1500);
     }
   </script>
