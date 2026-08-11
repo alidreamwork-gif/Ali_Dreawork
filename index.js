@@ -1,18 +1,16 @@
 const express = require('express');
-const fetch = require('node-fetch'); // अगर node-fetch इंस्टॉल न हो, तो ध्यान रखना (या नेटिव fetch यूज़ होगा)
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Порт (Port) सेट करना जो Render ऑटोमैटिक देता है
+// Port setup for Render
 const PORT = process.env.PORT || 3000;
 
-// बेसिक टेस्ट रूट
+// Test route
 app.get('/', (req, res) => {
-    sendResponse = "Bot and Payment Server is Running!";
-    res.send(sendResponse);
+    res.send("Bot and Payment Server is Running Perfectly!");
 });
 
 // ==========================================
@@ -49,14 +47,13 @@ app.post('/api/create-payment', async (req, res) => {
     }
 });
 
-// पेमेंट सक्सेस होने पर यहाँ रिक्वेस्ट आएगी (Webhook)
+// Webhook for payment success
 app.post('/api/payment-success', (req, res) => {
-    // यहाँ कॉइन ऑटोमैटिक यूजर को भेजने का लॉजिक आएगा
     console.log("Payment Success Callback Received:", req.body);
     res.status(200).send("Success");
 });
 
-// सर्वर स्टार्ट करना
+// Start Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
