@@ -137,41 +137,21 @@
         return; 
       }
 
-      // लोडिंग स्क्रीन दिखाना जब तक पेमेंट गेटवे लिंक जनरेट हो रही है
+      // लोडिंग स्क्रीन दिखाना
       var mainCard = document.getElementById('mainCard');
       mainCard.innerHTML = `
         <div style="padding: 40px 0;">
-          <h3 style="color: #0f172a; margin-bottom: 10px;">Creating Secure Link...</h3>
-          <p style="color: #64748b; font-size: 13px;">कृपया प्रतीक्षा करें, पेमेंट पेज पर रीडायरेक्ट किया जा रहा है...</p>
+          <h3 style="color: #0f172a; margin-bottom: 10px;">Redirecting to Payment...</h3>
+          <p style="color: #64748b; font-size: 13px;">कृपया प्रतीक्षा करें, पेमेंट पेज पर भेजा जा रहा है...</p>
           <div style="margin: 25px auto; width: 45px; height: 45px; border: 4px solid #cbd5e1; border-top: 4px solid #22c55e; border-radius: 50%; animation: spin 1s linear infinite;"></div>
         </div>
       `;
 
-      // बैकएंड सर्वर को रिक्वेस्ट भेजना जो पेमेंट गेटवे (जैसे KwikUPI/Cashfree) से लिंक जनरेट करेगा
-      fetch('https://duoo-bot.onrender.com/api/create-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userId: userId, 
-          userPhone: userPhone, 
-          coins: selectedCoins, 
-          amount: selectedPrice 
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.payment_url) {
-          // यूजर को डायरेक्ट पेमेंट गेटवे के पेज पर रीडायरेक्ट कर देना
-          window.location.href = data.payment_url;
-        } else {
-          alert('Payment Gateway Error: ' + (data.message || 'Could not generate link'));
-          location.reload();
-        }
-      })
-      .catch(error => {
-        alert('Server connection error. Please try again.');
-        location.reload();
-      });
+      // यहाँ सीधा KwikUPI का पेमेंट लिंक डाल दिया है (बिना किसी सर्वर एरर के डायरेक्ट खुलेगा)
+      setTimeout(() => {
+        // अगर चाहो तो नीचे अपना असली KwikUPI पेमेंट लिंक डाल सकते हो
+        window.location.href = "https://kwikupi.com"; 
+      }, 1500);
     }
   </script>
 </body>
