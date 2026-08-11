@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
 // Middleware
@@ -8,8 +9,10 @@ app.use(express.urlencoded({ extended: true }));
 // Port setup for Render
 const PORT = process.env.PORT || 3000;
 
-// Test route
-app.use(express.static(path.join(__dirname, 'public'))); //
+// यह सीधा तुम्हारी वेबसाइट (index.html) को स्क्रीन पर दिखाएगा
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // ==========================================
 // KwikUPI Payment Link Generator Route
