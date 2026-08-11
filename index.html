@@ -31,11 +31,12 @@
     #verifyResult { margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 13px; display: none; text-align: left; }
     .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
     
-    .plans-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; justify-content: center; }
-    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; width: 45%; cursor: pointer; transition: 0.2s; }
+    .plans-container { max-height: 280px; overflow-y: auto; margin-top: 10px; padding-right: 4px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
+    .plans-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; width: 46%; cursor: pointer; transition: 0.2s; box-sizing: border-box; background: #fff; }
     .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
-    .plan-coins { font-size: 14px; font-weight: bold; color: #334155; }
-    .plan-price { font-size: 16px; font-weight: bold; color: #16a34a; margin-top: 4px; }
+    .plan-coins { font-size: 13px; font-weight: bold; color: #334155; }
+    .plan-price { font-size: 15px; font-weight: bold; color: #16a34a; margin-top: 2px; }
     
     .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
     
@@ -76,18 +77,44 @@
       <div id="verifyResult"></div>
 
       <label>Select your Coin Plan:</label>
-      <div class="plans-grid">
-        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
-            <div class="plan-coins">14,600 Coins</div>
-            <div class="plan-price">₹200</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
-            <div class="plan-coins">21,900 Coins</div>
-            <div class="plan-price">₹300</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
-            <div class="plan-coins">36,500 Coins</div>
-            <div class="plan-price">₹500</div>
+      <div class="plans-container">
+        <div class="plans-grid">
+          <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_LgOHAuEcJT9Q')">
+              <div class="plan-coins">14,600 Coins</div>
+              <div class="plan-price">₹200</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 21900, 300, '')">
+              <div class="plan-coins">21,900 Coins</div>
+              <div class="plan-price">₹300</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 36500, 500, '')">
+              <div class="plan-coins">36,500 Coins</div>
+              <div class="plan-price">₹500</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 73000, 1000, '')">
+              <div class="plan-coins">73,000 Coins</div>
+              <div class="plan-price">₹1,000</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 109500, 1500, '')">
+              <div class="plan-coins">109,500 Coins</div>
+              <div class="plan-price">₹1,500</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 146000, 2000, '')">
+              <div class="plan-coins">146,000 Coins</div>
+              <div class="plan-price">₹2,000</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 219000, 3000, '')">
+              <div class="plan-coins">219,000 Coins</div>
+              <div class="plan-price">₹3,000</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 328500, 4500, '')">
+              <div class="plan-coins">328,500 Coins</div>
+              <div class="plan-price">₹4,500</div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 500000, 6850, '')">
+              <div class="plan-coins">500,000 Coins</div>
+              <div class="plan-price">₹6,850</div>
+          </div>
         </div>
       </div>
 
@@ -110,6 +137,7 @@
   <script>
     let selectedPrice = 0;
     let selectedCoins = 0;
+    let selectedPaymentLink = "";
 
     function openDrawer() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('active'); }
     function closeDrawer() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('active'); }
@@ -121,11 +149,12 @@
       resBox.style.display="block"; resBox.className="verify-success"; resBox.innerHTML="✓ Verified User: " + idInput;
     }
 
-    function selectPlan(element, coins, price) {
+    function selectPlan(element, coins, price, payLink) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedPrice = price;
       selectedCoins = coins;
+      selectedPaymentLink = payLink;
     }
 
     function initiateGatewayPayment() {
@@ -137,7 +166,11 @@
         return; 
       }
 
-      // लोडिंग स्क्रीन दिखाना
+      if (!selectedPaymentLink) {
+        alert('This plan link is not configured yet! Please provide its payment link.');
+        return;
+      }
+
       var mainCard = document.getElementById('mainCard');
       mainCard.innerHTML = `
         <div style="padding: 40px 0;">
@@ -147,9 +180,8 @@
         </div>
       `;
 
-      // सीधा तुम्हारे असली KwikUPI पेमेंट लिंक पर रीडायरेक्ट होगा
       setTimeout(() => {
-        window.location.href = "https://kwikupi.com/pay-link/plink_LgOHAuEcJT9Q"; 
+        window.location.href = selectedPaymentLink; 
       }, 1500);
     }
   </script>
