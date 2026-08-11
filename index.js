@@ -9,9 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 3000;
 
 // Test route
-app.get('/', (req, res) => {
-    res.send("Bot and Payment Server is Running Perfectly!");
-});
+app.use(express.static(path.join(__dirname, 'public'))); //
 
 // ==========================================
 // KwikUPI Payment Link Generator Route
