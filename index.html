@@ -1,16 +1,168 @@
-<!-- HTML Form Example -->
-<div class="payment-box">
-    <h3>Duoo Coin Recharge</h3>
-    
-    <!-- User UID Input -->
-    <input type="text" id="userId" placeholder="Enter your User ID" required>
-    
-    <!-- Plan Selection -->
-    <select id="coinPlan">
-        <option value="14600">14,600 Coins</option>
-        <option value="30000">30,000 Coins</option>
-    </select>
-    
-    <!-- Pay Button -->
-    <button onclick="startPayment()">Pay Now</button>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duoo Coin Recharge</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1e1e2f, #2d2b42);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #252336;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #ffcc00;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #b0b0c3;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #1a1827;
+            color: #fff;
+            font-size: 16px;
+        }
+        input:focus, select:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+        .pay-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ffcc00;
+            border: none;
+            border-radius: 8px;
+            color: #1a1827;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .pay-btn:hover {
+            background: #e6b800;
+        }
+        /* Popup Styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background: #252336;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 320px;
+            border: 2px solid #28a745;
+        }
+        .popup-content h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        .popup-content p {
+            color: #ddd;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .popup-btn {
+            padding: 10px 20px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Duoo Coin Recharge</h2>
+        <div class="form-group">
+            <label for="userId">Enter Your User ID (UID)</label>
+            <input type="number" id="userId" placeholder="e.g., 10016" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="coinPlan">Select Coin Plan</label>
+            <select id="coinPlan">
+                <option value="14600">14,600 Coins - ₹100</option>
+                <option value="30000">30,000 Coins - ₹200</option>
+                <option value="75000">75,000 Coins - ₹500</option>
+            </select>
+        </div>
+
+        <button class="pay-btn" onclick="startPayment()">Proceed to Pay</button>
+    </div>
+
+    <!-- Success Popup -->
+    <div class="popup" id="successPopup">
+        <div class="popup-content">
+            <h3>Payment Successful!</h3>
+            <p>Your coins have been successfully credited to your account ID.</p>
+            <button class="popup-btn" onclick="closePopup()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        function startPayment() {
+            var uid = document.getElementById('userId').value;
+            var plan = document.getElementById('coinPlan').value;
+
+            if(!uid) {
+                alert("Please enter your User ID first!");
+                return;
+            }
+
+            // Yahan KwikUPI ka payment link ya integration trigger hoga
+            // Abhi testing ke liye hum success popup show kar rahe hain
+            alert("Redirecting to KwikUPI for UID: " + uid + " with Coins: " + plan);
+            
+            // Payment hone ke baad agar success page par aaye toh yeh function call karna:
+            // showSuccessPopup();
+        }
+
+        function showSuccessPopup() {
+            document.getElementById('successPopup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('successPopup').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
