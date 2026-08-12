@@ -171,9 +171,8 @@
         return;
       }
 
-      // Save user details to browser storage so we can use them if needed
-      localStorage.setItem('duoo_uid', userId);
-      localStorage.setItem('duoo_coins', selectedCoins);
+      // KwikUPI लिंक के साथ UID और Phone को पास करना ताकि वेबहुक में सही डेटा मिले
+      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone);
 
       var mainCard = document.getElementById('mainCard');
       mainCard.innerHTML = `
@@ -185,7 +184,7 @@
       `;
 
       setTimeout(() => {
-        window.location.href = selectedPaymentLink; 
+        window.location.href = finalPaymentUrl; 
       }, 1500);
     }
   </script>
