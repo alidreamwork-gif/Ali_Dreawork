@@ -171,6 +171,10 @@
         return;
       }
 
+      // Save user details to browser storage so we can use them if needed
+      localStorage.setItem('duoo_uid', userId);
+      localStorage.setItem('duoo_coins', selectedCoins);
+
       var mainCard = document.getElementById('mainCard');
       mainCard.innerHTML = `
         <div style="padding: 40px 0;">
