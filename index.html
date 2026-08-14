@@ -42,7 +42,7 @@
 
       <label>Enter your User ID:</label>
       <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter Duoo User ID">
+        <input type="text" id="userId" placeholder="Enter Duoo User ID" oninput="verifyUser()">
         <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
       </div>
       <div id="verifyResult"></div>
@@ -78,13 +78,18 @@
     async function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
-      if (!uid) { resBox.className="verify-error"; resBox.innerHTML="❌ Please enter User ID first!"; return; }
+      if (!uid) { 
+        resBox.style.display = "none";
+        isVerified = false;
+        return; 
+      }
 
-      resBox.className="verify-success";
-      resBox.innerHTML="⏳ Verifying user...";
+      resBox.className = "verify-success";
+      resBox.innerHTML = "⏳ Verifying user...";
+      resBox.style.display = "flex";
 
       try {
-        let response = await fetch("https://script.google.com/macros/s/AKfycbxNRX57GSOSqHObjZF6WS4mY95dn8-zFrKu73TWvnBLPIwmHMCXrN2ixFuL8nPa8BoO/exec", {
+        let response = await fetch("https://script.google.com/macros/s/AKfycbxh-qyJLZTVQhp9pjXIfDgdMESfPkwCObnaCpenAL-ikQna0PcaiyFGYz6XGg5z2mNK/exec", {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "getUser", uid: uid })
@@ -101,7 +106,7 @@
           resBox.innerHTML = "❌ User not found!";
         }
       } catch (err) {
-        isVerified = true; // अगर डायरेक्ट क्रॉस-डोमेन रिस्ट्रिक्शन की वजह से फैच ब्लॉक भी हो, तो भी पेमेंट न रुके
+        isVerified = true; 
         resBox.className = "verify-success";
         resBox.innerHTML = "✓ User ID Accepted";
       }
