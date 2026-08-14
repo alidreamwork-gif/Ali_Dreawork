@@ -1,163 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ali Dreamwork - Coin Top-up</title>
-  <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-    .top-header { width: 100%; background: #ffffff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box; border-bottom: 1px solid #e2e8f0; }
-    .header-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-    .menu-icon { font-size: 26px; color: #334155; cursor: pointer; }
-    
-    .side-drawer { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background-color: #ffffff; box-shadow: -4px 0 15px rgba(0,0,0,0.15); transition: right 0.3s ease-in-out; z-index: 100; }
-    .side-drawer.open { right: 0; }
-    .drawer-header { background-color: #0f172a; color: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-    .drawer-content { padding: 20px 15px; }
-    .drawer-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-weight: 600; }
-    .drawer-overlay { position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 90; }
-    .drawer-overlay.active { display: block; }
-    
-    .container { width: 100%; max-width: 420px; padding: 20px 15px; box-sizing: border-box; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
-    .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #dfb15b; margin-bottom: 10px; }
-    .brand-title { font-size: 22px; font-weight: bold; color: #0f172a; }
-    .sub-title { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 15px; }
-    
-    label { display: block; margin-top: 14px; font-weight: 600; color: #334155; text-align: left; font-size: 14px; }
-    .id-group { display: flex; gap: 8px; }
-    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
-    .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    #verifyResult { margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 13px; display: none; text-align: left; }
-    .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-    
-    .plans-container { max-height: 280px; overflow-y: auto; margin-top: 10px; padding-right: 4px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
-    .plans-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; width: 46%; cursor: pointer; transition: 0.2s; box-sizing: border-box; background: #fff; }
-    .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
-    .plan-coins { font-size: 13px; font-weight: bold; color: #334155; }
-    .plan-price { font-size: 15px; font-weight: bold; color: #16a34a; margin-top: 2px; }
-    
-    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
-    
-    .footer-section { width: 100%; max-width: 420px; margin-top: 25px; padding: 20px; text-align: left; border-top: 1px solid #e2e8f0; font-size: 14px; color: #475569; }
-    .footer-logo { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 10px; }
-    
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  </style>
-</head>
-<body>
-
-  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-  <div class="side-drawer" id="sideDrawer">
-    <div class="drawer-header">Menu <span onclick="closeDrawer()" style="cursor:pointer">✕</span></div>
-    <div class="drawer-content">
-      <div class="drawer-item" onclick="closeDrawer()">Home</div>
-      <div class="drawer-item">Terms & Conditions</div>
-      <div class="drawer-item">Contact Support</div>
-    </div>
-  </div>
-
-  <div class="top-header">
-    <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="header-logo">
-    <div class="menu-icon" onclick="openDrawer()">☰</div>
-  </div>
-
-  <div class="container">
-    <div class="card" id="mainCard">
-      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-      <div class="brand-title">Ali Dreamwork</div>
-      <div class="sub-title">Coin Top-up Panel</div>
-
-      <label>Enter your User ID:</label>
-      <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter User ID">
-        <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
-      </div>
-      <div id="verifyResult"></div>
-
-      <label>Select your Coin Plan:</label>
-      <div class="plans-container">
-        <div class="plans-grid">
-          <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')">
-              <div class="plan-coins">14,600 Coins</div>
-              <div class="plan-price">₹200</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')">
-              <div class="plan-coins">21,900 Coins</div>
-              <div class="plan-price">₹300</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')">
-              <div class="plan-coins">36,500 Coins</div>
-              <div class="plan-price">₹500</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')">
-              <div class="plan-coins">73,000 Coins</div>
-              <div class="plan-price">₹1,000</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')">
-              <div class="plan-coins">109,500 Coins</div>
-              <div class="plan-price">₹1,500</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 146000, 2000, 'https://kwikupi.com/pay-link/plink_j5mt7B8i483W')">
-              <div class="plan-coins">146,000 Coins</div>
-              <div class="plan-price">₹2,000</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 219000, 3000, 'https://kwikupi.com/pay-link/plink_cC2IQpuBx559')">
-              <div class="plan-coins">219,000 Coins</div>
-              <div class="plan-price">₹3,000</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 328500, 4500, 'https://kwikupi.com/pay-link/plink_t0hkAeM2WnnB')">
-              <div class="plan-coins">328,500 Coins</div>
-              <div class="plan-price">₹4,500</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 500000, 6850, 'https://kwikupi.com/pay-link/plink_0JD3cImVeViY')">
-              <div class="plan-coins">500,000 Coins</div>
-              <div class="plan-price">₹6,850</div>
-          </div>
-        </div>
-      </div>
-
-      <label>Enter your WhatsApp Number:</label>
-      <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
-
-      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">Proceed to Pay</button>
-    </div>
-
-    <div class="footer-section">
-      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="footer-logo">
-      <p>Your trusted official gateway for Duoo & Doran coin top-ups. Fast, seamless, and 100% secure.</p>
-      <strong>SUPPORT:</strong><br>
-      Email: alidreamwork@gmail.com<br>
-      Phone: +91 77768 81407<br>
-      <div style="text-align:center; margin-top:15px; font-size:12px;">© 2026 Ali Dreamwork.</div>
-    </div>
-  </div>
-
-  <script>
-    let selectedPrice = 0;
-    let selectedCoins = 0;
-    let selectedPaymentLink = "";
-
-    function openDrawer() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('active'); }
-    function closeDrawer() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('active'); }
-
-    function verifyUser() {
-      var idInput = document.getElementById('userId').value.trim();
-      var resBox = document.getElementById('verifyResult');
-      if (!idInput) { resBox.style.display="block"; resBox.innerHTML="❌ Invalid ID!"; return; }
-      resBox.style.display="block"; resBox.className="verify-success"; resBox.innerHTML="✓ Verified User: " + idInput;
-    }
-
-    function selectPlan(element, coins, price, payLink) {
-      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-      element.classList.add('selected');
-      selectedPrice = price;
-      selectedCoins = coins;
-      selectedPaymentLink = payLink;
-    }
-
-    function initiateGatewayPayment() {
+function initiateGatewayPayment() {
       var userId = document.getElementById('userId').value.trim();
       var userPhone = document.getElementById('userPhone').value.trim();
       
@@ -171,8 +12,9 @@
         return;
       }
 
-      // KwikUPI लिंक के साथ UID और Phone को पास करना ताकि वेबहुक में सही डेटा मिले
-      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone);
+      // यहाँ हम KwikUPI के लिंक में customer_name की जगह सीधे यूजर की UID भेज रहे हैं
+      // और customer_phone की जगह WhatsApp नंबर भेज रहे हैं
+      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&customer_email=" + encodeURIComponent(userId + "@duoo.com");
 
       var mainCard = document.getElementById('mainCard');
       mainCard.innerHTML = `
@@ -187,6 +29,3 @@
         window.location.href = finalPaymentUrl; 
       }, 1500);
     }
-  </script>
-</body>
-</html>
