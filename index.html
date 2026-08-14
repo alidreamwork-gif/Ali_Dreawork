@@ -96,19 +96,24 @@
         });
         let result = await response.json();
         
-        if (result.status === 200) {
+        // Duoo API रिस्पॉन्स को सुरक्षित तरीके से चेक करना
+        let userData = result.data || result;
+        if (result.status === 200 || result.code === 200 || userData.nick || userData.nickname) {
           isVerified = true;
+          var nickName = userData.nick || userData.nickname || "User";
+          var avatarImg = userData.avatar || userData.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
           resBox.className = "verify-success";
-          resBox.innerHTML = `<img src="${result.avatar}" class="user-avatar"> <div><b>${result.nick}</b> (Verified)</div>`;
+          resBox.innerHTML = `<img src="${avatarImg}" class="user-avatar"> <div><b>${nickName}</b> (Verified)</div>`;
         } else {
           isVerified = false;
           resBox.className = "verify-error";
           resBox.innerHTML = "❌ User not found!";
         }
       } catch (err) {
+        // यदि कोई नेटवर्क या पार्सिंग एरर हो, तब भी यूजर को रोकने के बजाय आगे बढ़ने दें
         isVerified = true; 
         resBox.className = "verify-success";
-        resBox.innerHTML = "✓ User ID Accepted";
+        resBox.innerHTML = "✓ User ID Accepted (ID: " + uid + ")";
       }
     }
 
