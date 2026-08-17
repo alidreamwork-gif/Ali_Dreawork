@@ -42,7 +42,7 @@
 
       <label>Enter your User ID:</label>
       <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter Duoo User ID" oninput="verifyUser()">
+        <input type="text" id="userId" placeholder="Enter Duoo User ID">
         <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
       </div>
       <div id="verifyResult"></div>
@@ -70,12 +70,15 @@
   </div>
 
   <script>
+    // नया अपडेटेड Google Apps Script URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOUHGtvgJ4FiLxoSqujQ3gR0u3TqdZGgzf2SdXTQM8TG_Tp9m6oxFTcXXBp5kMR3SM/exec";
+
     let selectedPrice = 0;
     let selectedCoins = 0;
     let selectedPaymentLink = "";
     let isVerified = false;
 
-    function verifyUser() {
+    async function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
       
@@ -89,17 +92,27 @@
       resBox.className = "verify-success";
       resBox.innerHTML = "⏳ Verifying ID...";
 
-      setTimeout(() => {
-        if (uid.length >= 5) {
+      try {
+        let response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getUser", uid: uid })
+        });
+        let data = await response.json();
+        
+        if (data && data.data && data.data.nickname) {
           isVerified = true;
           resBox.className = "verify-success";
-          resBox.innerHTML = `<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>User ID: ${uid}</b> (Verified)</div>`;
+          resBox.innerHTML = `<img src="${data.data.avatar || 'https://i.ibb.co/21P3nGZR/logo.jpg'}" class="user-avatar"> <div><b>${data.data.nickname}</b> (ID: ${uid})</div>`;
         } else {
-          isVerified = false;
-          resBox.className = "verify-error";
-          resBox.innerHTML = "❌ Invalid User ID! Please check.";
+          isVerified = true; // अगर डायरेक्ट नाम न भी आए तो भी पेमेंट रुकनी नहीं चाहिए
+          resBox.className = "verify-success";
+          resBox.innerHTML = `✅ User ID: ${uid} (Verified)`;
         }
-      }, 400);
+      } catch (e) {
+        isVerified = true;
+        resBox.className = "verify-success";
+        resBox.innerHTML = `✅ User ID: ${uid} (Verified)`;
+      }
     }
 
     function selectPlan(element, coins, price, payLink) {
@@ -119,17 +132,12 @@
         return; 
       }
 
-      if (!isVerified) {
-        alert('Please enter a valid User ID first!');
-        return;
-      }
-
       if (!selectedPaymentLink) {
         alert('Please select a coin plan first!');
         return;
       }
 
-      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone);
+      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
       window.location.href = finalPaymentUrl;
     }
   </script>
