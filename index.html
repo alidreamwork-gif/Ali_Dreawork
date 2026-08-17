@@ -11,24 +11,19 @@
     .logo-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 2px solid #dfb15b; margin-bottom: 10px; }
     .brand-title { font-size: 22px; font-weight: bold; color: #0f172a; }
     .sub-title { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 15px; }
-    
     label { display: block; margin-top: 14px; font-weight: 600; color: #334155; text-align: left; font-size: 14px; }
     .id-group { display: flex; gap: 8px; }
     input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
     .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    
     #verifyResult { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 13px; display: none; text-align: left; align-items: center; gap: 10px; }
     .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; display: flex !important; }
     .verify-error { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: flex !important; }
-    .user-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
-
     .plans-container { max-height: 260px; overflow-y: auto; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
     .plans-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; width: 46%; cursor: pointer; transition: 0.2s; background: #fff; box-sizing: border-box; }
     .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
     .plan-coins { font-size: 13px; font-weight: bold; color: #334155; }
     .plan-price { font-size: 15px; font-weight: bold; color: #16a34a; margin-top: 2px; }
-    
     .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
@@ -42,7 +37,7 @@
 
       <label>Enter your User ID:</label>
       <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter Duoo User ID" oninput="verifyUser()">
+        <input type="text" id="userId" placeholder="Enter Duoo User ID">
         <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
       </div>
       <div id="verifyResult"></div>
@@ -70,45 +65,31 @@
   </div>
 
   <script>
-    // यह रहा तुम्हारा नया Google Apps Script URL
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpqWZ2kv4Y5A1b_SbHc6dm_JOBN6iQOGQ6OEBg5enCMrHZEVGYdqWHXmOg1MynKrB0/exec
+    // नया अपडेटेड स्क्रिप्ट URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpqWZ2kv4Y5A1b_SbHc6dm_JOBN6iQOGQ6OEBg5enCMrHZEVGYdqWHXmOg1MynKrB0/exec";
+
     let selectedPrice = 0;
-    let selectedCoins = 0;
     let selectedPaymentLink = "";
     let isVerified = false;
 
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
-      
-      if (!uid) { 
-        resBox.style.display = "none";
+      if (uid.length >= 5) {
+        isVerified = true;
+        resBox.className = "verify-success";
+        resBox.innerHTML = "✅ User ID Verified!";
+      } else {
         isVerified = false;
-        return; 
+        resBox.className = "verify-error";
+        resBox.innerHTML = "❌ Invalid User ID!";
       }
-
-      resBox.style.display = "flex";
-      resBox.className = "verify-success";
-      resBox.innerHTML = "⏳ Verifying ID...";
-
-      setTimeout(() => {
-        if (uid.length >= 5) {
-          isVerified = true;
-          resBox.className = "verify-success";
-          resBox.innerHTML = `<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>User ID: ${uid}</b> (Verified)</div>`;
-        } else {
-          isVerified = false;
-          resBox.className = "verify-error";
-          resBox.innerHTML = "❌ Invalid User ID! Please check.";
-        }
-      }, 400);
     }
 
     function selectPlan(element, coins, price, payLink) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedPrice = price;
-      selectedCoins = coins;
       selectedPaymentLink = payLink;
     }
 
@@ -117,22 +98,14 @@
       var userPhone = document.getElementById('userPhone').value.trim();
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
-        alert('Please fill User ID, select a coin plan & enter WhatsApp number!'); 
+        alert('Please fill User ID, select a plan & phone number!'); 
         return; 
       }
-
       if (!isVerified) {
-        alert('Please enter a valid User ID first!');
+        alert('Please click Verify button first!');
         return;
       }
-
-      if (!selectedPaymentLink) {
-        alert('Please select a coin plan first!');
-        return;
-      }
-
-      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
-      window.location.href = finalPaymentUrl;
+      window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
     }
   </script>
 </body>
