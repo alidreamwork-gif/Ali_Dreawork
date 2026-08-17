@@ -1,83 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ali Dreamwork - Coin Top-up</title>
-  <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 420px; padding: 20px 15px; box-sizing: border-box; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
-    .logo-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 2px solid #dfb15b; margin-bottom: 10px; }
-    .brand-title { font-size: 22px; font-weight: bold; color: #0f172a; }
-    .sub-title { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 15px; }
-    
-    label { display: block; margin-top: 14px; font-weight: 600; color: #334155; text-align: left; font-size: 14px; }
-    .id-group { display: flex; gap: 8px; }
-    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
-    .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    
-    #verifyResult { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 13px; display: none; text-align: left; align-items: center; gap: 10px; }
-    .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; display: flex !important; }
-    .verify-error { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: block !important; }
-    .user-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
-
-    .plans-container { max-height: 260px; overflow-y: auto; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
-    .plans-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; width: 46%; cursor: pointer; transition: 0.2s; background: #fff; box-sizing: border-box; }
-    .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
-    .plan-coins { font-size: 13px; font-weight: bold; color: #334155; }
-    .plan-price { font-size: 15px; font-weight: bold; color: #16a34a; margin-top: 2px; }
-    
-    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <div class="card" id="mainCard">
-      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-      <div class="brand-title">Ali Dreamwork</div>
-      <div class="sub-title">Coin Top-up Panel</div>
-
-      <label>Enter your User ID:</label>
-      <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter Duoo User ID" oninput="verifyUser()">
-        <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
-      </div>
-      <div id="verifyResult"></div>
-
-      <label>Select your Coin Plan:</label>
-      <div class="plans-container">
-        <div class="plans-grid">
-          <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')"><div class="plan-coins">14,600 Coins</div><div class="plan-price">₹200</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')"><div class="plan-coins">21,900 Coins</div><div class="plan-price">₹300</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')"><div class="plan-coins">36,500 Coins</div><div class="plan-price">₹500</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')"><div class="plan-coins">73,000 Coins</div><div class="plan-price">₹1,000</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')"><div class="plan-coins">109,500 Coins</div><div class="plan-price">₹1,500</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 146000, 2000, 'https://kwikupi.com/pay-link/plink_j5mt7B8i483W')"><div class="plan-coins">146,000 Coins</div><div class="plan-price">₹2,000</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 219000, 3000, 'https://kwikupi.com/pay-link/plink_cC2IQpuBx559')"><div class="plan-coins">219,000 Coins</div><div class="plan-price">₹3,000</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 328500, 4500, 'https://kwikupi.com/pay-link/plink_t0hkAeM2WnnB')"><div class="plan-coins">328,500 Coins</div><div class="plan-price">₹4,500</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 500000, 6850, 'https://kwikupi.com/pay-link/plink_0JD3cImVeViY')"><div class="plan-coins">500,000 Coins</div><div class="plan-price">₹6,850</div></div>
-        </div>
-      </div>
-
-      <label>Enter your WhatsApp Number:</label>
-      <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
-
-      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">Proceed to Pay</button>
-    </div>
-  </div>
-
-  <script>
-    let selectedPrice = 0;
-    let selectedCoins = 0;
-    let selectedPaymentLink = "";
-    let isVerified = false;
-
-    async function verifyUser() {
+async function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
+      
       if (!uid) { 
         resBox.style.display = "none";
         isVerified = false;
@@ -85,69 +9,35 @@
       }
 
       resBox.className = "verify-success";
-      resBox.innerHTML = "⏳ Verifying user from Duoo server...";
+      resBox.innerHTML = "⏳ Verifying...";
       resBox.style.display = "flex";
 
       try {
         let response = await fetch("https://script.google.com/macros/s/AKfycbxNQdckJUTCQkkI79cTXmPCCN_hDYk7SbkBZ5PleZbbOvj9Rcl9ixklcjTY0Iz33_/exec", {
           method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "getUser", uid: uid })
         });
+        
         let result = await response.json();
         
-        // चेक करेंगे कि क्या सर्वर से सही यूजर डेटा मिला है
-        if (result && (result.code === 200 || result.status === 200 || result.nick || result.nickname || (result.data && (result.data.nick || result.data.nickname)))) {
+        // पक्का चेक: अगर सर्वर से 'nick' या 'nickname' नाम की चीज़ आ रही है तभी 'Verified' मानेगा
+        if (result && (result.nick || result.nickname || (result.data && (result.data.nick || result.data.nickname)))) {
           isVerified = true;
-          let userData = result.data || result;
-          var nickName = userData.nick || userData.nickname || "Duoo User";
-          var avatarImg = userData.avatar || userData.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          let nickName = result.nick || result.nickname || (result.data ? (result.data.nick || result.data.nickname) : "User");
+          let avatarImg = result.avatar || (result.data ? result.data.avatar : "https://i.ibb.co/21P3nGZR/logo.jpg");
+          
           resBox.className = "verify-success";
-          resBox.innerHTML = `<img src="${avatarImg}" class="user-avatar"> <div><b>${nickName}</b> (Verified)</div>`;
+          resBox.innerHTML = `<img src="${avatarImg}" class="user-avatar"> <b>${nickName}</b> (Verified)`;
         } else {
-          // अगर गलत आईडी है तो साफ मना कर देगा
+          // अगर यूजर नहीं मिला
           isVerified = false;
           resBox.className = "verify-error";
-          resBox.innerHTML = "❌ User not found! Please check ID.";
+          resBox.innerHTML = "❌ User ID not found in Duoo!";
         }
       } catch (err) {
-        // अगर कोई टेक्निकल दिक्कत हो तो अब तुक्का नहीं मरेगा, बल्कि एरर बताएगा
+        // अगर सर्वर से कनेक्शन न हो पाए
         isVerified = false;
         resBox.className = "verify-error";
-        resBox.innerHTML = "❌ Error connecting to server. Try again.";
+        resBox.innerHTML = "❌ Server error! Please try again.";
       }
     }
-
-    function selectPlan(element, coins, price, payLink) {
-      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-      element.classList.add('selected');
-      selectedPrice = price;
-      selectedCoins = coins;
-      selectedPaymentLink = payLink;
-    }
-
-    function initiateGatewayPayment() {
-      var userId = document.getElementById('userId').value.trim();
-      var userPhone = document.getElementById('userPhone').value.trim();
-      
-      if (!userId || selectedPrice === 0 || !userPhone) { 
-        alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
-        return; 
-      }
-
-      if (!isVerified) {
-        alert('Please enter a valid verified User ID first!');
-        return;
-      }
-
-      if (!selectedPaymentLink) {
-        alert('Please select a coin plan first!');
-        return;
-      }
-
-      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone);
-      window.location.href = finalPaymentUrl;
-    }
-  </script>
-</body>
-</html>
