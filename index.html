@@ -85,7 +85,7 @@
       }
 
       resBox.className = "verify-success";
-      resBox.innerHTML = "⏳ Verifying user...";
+      resBox.innerHTML = "⏳ Verifying user from Duoo server...";
       resBox.style.display = "flex";
 
       try {
@@ -96,22 +96,25 @@
         });
         let result = await response.json();
         
-        let userData = result.data || result;
-        if (result.status === 200 || result.code === 200 || userData.nick || userData.nickname) {
+        // चेक करेंगे कि क्या सर्वर से सही यूजर डेटा मिला है
+        if (result && (result.code === 200 || result.status === 200 || result.nick || result.nickname || (result.data && (result.data.nick || result.data.nickname)))) {
           isVerified = true;
-          var nickName = userData.nick || userData.nickname || "User";
+          let userData = result.data || result;
+          var nickName = userData.nick || userData.nickname || "Duoo User";
           var avatarImg = userData.avatar || userData.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
           resBox.className = "verify-success";
           resBox.innerHTML = `<img src="${avatarImg}" class="user-avatar"> <div><b>${nickName}</b> (Verified)</div>`;
         } else {
+          // अगर गलत आईडी है तो साफ मना कर देगा
           isVerified = false;
           resBox.className = "verify-error";
-          resBox.innerHTML = "❌ User not found!";
+          resBox.innerHTML = "❌ User not found! Please check ID.";
         }
       } catch (err) {
-        isVerified = true; 
-        resBox.className = "verify-success";
-        resBox.innerHTML = "✓ User ID Accepted (ID: " + uid + ")";
+        // अगर कोई टेक्निकल दिक्कत हो तो अब तुक्का नहीं मरेगा, बल्कि एरर बताएगा
+        isVerified = false;
+        resBox.className = "verify-error";
+        resBox.innerHTML = "❌ Error connecting to server. Try again.";
       }
     }
 
@@ -130,6 +133,11 @@
       if (!userId || selectedPrice === 0 || !userPhone) { 
         alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
         return; 
+      }
+
+      if (!isVerified) {
+        alert('Please enter a valid verified User ID first!');
+        return;
       }
 
       if (!selectedPaymentLink) {
