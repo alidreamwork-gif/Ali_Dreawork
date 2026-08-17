@@ -70,8 +70,8 @@
   </div>
 
   <script>
-    // यहाँ नया Google Apps Script URL सेट कर दिया गया है
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOUHGtvgJ4FiLxoSqujQ3gR0u3TqdZGgzf2SdXTQM8TG_Tp9m6oxFTcXXBp5kMR3SM/exec";
+    // यह रहा तुम्हारा नया Google Apps Script URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlXt4LJietVF4tes-84_Xon4aSnhYgNkITasAusZ7Y1nJuYrKSVfAlLUpS7KMZbyMh/exec";
 
     let selectedPrice = 0;
     let selectedCoins = 0;
@@ -132,7 +132,6 @@
         return;
       }
 
-      // पेमेंट लिंक के साथ अमाउंट और बाकी डेटा जोड़ना ताकि स्क्रिप्ट को सही जानकारी मिल सके
       var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
       window.location.href = finalPaymentUrl;
     }
