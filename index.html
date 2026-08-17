@@ -1,4 +1,10 @@
-async function verifyUser() {
+<script>
+    let selectedPrice = 0;
+    let selectedCoins = 0;
+    let selectedPaymentLink = "";
+    let isVerified = false;
+
+    async function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
       
@@ -15,29 +21,59 @@ async function verifyUser() {
       try {
         let response = await fetch("https://script.google.com/macros/s/AKfycbxNQdckJUTCQkkI79cTXmPCCN_hDYk7SbkBZ5PleZbbOvj9Rcl9ixklcjTY0Iz33_/exec", {
           method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "getUser", uid: uid })
         });
         
         let result = await response.json();
         
-        // पक्का चेक: अगर सर्वर से 'nick' या 'nickname' नाम की चीज़ आ रही है तभी 'Verified' मानेगा
         if (result && (result.nick || result.nickname || (result.data && (result.data.nick || result.data.nickname)))) {
           isVerified = true;
           let nickName = result.nick || result.nickname || (result.data ? (result.data.nick || result.data.nickname) : "User");
           let avatarImg = result.avatar || (result.data ? result.data.avatar : "https://i.ibb.co/21P3nGZR/logo.jpg");
           
           resBox.className = "verify-success";
-          resBox.innerHTML = `<img src="${avatarImg}" class="user-avatar"> <b>${nickName}</b> (Verified)`;
+          resBox.innerHTML = `<img src="${avatarImg}" class="user-avatar"> <div><b>${nickName}</b> (Verified)</div>`;
         } else {
-          // अगर यूजर नहीं मिला
           isVerified = false;
           resBox.className = "verify-error";
-          resBox.innerHTML = "❌ User ID not found in Duoo!";
+          resBox.innerHTML = "❌ User ID not found!";
         }
       } catch (err) {
-        // अगर सर्वर से कनेक्शन न हो पाए
         isVerified = false;
         resBox.className = "verify-error";
-        resBox.innerHTML = "❌ Server error! Please try again.";
+        resBox.innerHTML = "❌ Server error! Try again.";
       }
     }
+
+    function selectPlan(element, coins, price, payLink) {
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedPrice = price;
+      selectedCoins = coins;
+      selectedPaymentLink = payLink;
+    }
+
+    function initiateGatewayPayment() {
+      var userId = document.getElementById('userId').value.trim();
+      var userPhone = document.getElementById('userPhone').value.trim();
+      
+      if (!userId || selectedPrice === 0 || !userPhone) { 
+        alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
+        return; 
+      }
+
+      if (!isVerified) {
+        alert('Please enter a valid verified User ID first!');
+        return;
+      }
+
+      if (!selectedPaymentLink) {
+        alert('Please select a coin plan first!');
+        return;
+      }
+
+      var finalPaymentUrl = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone);
+      window.location.href = finalPaymentUrl;
+    }
+  </script>
