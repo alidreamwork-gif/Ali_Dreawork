@@ -65,9 +65,6 @@
   </div>
 
   <script>
-    // आपका अपडेटेड Google Script URL
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5yKGgmj1jytA8u9YIj3Xr96HSh_S_l9-iFFFstkFdVPmrg72scEMiZa8-zngm9qP5/exec";
-
     let selectedPrice = 0;
     let selectedPaymentLink = "";
     let isVerified = false;
@@ -98,14 +95,15 @@
       var userPhone = document.getElementById('userPhone').value.trim();
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
-        alert('Please fill User ID, select a plan & phone number!'); 
+        alert('Please fill all details and select a plan!'); 
         return; 
       }
       if (!isVerified) {
-        alert('Please click Verify button first!');
+        alert('Please verify User ID first!');
         return;
       }
-      // पेमेंट लिंक पर रीडायरेक्ट करें
+
+      // सीधा KwikUPI के पेमेंट पेज पर रीडायरेक्ट करेगा
       window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
     }
   </script>
