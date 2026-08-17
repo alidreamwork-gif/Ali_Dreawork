@@ -65,8 +65,8 @@
   </div>
 
   <script>
-    // नया अपडेटेड स्क्रिप्ट URL
-    const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbw5yKGgmj1jytA8u9YIj3Xr96HSh_S_l9-iFFFstkFdVPmrg72scEMiZa8-zngm9qP5/exec;
+    // आपका अपडेटेड Google Script URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5yKGgmj1jytA8u9YIj3Xr96HSh_S_l9-iFFFstkFdVPmrg72scEMiZa8-zngm9qP5/exec";
 
     let selectedPrice = 0;
     let selectedPaymentLink = "";
@@ -105,6 +105,7 @@
         alert('Please click Verify button first!');
         return;
       }
+      // पेमेंट लिंक पर रीडायरेक्ट करें
       window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
     }
   </script>
