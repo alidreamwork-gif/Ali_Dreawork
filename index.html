@@ -15,9 +15,13 @@
     .id-group { display: flex; gap: 8px; }
     input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
     .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    #verifyResult { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 13px; display: none; text-align: left; align-items: center; gap: 10px; }
+    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; }
     .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; display: flex !important; }
     .verify-error { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: flex !important; }
+    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; }
+    .user-info-text { display: flex; flex-direction: column; }
+    .user-name { font-weight: bold; font-size: 15px; color: #0f172a; }
+    .user-id-small { font-size: 12px; color: #64748b; }
     .plans-container { max-height: 260px; overflow-y: auto; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
     .plans-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; width: 46%; cursor: pointer; transition: 0.2s; background: #fff; box-sizing: border-box; }
@@ -65,6 +69,9 @@
   </div>
 
   <script>
+    // आपका नया और फाइनल Google Apps Script URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs-BEHt0fwMvEX0FlPQcfRrK3mt953qBGk_P2p1-YA8S_ZoFe0dsBM_wg1BTnYwY8m/exec";
+
     let selectedPrice = 0;
     let selectedPaymentLink = "";
     let isVerified = false;
@@ -72,15 +79,42 @@
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
-      if (uid.length >= 5) {
-        isVerified = true;
-        resBox.className = "verify-success";
-        resBox.innerHTML = "✅ User ID Verified!";
-      } else {
-        isVerified = false;
-        resBox.className = "verify-error";
-        resBox.innerHTML = "❌ Invalid User ID!";
+      
+      if (!uid) {
+        alert('Please enter User ID first!');
+        return;
       }
+
+      resBox.style.display = "flex";
+      resBox.className = "";
+      resBox.innerHTML = "⏳ Verifying user...";
+
+      fetch(GOOGLE_SCRIPT_URL + "?action=getUser&uid=" + encodeURIComponent(uid))
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 200 || data.code === 200 || data.nick) {
+            isVerified = true;
+            resBox.className = "verify-success";
+            var nick = data.nick || data.data?.nick || "Verified User";
+            var avatar = data.avatar || data.data?.avatar || "https://i.ibb.co/21P3nGZR/logo.jpg";
+            resBox.innerHTML = `
+              <img src="${avatar}" class="user-avatar" alt="DP">
+              <div class="user-info-text">
+                <span class="user-name">${nick}</span>
+                <span class="user-id-small">ID: ${uid} (Verified ✅)</span>
+              </div>
+            `;
+          } else {
+            isVerified = false;
+            resBox.className = "verify-error";
+            resBox.innerHTML = "❌ User not found or invalid ID!";
+          }
+        })
+        .catch(err => {
+          isVerified = false;
+          resBox.className = "verify-error";
+          resBox.innerHTML = "❌ Verification failed. Try again!";
+        });
     }
 
     function selectPlan(element, coins, price, payLink) {
@@ -95,15 +129,15 @@
       var userPhone = document.getElementById('userPhone').value.trim();
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
-        alert('Please fill all details and select a plan!'); 
+        alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
         return; 
       }
       if (!isVerified) {
-        alert('Please verify User ID first!');
+        alert('Please click Verify button and verify your User ID first!');
         return;
       }
 
-      // सीधा KwikUPI के पेमेंट पेज पर रीडायरेक्ट करेगा
+      // KwikUPI पेमेंट गेटवे पर रीडायरेक्ट करें
       window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
     }
   </script>
