@@ -69,8 +69,8 @@
   </div>
 
   <script>
-    // आपका नया और फाइनल Google Apps Script URL
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs-BEHt0fwMvEX0FlPQcfRrK3mt953qBGk_P2p1-YA8S_ZoFe0dsBM_wg1BTnYwY8m/exec";
+    // आपका नया Google Apps Script URL यहाँ सेट है
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdb5qmxkXSd0AgXAd6ACxEMcq8r_xrjgCOq21dmVKbLQ6MTFPhdBkbZXbDS5CZWqEE/exec";
 
     let selectedPrice = 0;
     let selectedPaymentLink = "";
@@ -92,6 +92,7 @@
       fetch(GOOGLE_SCRIPT_URL + "?action=getUser&uid=" + encodeURIComponent(uid))
         .then(response => response.json())
         .then(data => {
+          // अगर API से सही रिस्पॉन्स मिले
           if (data.status === 200 || data.code === 200 || data.nick) {
             isVerified = true;
             resBox.className = "verify-success";
@@ -113,7 +114,7 @@
         .catch(err => {
           isVerified = false;
           resBox.className = "verify-error";
-          resBox.innerHTML = "❌ Verification failed. Try again!";
+          resBox.innerHTML = "❌ Verification failed. Check Console!";
         });
     }
 
@@ -137,7 +138,7 @@
         return;
       }
 
-      // KwikUPI पेमेंट गेटवे पर रीडायरेक्ट करें
+      // KwikUPI पेमेंट पर रीडायरेक्ट
       window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
     }
   </script>
