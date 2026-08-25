@@ -1,53 +1,50 @@
 function verifyUser() {
-      var uid = document.getElementById('userId').value.trim();
-      var resBox = document.getElementById('verifyResult');
+  var uid = document.getElementById('userId').value.trim();
+  var resBox = document.getElementById('verifyResult');
+  
+  if (!uid) {
+    alert('Please enter User ID first!');
+    return;
+  }
+
+  resBox.style.display = "flex";
+  resBox.className = "";
+  resBox.innerHTML = "⏳ Verifying user...";
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    contentType: "application/json",
+    body: JSON.stringify({ action: "getUser", uid: uid })
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    console.log("Full API Response:", data);
+    
+    if (data.code === 200 || data.status === 200 || data.success === true || data.data) {
+      isVerified = true;
+      resBox.className = "verify-success";
       
-      if (!uid) {
-        alert('Please enter User ID first!');
-        return;
-      }
-
-      resBox.style.display = "flex";
-      resBox.className = "";
-      resBox.innerHTML = "⏳ Verifying user...";
-
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        contentType: "application/json",
-        body: JSON.stringify({ action: "getUser", uid: uid })
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Full API Response:", data);
-          
-          // चेक कर रहे हैं कि डेटा सफल है या नहीं
-          if (data.code === 200 || data.status === 200 || data.success === true || data.data) {
-            isVerified = true;
-            resBox.className = "verify-success";
-            
-            var userInfo = data.data || data;
-            
-            // यूजर का असली नाम और डीपी ढूँढने के लिए सही फील्ड्स
-            var nick = userInfo.nick || userInfo.nickname || userInfo.username || userInfo.name || "Verified User";
-            var avatar = userInfo.avatar || userInfo.headImg || userInfo.headUrl || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-            
-            resBox.innerHTML = `
-              <img src="${avatar}" class="user-avatar" alt="DP">
-              <div class="user-info-text">
-                <span class="user-name">${nick}</span>
-                <span class="user-id-small">ID: ${uid} (Verified ✅)</span>
-              </div>
-            `;
-          } else {
-            isVerified = false;
-            resBox.className = "verify-error";
-            resBox.innerHTML = "❌ " + (data.message || "User not found or invalid ID!");
-          }
-        })
-        .catch(err => {
-          console.error("Fetch Error:", err);
-          isVerified = false;
-          resBox.className = "verify-error";
-          resBox.innerHTML = "❌ Connection failed!";
-        });
+      var userInfo = data.data || data;
+      var nick = userInfo.nick || userInfo.nickname || userInfo.username || userInfo.name || "Verified User";
+      var avatar = userInfo.avatar || userInfo.headImg || userInfo.headUrl || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
+      
+      resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" alt="DP">' +
+                         '<div class="user-info-text">' +
+                         '<span class="user-name">' + nick + '</span>' +
+                         '<span class="user-id-small">ID: ' + uid + ' (Verified ✅)</span>' +
+                         '</div>';
+    } else {
+      isVerified = false;
+      resBox.className = "verify-error";
+      resBox.innerHTML = "❌ " + (data.message || "User not found or invalid ID!");
     }
+  })
+  .catch(function(err) {
+    console.error("Fetch Error:", err);
+    isVerified = false;
+    resBox.className = "verify-error";
+    resBox.innerHTML = "❌ Connection failed!";
+  });
+}
