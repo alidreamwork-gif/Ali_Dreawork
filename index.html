@@ -30,8 +30,6 @@
     .plan-price { font-size: 15px; font-weight: bold; color: #16a34a; margin-top: 2px; }
     .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
   </style>
-  <!-- MD5 Library for browser security sign -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
 
@@ -71,8 +69,7 @@
   </div>
 
   <script>
-    const SELLER_ID = "4851724";
-    const API_KEY = "DU00a49Jeyu8Zx7AKei6";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdb5qmxkXSd0AgXAd6ACxEMcq8r_xrjgCOq21dmVKbLQ6MTFPhdBkbZXbDS5CZWqEE/exec";
 
     let selectedPrice = 0;
     let selectedPaymentLink = "";
@@ -91,22 +88,8 @@
       resBox.className = "";
       resBox.innerHTML = "⏳ Verifying user...";
 
-      // Generate MD5 signature directly in browser
-      var signString = "sellerId=" + SELLER_ID + "&uid=" + uid + "&key=" + API_KEY;
-      var sign = CryptoJS.MD5(signString).toString();
-
-      var payload = {
-        "sellerId": parseInt(SELLER_ID),
-        "uid": parseInt(uid),
-        "sign": sign
-      };
-
-      fetch("https://api.duoo.live/api/finance/v1/getUserInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
+      fetch(GOOGLE_SCRIPT_URL + "?action=getUser&uid=" + encodeURIComponent(uid), {
+        method: "POST"
       })
       .then(response => response.json())
       .then(data => {
