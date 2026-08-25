@@ -1,50 +1,153 @@
-function verifyUser() {
-  var uid = document.getElementById('userId').value.trim();
-  var resBox = document.getElementById('verifyResult');
-  
-  if (!uid) {
-    alert('Please enter User ID first!');
-    return;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Dreamwork - Coin Top-up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #1e293b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #334155;
+        }
+        #verifyResult {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+        .verify-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .verify-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .user-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .user-id-small {
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
 
-  resBox.style.display = "flex";
-  resBox.className = "";
-  resBox.innerHTML = "⏳ Verifying user...";
+    <div class="container">
+        <h2>Ali Dreamwork</h2>
+        <p>Coin Top-up Panel</p>
+        
+        <input type="text" id="userId" placeholder="Enter your User ID">
+        <button onclick="verifyUser()">Verify</button>
+        
+        <div id="verifyResult"></div>
+    </div>
 
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    contentType: "application/json",
-    body: JSON.stringify({ action: "getUser", uid: uid })
-  })
-  .then(function(response) {
-    return response.json();
-  })
-  .then(function(data) {
-    console.log("Full API Response:", data);
-    
-    if (data.code === 200 || data.status === 200 || data.success === true || data.data) {
-      isVerified = true;
-      resBox.className = "verify-success";
-      
-      var userInfo = data.data || data;
-      var nick = userInfo.nick || userInfo.nickname || userInfo.username || userInfo.name || "Verified User";
-      var avatar = userInfo.avatar || userInfo.headImg || userInfo.headUrl || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-      
-      resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" alt="DP">' +
-                         '<div class="user-info-text">' +
-                         '<span class="user-name">' + nick + '</span>' +
-                         '<span class="user-id-small">ID: ' + uid + ' (Verified ✅)</span>' +
-                         '</div>';
-    } else {
-      isVerified = false;
-      resBox.className = "verify-error";
-      resBox.innerHTML = "❌ " + (data.message || "User not found or invalid ID!");
-    }
-  })
-  .catch(function(err) {
-    console.error("Fetch Error:", err);
-    isVerified = false;
-    resBox.className = "verify-error";
-    resBox.innerHTML = "❌ Connection failed!";
-  });
-}
+    <script>
+        // यहाँ अपनी Google Apps Script का Web App URL डाल देना
+        var GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+        var isVerified = false;
+
+        function verifyUser() {
+            var uid = document.getElementById('userId').value.trim();
+            var resBox = document.getElementById('verifyResult');
+            
+            if (!uid) {
+                alert('Please enter User ID first!');
+                return;
+            }
+
+            resBox.style.display = "flex";
+            resBox.className = "";
+            resBox.innerHTML = "⏳ Verifying user...";
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                contentType: "application/json",
+                body: JSON.stringify({ action: "getUser", uid: uid })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log("Full API Response:", data);
+                
+                if (data.code === 200 || data.status === 200 || data.success === true || data.data) {
+                    isVerified = true;
+                    resBox.className = "verify-success";
+                    
+                    var userInfo = data.data || data;
+                    var nick = userInfo.nick || userInfo.nickname || userInfo.username || userInfo.name || "Verified User";
+                    var avatar = userInfo.avatar || userInfo.headImg || userInfo.headUrl || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
+                    
+                    resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" alt="DP">' +
+                                       '<div class="user-info-text">' +
+                                       '<span class="user-name">' + nick + '</span>' +
+                                       '<span class="user-id-small">ID: ' + uid + ' (Verified ✅)</span>' +
+                                       '</div>';
+                } else {
+                    isVerified = false;
+                    resBox.className = "verify-error";
+                    resBox.innerHTML = "❌ " + (data.message || "User not found or invalid ID!");
+                }
+            })
+            .catch(function(err) {
+                console.error("Fetch Error:", err);
+                isVerified = false;
+                resBox.className = "verify-error";
+                resBox.innerHTML = "❌ Connection failed!";
+            });
+        }
+    </script>
+
+</body>
+</html>
