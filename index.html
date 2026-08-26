@@ -69,8 +69,6 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdb5qmxkXSd0AgXAd6ACxEMcq8r_xrjgCOq21dmVKbLQ6MTFPhdBkbZXbDS5CZWqEE/exec";
-
     let selectedPrice = 0;
     let selectedPaymentLink = "";
     let isVerified = false;
@@ -84,11 +82,19 @@
         return;
       }
 
-    //  resBox.style.display = "flex";
+      // Fix: Box को सही से visible किया ताकि "Verifying..." तुरंत दिखे
+      resBox.style.display = "flex";
       resBox.className = "";
       resBox.innerHTML = "⏳ Verifying user...";
 
-      fetch(GOOGLE_SCRIPT_URL + "?uid=" + encodeURIComponent(uid))
+      // अब रिक्वेस्ट सीधे हमारे Render सर्वर के बैकएंड राउट पर जाएगी
+      fetch('/api/verify-user', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ uid: uid })
+      })
       .then(response => response.json())
       .then(data => {
         console.log("API Response:", data);
@@ -118,7 +124,7 @@
         console.error("Fetch Error:", err);
         isVerified = false;
         resBox.className = "verify-error";
-        resBox.innerHTML = "❌ Connection failed! Check console.";
+        resBox.innerHTML = "❌ Connection failed!";
       });
     }
 
