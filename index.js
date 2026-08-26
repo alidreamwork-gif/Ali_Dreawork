@@ -19,7 +19,7 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-(Note: MD5 signature format can sometimes depend on parameter order or fields. Let's make sure it matches standard Duoo API guidelines)
+        // MD5 Signature Generate करना
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex');
 
