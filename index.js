@@ -5,12 +5,11 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.static(__dirname)); // Frontend (HTML/CSS/JS) फाइल्स को सर्व करने के लिए
+app.use(express.static(__dirname));
 
 const SELLER_ID = "4851724";
 const API_KEY = "DU00a49Jeyu8Zx7AKei6";
 
-// यूजर वेरीफाई करने का राउट
 app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
@@ -19,24 +18,36 @@ app.post('/api/verify-user', async (req, res) => {
         }
 
         const cleanUid = uid.toString().trim();
+        
+(Note: MD5 signature format can sometimes depend on parameter order or fields. Let's make sure it matches standard Duoo API guidelines)
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex');
 
-        // सीधे Duoo API को कॉल कर रहे हैं
+        console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
+
+        // Duoo API Request
         const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', {
             sellerId: parseInt(SELLER_ID),
             uid: parseInt(cleanUid),
             sign: sign
+        }, {
+            headers: { 'Content-Type': 'application/json' }
         });
 
+        console.log("Duoo API Raw Response:", response.data);
         res.json(response.data);
+
     } catch (error) {
-        console.error("API Error:", error.message);
-        res.status(500).json({ code: 500, message: "Server error or invalid Duoo API connection." });
+        console.error("API Error Response:", error.response ? error.response.data : error.message);
+        res.status(500).json({ 
+            code: 500, 
+            message: "API Connection Error", 
+            details: error.response ? error.response.data : error.message 
+        });
     }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Ali Dreamwork Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
