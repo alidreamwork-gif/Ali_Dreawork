@@ -19,19 +19,20 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // MD5 Signature Generate करना
+        // Duoo API documentation standard MD5 format: key + uid or similar alphabetical order
+        // Let's try formatting keys explicitly as required by standard gaming top-up APIs
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex');
 
         console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // Duoo API Request
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', {
-            sellerId: parseInt(SELLER_ID),
-            uid: parseInt(cleanUid),
-            sign: sign
-        }, {
-            headers: { 'Content-Type': 'application/json' }
+        // Sending parameters as query/body parameters properly formatted
+        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', null, {
+            params: {
+                sellerId: SELLER_ID,
+                uid: cleanUid,
+                sign: sign
+            }
         });
 
         console.log("Duoo API Raw Response:", response.data);
