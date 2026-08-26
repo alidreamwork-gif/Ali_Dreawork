@@ -3,72 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ali Dreamwork - Coin Top-up</title>
+  <title>Ali Dreamwork - Self Duoo and Doran Coin Top-up Panel</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 420px; padding: 20px 15px; box-sizing: border-box; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
-    .logo-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 2px solid #dfb15b; margin-bottom: 10px; }
-    .brand-title { font-size: 22px; font-weight: bold; color: #0f172a; }
-    .sub-title { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 15px; }
-    label { display: block; margin-top: 14px; font-weight: 600; color: #334155; text-align: left; font-size: 14px; }
-    .id-group { display: flex; gap: 8px; }
-    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; box-sizing: border-box; font-size: 14px; }
-    .verify-btn { background-color: #0f172a; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; }
-    .verify-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; display: flex !important; }
-    .verify-error { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: flex !important; }
-    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; }
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #111827;
+      --border-color: #1f2937;
+      --gold: #f3ba2f;
+      --text-main: #f9fafb;
+      --text-sub: #9ca3af;
+      --accent-purple: #7c3aed;
+      --green: #10b981;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    .container { width: 100%; max-width: 480px; padding: 20px 15px; box-sizing: border-box; }
+    
+    /* Header */
+    .header { text-align: center; margin-bottom: 20px; }
+    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 8px; box-shadow: 0 0 15px rgba(243, 186, 47, 0.3); }
+    .brand-title { font-size: 22px; font-weight: bold; color: var(--gold); letter-spacing: 0.5px; }
+    .sub-title { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
+    .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: var(--text-sub); margin-top: 10px; }
+
+    /* Card Box */
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.5); margin-bottom: 15px; }
+    
+    label { display: block; margin-top: 14px; font-weight: 600; color: var(--text-main); text-align: left; font-size: 13px; }
+    .id-group { display: flex; gap: 8px; margin-top: 6px; }
+    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border-color); color: white; border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
+    input:focus { border-color: var(--accent-purple); }
+    
+    .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; transition: 0.2s; }
+    .verify-btn:hover { opacity: 0.9; }
+
+    /* Verified Box */
+    #verifyResult { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; background: #064e3b; border: 1px solid #059669; }
+    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); }
     .user-info-text { display: flex; flex-direction: column; }
-    .user-name { font-weight: bold; font-size: 15px; color: #0f172a; }
-    .user-id-small { font-size: 12px; color: #64748b; }
-    .plans-container { max-height: 260px; overflow-y: auto; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
-    .plans-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .plan-card { border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; width: 46%; cursor: pointer; transition: 0.2s; background: #fff; box-sizing: border-box; }
-    .plan-card.selected { border: 2px solid #22c55e; background-color: #f0fdf4; }
-    .plan-coins { font-size: 13px; font-weight: bold; color: #334155; }
-    .plan-price { font-size: 15px; font-weight: bold; color: #16a34a; margin-top: 2px; }
-    .main-buy-btn { width: 100%; background-color: #22c55e; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+    .user-name { font-weight: bold; font-size: 15px; color: white; }
+    .user-id-small { font-size: 12px; color: #34d399; }
+    .error-box { background: #7f1d1d !important; border: 1px solid #ef4444 !important; color: #fca5a5 !important; }
+
+    /* Plans Grid */
+    .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 10px; text-align: left; display: flex; align-items: center; gap: 6px; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .plan-card { border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 6px; cursor: pointer; transition: 0.2s; background: #0b0f19; text-align: center; position: relative; }
+    .plan-card.selected { border: 2px solid var(--green); background: rgba(16, 185, 129, 0.1); }
+    .plan-coins { font-size: 12px; font-weight: bold; color: var(--text-main); }
+    .plan-price { font-size: 14px; font-weight: bold; color: var(--green); margin-top: 4px; }
+    .plan-badge { position: absolute; top: -6px; right: 4px; background: var(--accent-purple); color: white; font-size: 8px; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+
+    /* Order Summary Inside Card */
+    .summary-box { background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-sub); }
+    .summary-row span:last-child { color: white; font-weight: 600; }
+
+    /* Main Action Button */
+    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: 0.2s; }
+    .main-buy-btn:hover { opacity: 0.95; }
+
+    .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="card">
+    <div class="header">
       <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-      <div class="brand-title">Ali Dreamwork</div>
-      <div class="sub-title">Coin Top-up Panel</div>
+      <div class="brand-title">ALI DREAMWORK</div>
+      <div class="sub-title">SELF DUOO AND DORAN COIN TOP-UP PANEL</div>
+      <div class="features-top">
+        <span>🔒 100% Secure</span>
+        <span>⚡ Instant Delivery</span>
+        <span>🎧 24/7 Support</span>
+      </div>
+    </div>
 
+    <div class="card">
       <label>Enter your User ID:</label>
       <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter Duoo User ID">
+        <input type="text" id="userId" placeholder="Enter Duoo / Doran ID">
         <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
       </div>
       <div id="verifyResult"></div>
 
-      <label>Select your Coin Plan:</label>
-      <div class="plans-container">
-        <div class="plans-grid">
-          <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')"><div class="plan-coins">14,600 Coins</div><div class="plan-price">₹200</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')"><div class="plan-coins">21,900 Coins</div><div class="plan-price">₹300</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')"><div class="plan-coins">36,500 Coins</div><div class="plan-price">₹500</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')"><div class="plan-coins">73,000 Coins</div><div class="plan-price">₹1,000</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')"><div class="plan-coins">109,500 Coins</div><div class="plan-price">₹1,500</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 146000, 2000, 'https://kwikupi.com/pay-link/plink_j5mt7B8i483W')"><div class="plan-coins">146,000 Coins</div><div class="plan-price">₹2,000</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 219000, 3000, 'https://kwikupi.com/pay-link/plink_cC2IQpuBx559')"><div class="plan-coins">219,000 Coins</div><div class="plan-price">₹3,000</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 328500, 4500, 'https://kwikupi.com/pay-link/plink_t0hkAeM2WnnB')"><div class="plan-coins">328,500 Coins</div><div class="plan-price">₹4,500</div></div>
-          <div class="plan-card" onclick="selectPlan(this, 500000, 6850, 'https://kwikupi.com/pay-link/plink_0JD3cImVeViY')"><div class="plan-coins">500,000 Coins</div><div class="plan-price">₹6,850</div></div>
+      <div class="section-title">🪙 SELECT COIN TOP-UP PLAN</div>
+      <div class="plans-grid">
+        <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')">
+          <div class="plan-coins">14,600 Coins</div>
+          <div class="plan-price">₹200</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')">
+          <div class="plan-coins">21,900 Coins</div>
+          <div class="plan-price">₹300</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')">
+          <div class="plan-badge">POPULAR</div>
+          <div class="plan-coins">36,500 Coins</div>
+          <div class="plan-price">₹500</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')">
+          <div class="plan-coins">73,000 Coins</div>
+          <div class="plan-price">₹1,000</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')">
+          <div class="plan-badge">BEST</div>
+          <div class="plan-coins">109,500 Coins</div>
+          <div class="plan-price">₹1,500</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 146000, 2000, 'https://kwikupi.com/pay-link/plink_j5mt7B8i483W')">
+          <div class="plan-coins">146,000 Coins</div>
+          <div class="plan-price">₹2,000</div>
         </div>
       </div>
 
-      <label>Enter your WhatsApp Number:</label>
+      <label style="margin-top: 18px;">Enter your WhatsApp Number:</label>
       <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
 
-      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">Proceed to Pay</button>
+      <div class="summary-box">
+        <div class="summary-row"><span>Selected Plan:</span> <span id="sumPlan">None</span></div>
+        <div class="summary-row"><span>Total Amount:</span> <span id="sumPrice">₹0</span></div>
+      </div>
+
+      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
+    </div>
+
+    <div class="footer-note">
+      © 2026 Ali Dreamwork. All rights reserved. Secure payments powered by KwikUPI.
     </div>
   </div>
 
   <script>
+    let selectedCoins = 0;
     let selectedPrice = 0;
     let selectedPaymentLink = "";
     let isVerified = false;
@@ -82,17 +148,13 @@
         return;
       }
 
-      // Fix: Box को सही से visible किया ताकि "Verifying..." तुरंत दिखे
       resBox.style.display = "flex";
       resBox.className = "";
-      resBox.innerHTML = "⏳ Verifying user...";
+      resBox.innerHTML = "⏳ Verifying user from Duoo server...";
 
-      // अब रिक्वेस्ट सीधे हमारे Render सर्वर के बैकएंड राउट पर जाएगी
       fetch('/api/verify-user', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid })
       })
       .then(response => response.json())
@@ -101,7 +163,9 @@
         
         if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
           isVerified = true;
-          resBox.className = "verify-success";
+          resBox.className = "";
+          resBox.style.background = "#064e3b";
+          resBox.style.border = "1px solid #059669";
           
           var userInfo = data.data || data;
           var nick = userInfo.nick || userInfo.name || "Verified User";
@@ -111,28 +175,35 @@
             <img src="${avatar}" class="user-avatar" alt="DP">
             <div class="user-info-text">
               <span class="user-name">${nick}</span>
-              <span class="user-id-small">ID: ${uid} (Verified ✅)</span>
+              <span class="user-id-small">ID: ${uid} (Verified Successfully ✅)</span>
             </div>
           `;
         } else {
           isVerified = false;
-          resBox.className = "verify-error";
-          resBox.innerHTML = "❌ " + (data.message || "User not found or invalid ID!");
+          resBox.className = "";
+          resBox.style.background = "#7f1d1d";
+          resBox.style.border = "1px solid #ef4444";
+          resBox.innerHTML = "<span style='color: #fca5a5;'>❌ User not found or invalid ID!</span>";
         }
       })
       .catch(err => {
         console.error("Fetch Error:", err);
         isVerified = false;
-        resBox.className = "verify-error";
-        resBox.innerHTML = "❌ Connection failed!";
+        resBox.style.background = "#7f1d1d";
+        resBox.style.border = "1px solid #ef4444";
+        resBox.innerHTML = "<span style='color: #fca5a5;'>❌ Connection failed to server!</span>";
       });
     }
 
     function selectPlan(element, coins, price, payLink) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
+      selectedCoins = coins;
       selectedPrice = price;
       selectedPaymentLink = payLink;
+
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
     function initiateGatewayPayment() {
