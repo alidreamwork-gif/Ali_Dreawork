@@ -19,35 +19,41 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // MD5 Signature Generation (Uppercase as per Duoo Doc)
+        // Exact rule from Duoo doc: 
+        // 1. Alphabetical sorting: sellerId first, then uid.
+        // 2. Format: sellerId=VALUE&uid=VALUE&key=API_KEY
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
-        console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
+        console.log(`Checking UID: ${cleanUid}, SignString: ${signString}, Sign: ${sign}`);
 
-        // Call Duoo Production API
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', {
-            sellerId: parseInt(SELLER_ID),
-            uid: parseInt(cleanUid),
+        // Sending values strictly as strings/integers matching official doc example
+        const requestPayload = {
+            sellerId: parseInt(SELLER_ID, 10),
+            uid: parseInt(cleanUid, 10),
             sign: sign
-        }, {
+        };
+
+        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', requestPayload, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
 
         console.log("Duoo API Raw Response:", response.data);
-        
-        // Directly forward Duoo's response to frontend
         res.json(response.data);
 
     } catch (error) {
         console.error("API Error Response:", error.response ? error.response.data : error.message);
+        
+        // If Duoo returns 400 with a message, forward it safely to frontend
+        if (error.response && error.response.data) {
+            return res.status(200).json(error.response.data);
+        }
+
         res.status(500).json({ 
             status: 400, 
-            message: error.response && error.response.data && error.response.data.message 
-                ? error.response.data.message 
-                : "User not found or invalid ID!" 
+            message: "User not found or invalid ID!" 
         });
     }
 });
