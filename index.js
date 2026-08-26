@@ -14,21 +14,18 @@ app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
         if (!uid) {
-            return res.status(400).json({ code: 400, message: "UID is missing!" });
+            return res.status(400).json({ status: 400, message: "UID is missing!" });
         }
 
         const cleanUid = uid.toString().trim();
         
-        // Official Documentation Rules:
-        // 1. Sort parameters alphabetically: sellerId comes before uid.
-        // 2. Concatenate: sellerId=...&uid=...&key=...
-        // 3. MD5 hash and convert strictly to UPPERCASE.
+        // MD5 Signature Generation (Uppercase as per Duoo Doc)
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
         console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // Sending as clean JSON with application/json header as per docs
+        // Call Duoo Production API
         const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', {
             sellerId: parseInt(SELLER_ID),
             uid: parseInt(cleanUid),
@@ -40,14 +37,17 @@ app.post('/api/verify-user', async (req, res) => {
         });
 
         console.log("Duoo API Raw Response:", response.data);
+        
+        // Directly forward Duoo's response to frontend
         res.json(response.data);
 
     } catch (error) {
         console.error("API Error Response:", error.response ? error.response.data : error.message);
         res.status(500).json({ 
-            code: 500, 
-            message: "API Connection Error", 
-            details: error.response ? error.response.data : error.message 
+            status: 400, 
+            message: error.response && error.response.data && error.response.data.message 
+                ? error.response.data.message 
+                : "User not found or invalid ID!" 
         });
     }
 });
