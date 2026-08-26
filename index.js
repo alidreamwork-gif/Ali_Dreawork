@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 const SELLER_ID = "4851724";
@@ -19,19 +20,21 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // Duoo API documentation standard MD5 format: key + uid or similar alphabetical order
-        // Let's try formatting keys explicitly as required by standard gaming top-up APIs
+        // MD5 Signature
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex');
 
         console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // Sending parameters as query/body parameters properly formatted
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', null, {
-            params: {
-                sellerId: SELLER_ID,
-                uid: cleanUid,
-                sign: sign
+        // Sending data using URLSearchParams for strict API compatibility
+        const params = new URLSearchParams();
+        params.append('sellerId', SELLER_ID);
+        params.append('uid', cleanUid);
+        params.append('sign', sign);
+
+        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', params, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
 
