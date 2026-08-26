@@ -5,7 +5,6 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 const SELLER_ID = "4851724";
@@ -20,21 +19,23 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // MD5 Signature
+        // Official Documentation Rules:
+        // 1. Sort parameters alphabetically: sellerId comes before uid.
+        // 2. Concatenate: sellerId=...&uid=...&key=...
+        // 3. MD5 hash and convert strictly to UPPERCASE.
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-        const sign = crypto.createHash('md5').update(signString).digest('hex');
+        const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
         console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // Sending data using URLSearchParams for strict API compatibility
-        const params = new URLSearchParams();
-        params.append('sellerId', SELLER_ID);
-        params.append('uid', cleanUid);
-        params.append('sign', sign);
-
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', params, {
+        // Sending as clean JSON with application/json header as per docs
+        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', {
+            sellerId: parseInt(SELLER_ID),
+            uid: parseInt(cleanUid),
+            sign: sign
+        }, {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             }
         });
 
