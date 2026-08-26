@@ -19,18 +19,16 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // Exact rule from Duoo doc: 
-        // 1. Alphabetical sorting: sellerId first, then uid.
-        // 2. Format: sellerId=VALUE&uid=VALUE&key=API_KEY
+        // MD5 Signature Generation
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
-        console.log(`Checking UID: ${cleanUid}, SignString: ${signString}, Sign: ${sign}`);
+        console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // Sending values strictly as strings/integers matching official doc example
+        // Sending parameters strictly as Strings
         const requestPayload = {
-            sellerId: parseInt(SELLER_ID, 10),
-            uid: parseInt(cleanUid, 10),
+            sellerId: SELLER_ID.toString(),
+            uid: cleanUid,
             sign: sign
         };
 
@@ -46,7 +44,6 @@ app.post('/api/verify-user', async (req, res) => {
     } catch (error) {
         console.error("API Error Response:", error.response ? error.response.data : error.message);
         
-        // If Duoo returns 400 with a message, forward it safely to frontend
         if (error.response && error.response.data) {
             return res.status(200).json(error.response.data);
         }
