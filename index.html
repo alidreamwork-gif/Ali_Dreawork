@@ -42,7 +42,6 @@
     .user-info-text { display: flex; flex-direction: column; }
     .user-name { font-weight: bold; font-size: 15px; color: white; }
     .user-id-small { font-size: 12px; color: #34d399; }
-    .error-box { background: #7f1d1d !important; border: 1px solid #ef4444 !important; color: #fca5a5 !important; }
 
     /* Plans Grid */
     .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 10px; text-align: left; display: flex; align-items: center; gap: 6px; }
@@ -53,7 +52,7 @@
     .plan-price { font-size: 14px; font-weight: bold; color: var(--green); margin-top: 4px; }
     .plan-badge { position: absolute; top: -6px; right: 4px; background: var(--accent-purple); color: white; font-size: 8px; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
 
-    /* Order Summary Inside Card */
+    /* Summary Box */
     .summary-box { background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-sub); }
     .summary-row span:last-child { color: white; font-weight: 600; }
@@ -89,30 +88,30 @@
 
       <div class="section-title">🪙 SELECT COIN TOP-UP PLAN</div>
       <div class="plans-grid">
-        <!-- Test Plan Added -->
-        <div class="plan-card" onclick="selectPlan(this, 730, 10, 'https://kwikupi.com/pay-link/plink_ogbSnOewvtnQ')">
+        <!-- सभी प्लान्स के लिए अब एक ही मास्टर लिंक इस्तेमाल होगा -->
+        <div class="plan-card" onclick="selectPlan(this, 730, 10)">
           <div class="plan-badge" style="background: #ef4444;">TEST</div>
           <div class="plan-coins">730 Coins</div>
           <div class="plan-price">₹10</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')">
+        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
           <div class="plan-coins">14,600 Coins</div>
           <div class="plan-price">₹200</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')">
+        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
           <div class="plan-coins">21,900 Coins</div>
           <div class="plan-price">₹300</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')">
+        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
           <div class="plan-badge">POPULAR</div>
           <div class="plan-coins">36,500 Coins</div>
           <div class="plan-price">₹500</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')">
+        <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
           <div class="plan-coins">73,000 Coins</div>
           <div class="plan-price">₹1,000</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')">
+        <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
           <div class="plan-badge">BEST</div>
           <div class="plan-coins">109,500 Coins</div>
           <div class="plan-price">₹1,500</div>
@@ -138,8 +137,10 @@
   <script>
     let selectedCoins = 0;
     let selectedPrice = 0;
-    let selectedPaymentLink = "";
     let isVerified = false;
+
+    // मास्टर ओपन-अमाउंट पेमेंट लिंक यहाँ सेट है
+    const masterPayLink = "https://kwikupi.com/pay-link/plink_dEwqhDrQeAhJ";
 
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
@@ -197,12 +198,11 @@
       });
     }
 
-    function selectPlan(element, coins, price, payLink) {
+    function selectPlan(element, coins, price) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedCoins = coins;
       selectedPrice = price;
-      selectedPaymentLink = payLink;
 
       document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
@@ -221,17 +221,19 @@
         return;
       }
 
-      // Generate a unique order ID for the transaction
       var customOrderId = "ORD_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-
-      // Current website domain url
       var currentDomain = window.location.origin;
 
-      // Redirect URL where KwikUPI will send back the user with uid, coins and orderId
       var redirectUrl = currentDomain + "/api/payment-success?uid=" + encodeURIComponent(userId) + "&coins=" + encodeURIComponent(selectedCoins) + "&orderId=" + encodeURIComponent(customOrderId);
 
-      // Open KwikUPI payment link with all required parameters including redirect_url
-      window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice) + "&order_id=" + encodeURIComponent(customOrderId) + "&redirect_url=" + encodeURIComponent(redirectUrl);
+      // KwikUPI के ओपन-अमाउंट लिंक में amount, customer details और notes के साथ रीडायरेक्ट यूआरएल जोड़ना
+      window.location.href = masterPayLink + 
+        "?amount=" + encodeURIComponent(selectedPrice) + 
+        "&customer_name=" + encodeURIComponent(userId) + 
+        "&customer_phone=" + encodeURIComponent(userPhone) + 
+        "&order_id=" + encodeURIComponent(customOrderId) + 
+        "&notes=" + encodeURIComponent("UID:" + userId + "|Coins:" + selectedCoins) +
+        "&redirect_url=" + encodeURIComponent(redirectUrl);
     }
   </script>
 </body>
