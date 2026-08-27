@@ -88,30 +88,29 @@
 
       <div class="section-title">🪙 SELECT COIN TOP-UP PLAN</div>
       <div class="plans-grid">
-        <!-- सभी प्लान्स के लिए अब एक ही मास्टर लिंक इस्तेमाल होगा -->
-        <div class="plan-card" onclick="selectPlan(this, 730, 10)">
+        <div class="plan-card" onclick="selectPlan(this, 730, 10, 'https://kwikupi.com/pay-link/plink_ogbSnOewvtnQ')">
           <div class="plan-badge" style="background: #ef4444;">TEST</div>
           <div class="plan-coins">730 Coins</div>
           <div class="plan-price">₹10</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
+        <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')">
           <div class="plan-coins">14,600 Coins</div>
           <div class="plan-price">₹200</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
+        <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')">
           <div class="plan-coins">21,900 Coins</div>
           <div class="plan-price">₹300</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
+        <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')">
           <div class="plan-badge">POPULAR</div>
           <div class="plan-coins">36,500 Coins</div>
           <div class="plan-price">₹500</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
+        <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')">
           <div class="plan-coins">73,000 Coins</div>
           <div class="plan-price">₹1,000</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
+        <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')">
           <div class="plan-badge">BEST</div>
           <div class="plan-coins">109,500 Coins</div>
           <div class="plan-price">₹1,500</div>
@@ -137,10 +136,8 @@
   <script>
     let selectedCoins = 0;
     let selectedPrice = 0;
+    let selectedPaymentLink = "";
     let isVerified = false;
-
-    // मास्टर ओपन-अमाउंट पेमेंट लिंक यहाँ सेट है
-    const masterPayLink = "https://kwikupi.com/pay-link/plink_dEwqhDrQeAhJ";
 
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
@@ -162,18 +159,13 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log("API Response:", data);
-        
         if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
           isVerified = true;
-          resBox.className = "";
           resBox.style.background = "#064e3b";
           resBox.style.border = "1px solid #059669";
-          
           var userInfo = data.data || data;
           var nick = userInfo.nick || userInfo.name || "Verified User";
           var avatar = userInfo.avatar || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          
           resBox.innerHTML = `
             <img src="${avatar}" class="user-avatar" alt="DP">
             <div class="user-info-text">
@@ -183,14 +175,12 @@
           `;
         } else {
           isVerified = false;
-          resBox.className = "";
           resBox.style.background = "#7f1d1d";
           resBox.style.border = "1px solid #ef4444";
           resBox.innerHTML = "<span style='color: #fca5a5;'>❌ User not found or invalid ID!</span>";
         }
       })
       .catch(err => {
-        console.error("Fetch Error:", err);
         isVerified = false;
         resBox.style.background = "#7f1d1d";
         resBox.style.border = "1px solid #ef4444";
@@ -198,17 +188,18 @@
       });
     }
 
-    function selectPlan(element, coins, price) {
+    function selectPlan(element, coins, price, payLink) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedCoins = coins;
       selectedPrice = price;
+      selectedPaymentLink = payLink;
 
       document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
-    function initiateGatewayPayment() {
+    async function initiateGatewayPayment() {
       var userId = document.getElementById('userId').value.trim();
       var userPhone = document.getElementById('userPhone').value.trim();
       
@@ -222,18 +213,23 @@
       }
 
       var customOrderId = "ORD_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-      var currentDomain = window.location.origin;
 
+      // पहले सर्वर पर आर्डर रजिस्टर करें ताकि वेबहुक में यूजर आईडी मिस न हो
+      try {
+        await fetch('/api/register-order', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId: customOrderId, uid: userId, coins: selectedCoins })
+        });
+      } catch (e) {
+        console.error("Order registration error:", e);
+      }
+
+      var currentDomain = window.location.origin;
       var redirectUrl = currentDomain + "/api/payment-success?uid=" + encodeURIComponent(userId) + "&coins=" + encodeURIComponent(selectedCoins) + "&orderId=" + encodeURIComponent(customOrderId);
 
-      // KwikUPI के ओपन-अमाउंट लिंक में amount, customer details और notes के साथ रीडायरेक्ट यूआरएल जोड़ना
-      window.location.href = masterPayLink + 
-        "?amount=" + encodeURIComponent(selectedPrice) + 
-        "&customer_name=" + encodeURIComponent(userId) + 
-        "&customer_phone=" + encodeURIComponent(userPhone) + 
-        "&order_id=" + encodeURIComponent(customOrderId) + 
-        "&notes=" + encodeURIComponent("UID:" + userId + "|Coins:" + selectedCoins) +
-        "&redirect_url=" + encodeURIComponent(redirectUrl);
+      // KwikUPI के फिक्स लिंक पर रीडायरेक्ट करें
+      window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&order_id=" + encodeURIComponent(customOrderId) + "&redirect_url=" + encodeURIComponent(redirectUrl);
     }
   </script>
 </body>
