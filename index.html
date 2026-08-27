@@ -88,29 +88,29 @@
 
       <div class="section-title">🪙 SELECT COIN TOP-UP PLAN</div>
       <div class="plans-grid">
-        <div class="plan-card" onclick="selectPlan(this, 730, 10, 'https://kwikupi.com/pay-link/plink_ogbSnOewvtnQ')">
+        <div class="plan-card" onclick="selectPlan(this, 730, 10)">
           <div class="plan-badge" style="background: #ef4444;">TEST</div>
           <div class="plan-coins">730 Coins</div>
           <div class="plan-price">₹10</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 14600, 200, 'https://kwikupi.com/pay-link/plink_l37GHmJ6HFVO')">
+        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
           <div class="plan-coins">14,600 Coins</div>
           <div class="plan-price">₹200</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 21900, 300, 'https://kwikupi.com/pay-link/plink_W1RgaXEax7G0')">
+        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
           <div class="plan-coins">21,900 Coins</div>
           <div class="plan-price">₹300</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 36500, 500, 'https://kwikupi.com/pay-link/plink_6yXkIS1bBJxY')">
+        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
           <div class="plan-badge">POPULAR</div>
           <div class="plan-coins">36,500 Coins</div>
           <div class="plan-price">₹500</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 73000, 1000, 'https://kwikupi.com/pay-link/plink_0Bdbdjcj3lu4')">
+        <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
           <div class="plan-coins">73,000 Coins</div>
           <div class="plan-price">₹1,000</div>
         </div>
-        <div class="plan-card" onclick="selectPlan(this, 109500, 1500, 'https://kwikupi.com/pay-link/plink_OSpKRVmNQPct')">
+        <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
           <div class="plan-badge">BEST</div>
           <div class="plan-coins">109,500 Coins</div>
           <div class="plan-price">₹1,500</div>
@@ -129,14 +129,13 @@
     </div>
 
     <div class="footer-note">
-      © 2026 Ali Dreamwork. All rights reserved. Secure payments powered by KwikUPI.
+      © 2026 Ali Dreamwork. All rights reserved. Secure payments powered by KwikUPI API.
     </div>
   </div>
 
   <script>
     let selectedCoins = 0;
     let selectedPrice = 0;
-    let selectedPaymentLink = "";
     let isVerified = false;
 
     function verifyUser() {
@@ -188,12 +187,11 @@
       });
     }
 
-    function selectPlan(element, coins, price, payLink) {
+    function selectPlan(element, coins, price) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedCoins = coins;
       selectedPrice = price;
-      selectedPaymentLink = payLink;
 
       document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
@@ -212,24 +210,39 @@
         return;
       }
 
-      var customOrderId = "ORD_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+      // Loader दिखाएं
+      var buyBtn = document.querySelector('.main-buy-btn');
+      buyBtn.innerText = "Processing...";
+      buyBtn.disabled = true;
 
-      // पहले सर्वर पर आर्डर रजिस्टर करें ताकि वेबहुक में यूजर आईडी मिस न हो
       try {
-        await fetch('/api/register-order', {
+        // हमारे नए बैकएंड एपीआई को कॉल करें जो KwikUPI से आर्डर बनाएगा
+        const response = await fetch('/api/create-kwikupi-order', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: customOrderId, uid: userId, coins: selectedCoins })
+          body: JSON.stringify({ 
+            uid: userId, 
+            amount: selectedPrice, 
+            whatsapp: userPhone 
+          })
         });
-      } catch (e) {
-        console.error("Order registration error:", e);
+
+        const data = await response.json();
+
+        if (data.success && data.payment_url) {
+          // सीधा KwikUPI के डायनेमिक पेमेंट पेज पर रीडायरेक्ट करें
+          window.location.href = data.payment_url;
+        } else {
+          alert(data.message || 'Failed to create payment link. Please try again.');
+          buyBtn.innerText = "TOP-UP NOW ➔";
+          buyBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error("Payment error:", err);
+        alert('Server connection error. Please try again.');
+        buyBtn.innerText = "TOP-UP NOW ➔";
+        buyBtn.disabled = false;
       }
-
-      var currentDomain = window.location.origin;
-      var redirectUrl = currentDomain + "/api/payment-success?uid=" + encodeURIComponent(userId) + "&coins=" + encodeURIComponent(selectedCoins) + "&orderId=" + encodeURIComponent(customOrderId);
-
-      // KwikUPI के फिक्स लिंक पर रीडायरेक्ट करें
-      window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&order_id=" + encodeURIComponent(customOrderId) + "&redirect_url=" + encodeURIComponent(redirectUrl);
     }
   </script>
 </body>
