@@ -239,28 +239,46 @@
     let selectedCoins = 0;
     let selectedPrice = 0;
     let isVerified = false;
-    let cashfree = window.Cashfree({
-      mode: "sandbox"
-    });
+    
+    // सुरक्षित रूप से Cashfree SDK इनिशियलाइज करना
+    let cashfree = null;
+    try {
+      if (window.Cashfree) {
+        cashfree = window.Cashfree({ mode: "sandbox" });
+      }
+    } catch (e) {
+      console.error("Cashfree SDK init error:", e);
+    }
 
-    // Page Load check: Agar payment return ke baad backend/redirect se status success mila hai
-    window.addEventListener('DOMContentLoaded', (event) => {
-      const urlParams = new URLSearchParams(window.location.search);
-      // Agar URL me payment success ka status ya parameter aaye (aapke backend redirect ke hisaब se)
-      if (urlParams.get('payment') === 'success' || urlParams.get('status') === 'SUCCESS' || urlParams.get('order_status') === 'PAID') {
-        showSuccessModal();
+    // Page Load check: URL से पेमेंट सक्सेस स्टेटस चेक करना
+    window.addEventListener('DOMContentLoaded', function() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment') === 'success' || urlParams.get('status') === 'SUCCESS' || urlParams.get('order_status') === 'PAID') {
+          showSuccessModal();
+        }
+      } catch (err) {
+        console.error("URL params check error:", err);
       }
     });
 
     // Sidebar Toggle Function
     function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-      document.getElementById('overlay').classList.toggle('active');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      if (sidebar && overlay) {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+      }
     }
 
+    // Verify User Function (Click block न हो, इसलिए try-catch और मजबूत एरर हैंडलिंग)
     function verifyUser() {
-      var uid = document.getElementById('userId').value.trim();
+      var uidInput = document.getElementById('userId');
       var resBox = document.getElementById('verifyResult');
+      
+      if (!uidInput || !resBox) return;
+      var uid = uidInput.value.trim();
       
       if (!uid) {
         alert('Please enter User ID first!');
@@ -269,6 +287,8 @@
 
       resBox.style.display = "flex";
       resBox.className = "";
+      resBox.style.background = "#eff6ff";
+      resBox.style.border = "1px solid #bfdbfe";
       resBox.innerHTML = "⏳ Verifying user from Duoo server...";
 
       fetch('/api/verify-user', {
@@ -307,30 +327,41 @@
       });
     }
 
+    // Plan Selection Function
     function selectPlan(element, coins, price) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedCoins = coins;
       selectedPrice = price;
 
-      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
+      var sumPlan = document.getElementById('sumPlan');
+      var sumPrice = document.getElementById('sumPrice');
+      if (sumPlan) sumPlan.innerText = coins.toLocaleString() + " Coins";
+      if (sumPrice) sumPrice.innerText = "₹" + price;
     }
 
     function showSuccessModal() {
-      document.getElementById('successModalOverlay').style.display = 'flex';
+      var modal = document.getElementById('successModalOverlay');
+      if (modal) modal.style.display = 'flex';
     }
 
     function closeSuccessModal() {
-      document.getElementById('successModalOverlay').style.display = 'none';
-      // URL clean karke page refresh ya normal state par laana
+      var modal = document.getElementById('successModalOverlay');
+      if (modal) modal.style.display = 'none';
       window.location.href = window.location.pathname;
     }
 
+    // Payment Initiation Function
     async function initiateGatewayPayment() {
-      var userId = document.getElementById('userId').value.trim();
-      var userPhone = document.getElementById('userPhone').value.trim();
-      var termsChecked = document.getElementById('termsCheck').checked;
+      var userIdEl = document.getElementById('userId');
+      var userPhoneEl = document.getElementById('userPhone');
+      var termsCheckEl = document.getElementById('termsCheck');
+      
+      if (!userIdEl || !userPhoneEl || !termsCheckEl) return;
+
+      var userId = userIdEl.value.trim();
+      var userPhone = userPhoneEl.value.trim();
+      var termsChecked = termsCheckEl.checked;
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
         alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
@@ -346,8 +377,10 @@
       }
 
       var buyBtn = document.querySelector('.main-buy-btn');
-      buyBtn.innerText = "Processing...";
-      buyBtn.disabled = true;
+      if (buyBtn) {
+        buyBtn.innerText = "Processing...";
+        buyBtn.disabled = true;
+      }
 
       try {
         const response = await fetch('/api/create-cashfree-order', {
@@ -360,25 +393,4 @@
           })
         });
 
-        const data = await response.json();
-
-        if (data.success && data.payment_session_id) {
-          let checkoutOptions = {
-            paymentSessionId: data.payment_session_id,
-            redirectTarget: "_self"
-          };
-          
-          cashfree.checkout(checkoutOptions).then(function(result) {
-            if(result.error){
-              alert(result.error.message);
-              buyBtn.innerText = "TOP-UP NOW ➔";
-              buyBtn.disabled = false;
-            }
-            if(result.redirect){
-              console.log("Payment will be redirected");
-            }
-          });
-        } else {
-          // **Test / Mock simulation ke liye ya direct success response handle karne ke liye**
-          // Agar aapka backend test mode me turant success return karta hai, toh aap yahin modal show kar sakte hain:
-          if (data.status === "SUCCESS" || data.success === true) {
+        const da
