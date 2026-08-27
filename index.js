@@ -1,6 +1,5 @@
 const express = require('express');
 const axios = require('axios');
-const crypto = require('crypto');
 const path = require('path');
 
 const app = express();
@@ -22,9 +21,10 @@ app.post('/api/verify-user', async (req, res) => {
         if (!uid) {
             return res.status(400).json({ status: 400, message: "UID is missing!" });
         }
-
         const cleanUid = uid.toString().trim();
         
+        // Duoo Sign Generation
+        const crypto = require('crypto');
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
@@ -48,21 +48,53 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Register order mapping
-app.post('/api/register-order', (req, res) => {
-    const { orderId, uid, coins } = req.body;
-    if (orderId && uid) {
-        pendingOrders.set(orderId, { uid, coins });
-        setTimeout(() => pendingOrders.delete(orderId), 3600000);
-        return res.json({ status: true });
+// 2. KwikUPI Dynamic Payment Order Creation (API Integration)
+app.post('/api/create-kwikupi-order', async (req, res) => {
+    try {
+        const { uid, amount, whatsapp } = req.body;
+        
+        if (!uid || !amount) {
+            return res.status(400).json({ success: false, message: "UID and Amount are required" });
+        }
+
+        const orderId = "ORD_" + Date.now();
+
+        // KwikUPI Create Payment API Request (अनुसार वीडियो डॉक्यूमेंटेशन)
+        const kwikResponse = await axios.post('https://kwikupi.com/api/create-payment', {
+            amount: parseFloat(amount).toFixed(2),
+            order_id: orderId,
+            customer_name: uid.toString(), // यहाँ यूजर की ID पास हो रही है ताकि वेबहुक में वापस मिले
+            customer_email: `${uid}@duoo.live`,
+            redirect_url: `https://duoo-bot.onrender.com/`
+        }, {
+            headers: {
+                'X-API-KEY': 'pk_live_5n5Ipy5CauIlzMCT5UhkNpbe',    // 🔴 यहाँ अपनी KwikUPI Public Key डालें
+                'X-API-SECRET': 'sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh', // 🔴 यहाँ अपनी KwikUPI Secret Key डालें
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (kwikResponse.data && kwikResponse.data.payment_page) {
+            return res.json({
+                success: true,
+                payment_url: kwikResponse.data.payment_page,
+                order_id: orderId
+            });
+        } else {
+            return res.status(500).json({ success: false, message: "Failed to generate payment URL" });
+        }
+
+    } catch (error) {
+        console.error("Payment Creation Error:", error.response?.data || error.message);
+        return res.status(500).json({ success: false, message: "Internal server error during payment creation" });
     }
-    return res.status(400).json({ status: false });
 });
 
-// 3. Helper function to deliver coins
+// 3. Helper function to deliver coins to Duoo
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
+    const crypto = require('crypto');
 
     const signString = `coins=${numCoins}&orderId=${orderId}&sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
     const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
@@ -86,39 +118,19 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. KwikUPI Webhook Endpoint (Updated to handle Fix-Link payload)
+// 4. KwikUPI Webhook Endpoint (Automatic Coin Delivery)
 app.post('/api/kwikupi-webhook', async (req, res) => {
     try {
         console.log("Webhook Received from KwikUPI:", req.body);
 
-        const { status, order_id, txid, amount, customer_name, customer_phone, custom_order_id } = req.body;
+        const { status, order_id, customer_name, amount, payment_id, txid } = req.body;
 
-        if (status === "success" || status === "SUCCESS" || req.body.success === true) {
-            let uid = null;
+        if (status === "TXN_SUCCESS" || status === "success" || status === "SUCCESS" || req.body.success === true) {
+            const uid = customer_name; // यहाँ से वही UID मिल जाएगी जो हमने आर्डर बनाते समय भेजी थी
             let coins = 0;
-            const targetOrderId = custom_order_id || order_id || txid || ("ORD_" + Date.now());
+            const targetOrderId = payment_id || txid || order_id || ("ORD_" + Date.now());
 
-            // तरीका 1: चेक करें कि क्या हमारे पास pendingOrders में यह आर्डर सेव है
-            if (order_id && pendingOrders.has(order_id)) {
-                const orderData = pendingOrders.get(order_id);
-                uid = orderData.uid;
-                coins = orderData.coins;
-                pendingOrders.delete(order_id);
-            } 
-            else if (custom_order_id && pendingOrders.has(custom_order_id)) {
-                const orderData = pendingOrders.get(custom_order_id);
-                uid = orderData.uid;
-                coins = orderData.coins;
-                pendingOrders.delete(custom_order_id);
-            }
-
-            // तरीका 2: अगर KwikUPI ने fixed link भेजा है और customer_name में UID है
-            if (!uid && customer_name && !isNaN(customer_name)) {
-                uid = customer_name.trim();
-            }
-
-            // तरीका 3: अमाउंट से कॉइन कैलकुलेट करें (अगर कॉइन पहले सेट नहीं थे)
-            if (uid && (!coins || coins === 0)) {
+            if (uid) {
                 const amtNum = Number(amount);
                 if (amtNum === 10) coins = 730;
                 else if (amtNum === 200) coins = 14600;
@@ -126,15 +138,11 @@ app.post('/api/kwikupi-webhook', async (req, res) => {
                 else if (amtNum === 500) coins = 36500;
                 else if (amtNum === 1000) coins = 73000;
                 else if (amtNum === 1500) coins = 109500;
-                else coins = Math.round(amtNum * 73); // डिफ़ॉल्ट कैलकुलेशन
-            }
+                else coins = Math.round(amtNum * 73);
 
-            if (uid && coins > 0) {
-                console.log(`Webhook Processing -> Delivering ${coins} coins to UID: ${uid} (Order: ${targetOrderId})`);
+                console.log(`Delivering ${coins} coins to User UID: ${uid} (Order: ${targetOrderId})`);
                 const result = await deliverCoinsToUser(uid, coins, targetOrderId);
-                console.log("Duoo Coin Delivery Result via Webhook:", result);
-            } else {
-                console.log("Webhook Warning: Could not find UID or Coins. Data received:", req.body);
+                console.log("Coin Delivery Result:", result);
             }
         }
 
@@ -145,55 +153,7 @@ app.post('/api/kwikupi-webhook', async (req, res) => {
     }
 });
 
-// 5. Payment Success Redirect Endpoint
-app.get('/api/payment-success', async (req, res) => {
-    try {
-        const { uid, coins, orderId } = req.query;
-        const finalOrderId = orderId || "ORD_" + Date.now();
-
-        if (!uid || !coins) {
-            return res.send(`
-                <div style="font-family: Arial; text-align: center; margin-top: 50px; background: #0b0f19; color: #fff; padding: 30px; border-radius: 10px; width: 80%; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    <h2 style="color: #f3ba2f;">⏳ Payment Received!</h2>
-                    <p>Your payment is being processed and coins will be added to your Duoo ID shortly.</p>
-                    <br>
-                    <a href="/" style="background: #f3ba2f; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Back to Home</a>
-                </div>
-            `);
-        }
-
-        console.log(`Processing redirect coin delivery -> UID: ${uid}, Coins: ${coins}, OrderID: ${finalOrderId}`);
-
-        const result = await deliverCoinsToUser(uid, coins, finalOrderId);
-        
-        if (result.status === 200 || result.success === true) {
-            res.send(`
-                <div style="font-family: Arial; text-align: center; margin-top: 50px; background: #0b0f19; color: #fff; padding: 30px; border-radius: 10px; width: 80%; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    <h2 style="color: #10b981;">✅ Payment Successful & Coins Delivered!</h2>
-                    <p>Successfully added <b>${coins} Coins</b> to User ID: <b>${uid}</b></p>
-                    <br>
-                    <a href="/" style="background: #f3ba2f; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Back to Home</a>
-                </div>
-            `);
-        } else {
-            res.send(`
-                <div style="font-family: Arial; text-align: center; margin-top: 50px; background: #0b0f19; color: #fff; padding: 30px; border-radius: 10px; width: 80%; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    <h2 style="color: #ef4444;">❌ Coin Delivery Notice</h2>
-                    <p>Payment was received! If coins are not reflected instantly, please contact support with your User ID: <b>${uid}</b></p>
-                    <br>
-                    <a href="/" style="background: #f3ba2f; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Back to Home</a>
-                </div>
-            `);
-        }
-    } catch (err) {
-        console.error("Payment Success Route Error:", err);
-        res.status(500).send("Internal Server Error during coin delivery.");
-    }
-});
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    const timeZoneStr = "Asia/Kolkata";
-    const currentTimeStr = new Date().toLocaleString("en-US", { timeZone: timeZoneStr });
-    console.log(`Server running on port ${PORT} at ${currentTimeStr}`);
+    console.log(`Server running on port ${PORT}`);
 });
