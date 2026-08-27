@@ -21,7 +21,7 @@
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
     .container { width: 100%; max-width: 480px; padding: 20px 15px; box-sizing: border-box; position: relative; }
     
-    /* Top Bar with Hamburger Menu */
+    /* Top Bar with Right-aligned Hamburger */
     .top-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 5px; width: 100%; }
     .menu-icon { font-size: 22px; cursor: pointer; color: var(--primary-blue); background: white; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); user-select: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
@@ -35,15 +35,15 @@
     .sidebar-menu li { border-bottom: 1px solid var(--border-color); }
     .sidebar-menu li a { display: block; padding: 14px 20px; color: var(--text-main); text-decoration: none; font-size: 14px; font-weight: 500; cursor: pointer; }
     .sidebar-menu li a:hover { background: #f8fafc; color: var(--primary-blue); }
-    
-    /* Submenu for Policies */
+
+    /* Submenu under Terms & Policies */
     .submenu { list-style: none; padding: 0; margin: 0; background: #f8fafc; display: none; }
     .submenu.active { display: block; }
     .submenu li a { padding: 12px 20px 12px 30px; font-size: 13px; color: var(--text-sub); border-bottom: 1px solid #edf2f7; }
 
-    /* Overlay */
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transition: 0.3s ease; z-index: 9998; }
-    .overlay.active { opacity: 1; visibility: visible; }
+    /* Overlay - जब साइडबार बंद हो तो pointer-events बंद रहेगा ताकि क्लिक ब्लॉक न हों */
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); opacity: 0; visibility: hidden; pointer-events: none; transition: 0.3s ease; z-index: 9998; }
+    .overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
     /* Header */
     .header { text-align: center; margin-bottom: 20px; }
@@ -114,7 +114,7 @@
 </head>
 <body>
 
-  <!-- Sidebar Menu (Right Side Drawer) -->
+  <!-- Sidebar Menu -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <span class="sidebar-title">Ali Dreamwork</span>
@@ -135,7 +135,6 @@
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
   <div class="container">
-    <!-- Top Bar with Hamburger Menu -->
     <div class="top-bar">
       <div class="menu-icon" onclick="toggleSidebar()">☰</div>
     </div>
@@ -163,13 +162,11 @@
 
         <div class="section-title" style="color: var(--primary-blue);">🪙 SELECT COIN TOP-UP PLAN</div>
         <div class="plans-grid">
-          <!-- Test Plan -->
           <div class="plan-card" onclick="selectPlan(this, 730, 10)">
             <div class="plan-badge" style="background: #ef4444;">TEST</div>
             <div class="plan-coins">730 Coins</div>
             <div class="plan-price">₹10</div>
           </div>
-          <!-- Existing Plans -->
           <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
             <div class="plan-coins">14,600 Coins</div>
             <div class="plan-price">₹200</div>
@@ -192,7 +189,6 @@
             <div class="plan-coins">109,500 Coins</div>
             <div class="plan-price">₹1,500</div>
           </div>
-          <!-- Newly Added Plans -->
           <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
             <div class="plan-coins">146,000 Coins</div>
             <div class="plan-price">₹2,000</div>
@@ -215,7 +211,6 @@
         <label style="margin-top: 18px;">Enter your WhatsApp Number:</label>
         <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
 
-        <!-- Terms and Conditions Checkbox (Pre-checked) -->
         <div class="terms-group">
           <input type="checkbox" id="termsCheck" checked>
           <label for="termsCheck" style="margin-top: 0; font-weight: normal; font-size: 11.5px; color: var(--text-sub); display: inline;">
@@ -230,7 +225,6 @@
 
         <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
 
-        <!-- Agency & Support Details Box -->
         <div class="agency-info-box">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Ali Dreamwork Logo" class="agency-logo-small">
           <div class="agency-desc">Official Coin Seller for Duoo and Doran. All payments are securely processed by Ali Dreamwork.</div>
@@ -368,3 +362,8 @@
         isVerified = false;
         resBox.style.background = "#fef2f2";
         resBox.style.border = "1px solid #ef4444";
+        resBox.innerHTML = "<span style='color: #b91c1c;'>❌ Connection failed to server!</span>";
+      });
+    }
+
+    function selectPlan(e
