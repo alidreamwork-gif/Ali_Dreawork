@@ -12,6 +12,9 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
+// अस्थायी आर्डर स्टोरेज (Order ID से UID को जोड़ने के लिए)
+const pendingOrders = new Map();
+
 // 1. User Verification Endpoint
 app.post('/api/verify-user', async (req, res) => {
     try {
@@ -22,11 +25,8 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // MD5 Signature Generation for User Info
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
-
-        console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
         const payload = {
             sellerId: Number(SELLER_ID),
@@ -35,29 +35,32 @@ app.post('/api/verify-user', async (req, res) => {
         };
 
         const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', payload, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
 
-        console.log("Duoo API Raw Response:", response.data);
         return res.json(response.data);
-
     } catch (error) {
         console.error("API Error Response:", error.response ? error.response.data : error.message);
-        
         if (error.response && error.response.data) {
             return res.status(200).json(error.response.data);
         }
-
-        return res.status(500).json({ 
-            status: 400, 
-            message: "User not found or invalid ID!" 
-        });
+        return res.status(500).json({ status: 400, message: "User not found or invalid ID!" });
     }
 });
 
-// 2. Helper function to deliver coins using Coin Sale API
+// 2. Helper function to register an order mapping before payment
+app.post('/api/register-order', (req, res) => {
+    const { orderId, uid, coins } = req.body;
+    if (orderId && uid) {
+        pendingOrders.set(orderId, { uid, coins });
+        // 1 घंटे बाद आर्डर मेमोरी से हटा दें ताकि सर्वर पर लोड न बढ़े
+        setTimeout(() => pendingOrders.delete(orderId), 3600000);
+        return res.json({ status: true });
+    }
+    return res.status(400).json({ status: false });
+});
+
+// 3. Helper function to deliver coins using Coin Sale API
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -84,37 +87,48 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 3. KwikUPI Webhook Endpoint (Background call from KwikUPI when payment is success)
+// 4. KwikUPI Webhook Endpoint
 app.post('/api/kwikupi-webhook', async (req, res) => {
     try {
         console.log("Webhook Received from KwikUPI:", req.body);
 
-        // KwikUPI parameters (adjusting based on standard gateway responses: customer_name is used for UID, amount/custom fields)
-        const { status, customer_name, amount, order_id, txid } = req.body;
+        const { status, order_id, txid, amount, customer_name } = req.body;
 
-        // Check if payment is successful
         if (status === "success" || status === "SUCCESS" || req.body.success === true) {
-            const uid = customer_name; // We passed UID in customer_name
-            const finalOrderId = order_id || txid || "ORD_" + Date.now();
-            
-            // Map amount to coins (e.g., ₹10 = 730 coins, ₹200 = 14600 coins, etc.)
+            let uid = null;
             let coins = 0;
-            const amtNum = Number(amount);
-            if (amtNum === 10) coins = 730;
-            else if (amtNum === 200) coins = 14600;
-            else if (amtNum === 300) coins = 21900;
-            else if (amtNum === 500) coins = 36500;
-            else if (amtNum === 1000) coins = 73000;
-            else if (amtNum === 1500) coins = 109500;
-            else {
-                // Generic calculation fallback if custom amount: ₹1 = 73 coins approx
-                coins = amtNum * 73;
+            const targetOrderId = order_id || txid;
+
+            // तरीका 1: अगर हमारे पास आर्डर मैपिंग में UID सेव है
+            if (targetOrderId && pendingOrders.has(targetOrderId)) {
+                const orderData = pendingOrders.get(targetOrderId);
+                uid = orderData.uid;
+                coins = orderData.coins;
+                pendingOrders.delete(targetOrderId); // काम होने के बाद हटा दें
+            } 
+            // तरीका 2: अगर KwikUPI ने customer_name में UID भेजा है
+            else if (customer_name && !isNaN(customer_name)) {
+                uid = customer_name;
+            }
+
+            // अगर फिर भी कोइन्स तय नहीं हुए, तो अमाउंट से कैलकुलेट कर लें
+            if (uid && (!coins || coins === 0)) {
+                const amtNum = Number(amount);
+                if (amtNum === 10) coins = 730;
+                else if (amtNum === 200) coins = 14600;
+                else if (amtNum === 300) coins = 21900;
+                else if (amtNum === 500) coins = 36500;
+                else if (amtNum === 1000) coins = 73000;
+                else if (amtNum === 1500) coins = 109500;
+                else coins = amtNum * 73;
             }
 
             if (uid && coins > 0) {
-                console.log(`Webhook Processing -> Delivering ${coins} coins to UID: ${uid}`);
-                const result = await deliverCoinsToUser(uid, coins, finalOrderId);
+                console.log(`Webhook Processing -> Delivering ${coins} coins to UID: ${uid} (Order: ${targetOrderId})`);
+                const result = await deliverCoinsToUser(uid, coins, targetOrderId || "ORD_" + Date.now());
                 console.log("Duoo Coin Delivery Result via Webhook:", result);
+            } else {
+                console.log("Webhook Warning: Could not find UID for order:", targetOrderId);
             }
         }
 
@@ -125,11 +139,10 @@ app.post('/api/kwikupi-webhook', async (req, res) => {
     }
 });
 
-// 4. Payment Success Redirect Endpoint (When user returns to website)
+// 5. Payment Success Redirect Endpoint
 app.get('/api/payment-success', async (req, res) => {
     try {
         const { uid, coins, orderId } = req.query;
-        
         const finalOrderId = orderId || "ORD_" + Date.now();
 
         if (!uid || !coins) {
@@ -145,7 +158,6 @@ app.get('/api/payment-success', async (req, res) => {
 
         console.log(`Processing redirect coin delivery -> UID: ${uid}, Coins: ${coins}, OrderID: ${finalOrderId}`);
 
-        // Call Duoo Coin Sale API directly on redirect as well
         const result = await deliverCoinsToUser(uid, coins, finalOrderId);
         
         if (result.status === 200 || result.success === true) {
