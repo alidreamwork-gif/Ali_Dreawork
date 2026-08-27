@@ -221,7 +221,17 @@
         return;
       }
 
-      window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice);
+      // Generate a unique order ID for the transaction
+      var customOrderId = "ORD_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+
+      // Current website domain url
+      var currentDomain = window.location.origin;
+
+      // Redirect URL where KwikUPI will send back the user with uid, coins and orderId
+      var redirectUrl = currentDomain + "/api/payment-success?uid=" + encodeURIComponent(userId) + "&coins=" + encodeURIComponent(selectedCoins) + "&orderId=" + encodeURIComponent(customOrderId);
+
+      // Open KwikUPI payment link with all required parameters including redirect_url
+      window.location.href = selectedPaymentLink + "?customer_name=" + encodeURIComponent(userId) + "&customer_phone=" + encodeURIComponent(userPhone) + "&amount=" + encodeURIComponent(selectedPrice) + "&order_id=" + encodeURIComponent(customOrderId) + "&redirect_url=" + encodeURIComponent(redirectUrl);
     }
   </script>
 </body>
