@@ -86,16 +86,6 @@
     .main-buy-btn { width: 100%; background: linear-gradient(135deg, var(--primary-blue), var(--blue-dark)); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: 0.2s; }
     .main-buy-btn:hover { opacity: 0.95; }
 
-    /* Success Modal Popup Styles */
-    .success-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 99999; }
-    .success-modal { background: #fff; width: 90%; max-width: 360px; border-radius: 16px; padding: 25px 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: popIn 0.3s ease; }
-    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .success-icon-box { width: 60px; height: 60px; background: #ecfdf5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px auto; border: 2px solid #10b981; }
-    .success-modal-title { font-size: 18px; font-weight: bold; color: var(--text-main); margin-bottom: 8px; }
-    .success-modal-desc { font-size: 13px; color: var(--text-sub); line-height: 1.5; margin-bottom: 20px; }
-    .success-modal-btn { background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; width: 100%; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); }
-    .success-modal-btn:hover { opacity: 0.95; }
-
     /* Agency Info & Support Section */
     .agency-info-box { margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; text-align: center; }
     .agency-logo-small { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary-blue); margin-bottom: 6px; }
@@ -108,16 +98,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Success Popup Modal -->
-  <div class="success-modal-overlay" id="successModalOverlay">
-    <div class="success-modal">
-      <div class="success-icon-box">✓</div>
-      <div class="success-modal-title">Coins Transferred!</div>
-      <div class="success-modal-desc">Payment successful! Your coins have been successfully transferred to your Duoo / Doran ID. You can now check your application.</div>
-      <button type="button" class="success-modal-btn" onclick="closeSuccessModal()">OK, Got It</button>
-    </div>
-  </div>
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -239,46 +219,19 @@
     let selectedCoins = 0;
     let selectedPrice = 0;
     let isVerified = false;
-    
-    // सुरक्षित रूप से Cashfree SDK इनिशियलाइज करना
-    let cashfree = null;
-    try {
-      if (window.Cashfree) {
-        cashfree = window.Cashfree({ mode: "sandbox" });
-      }
-    } catch (e) {
-      console.error("Cashfree SDK init error:", e);
-    }
-
-    // Page Load check: URL से पेमेंट सक्सेस स्टेटस चेक करना
-    window.addEventListener('DOMContentLoaded', function() {
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('payment') === 'success' || urlParams.get('status') === 'SUCCESS' || urlParams.get('order_status') === 'PAID') {
-          showSuccessModal();
-        }
-      } catch (err) {
-        console.error("URL params check error:", err);
-      }
+    let cashfree = window.Cashfree({
+      mode: "sandbox"
     });
 
     // Sidebar Toggle Function
     function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
-      if (sidebar && overlay) {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-      }
+      document.getElementById('sidebar').classList.toggle('active');
+      document.getElementById('overlay').classList.toggle('active');
     }
 
-    // Verify User Function (Click block न हो, इसलिए try-catch और मजबूत एरर हैंडलिंग)
     function verifyUser() {
-      var uidInput = document.getElementById('userId');
+      var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
-      
-      if (!uidInput || !resBox) return;
-      var uid = uidInput.value.trim();
       
       if (!uid) {
         alert('Please enter User ID first!');
@@ -287,8 +240,6 @@
 
       resBox.style.display = "flex";
       resBox.className = "";
-      resBox.style.background = "#eff6ff";
-      resBox.style.border = "1px solid #bfdbfe";
       resBox.innerHTML = "⏳ Verifying user from Duoo server...";
 
       fetch('/api/verify-user', {
@@ -327,41 +278,20 @@
       });
     }
 
-    // Plan Selection Function
     function selectPlan(element, coins, price) {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       selectedCoins = coins;
       selectedPrice = price;
 
-      var sumPlan = document.getElementById('sumPlan');
-      var sumPrice = document.getElementById('sumPrice');
-      if (sumPlan) sumPlan.innerText = coins.toLocaleString() + " Coins";
-      if (sumPrice) sumPrice.innerText = "₹" + price;
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
-    function showSuccessModal() {
-      var modal = document.getElementById('successModalOverlay');
-      if (modal) modal.style.display = 'flex';
-    }
-
-    function closeSuccessModal() {
-      var modal = document.getElementById('successModalOverlay');
-      if (modal) modal.style.display = 'none';
-      window.location.href = window.location.pathname;
-    }
-
-    // Payment Initiation Function
     async function initiateGatewayPayment() {
-      var userIdEl = document.getElementById('userId');
-      var userPhoneEl = document.getElementById('userPhone');
-      var termsCheckEl = document.getElementById('termsCheck');
-      
-      if (!userIdEl || !userPhoneEl || !termsCheckEl) return;
-
-      var userId = userIdEl.value.trim();
-      var userPhone = userPhoneEl.value.trim();
-      var termsChecked = termsCheckEl.checked;
+      var userId = document.getElementById('userId').value.trim();
+      var userPhone = document.getElementById('userPhone').value.trim();
+      var termsChecked = document.getElementById('termsCheck').checked;
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
         alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
@@ -377,10 +307,8 @@
       }
 
       var buyBtn = document.querySelector('.main-buy-btn');
-      if (buyBtn) {
-        buyBtn.innerText = "Processing...";
-        buyBtn.disabled = true;
-      }
+      buyBtn.innerText = "Processing...";
+      buyBtn.disabled = true;
 
       try {
         const response = await fetch('/api/create-cashfree-order', {
@@ -393,4 +321,36 @@
           })
         });
 
-        const da
+        const data = await response.json();
+
+        if (data.success && data.payment_session_id) {
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_self"
+          };
+          
+          cashfree.checkout(checkoutOptions).then(function(result) {
+            if(result.error){
+              alert(result.error.message);
+              buyBtn.innerText = "TOP-UP NOW ➔";
+              buyBtn.disabled = false;
+            }
+            if(result.redirect){
+              console.log("Payment will be redirected");
+            }
+          });
+        } else {
+          alert(data.message || 'Failed to create payment session. Please try again.');
+          buyBtn.innerText = "TOP-UP NOW ➔";
+          buyBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error("Payment error:", err);
+        alert('Server connection error. Please try again.');
+        buyBtn.innerText = "TOP-UP NOW ➔";
+        buyBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
