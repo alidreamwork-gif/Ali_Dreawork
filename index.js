@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// अस्थायी आर्डर स्टोरेज (Order ID से UID को जोड़ने के लिए)
+// अस्थायी आर्डर स्टोरेज
 const pendingOrders = new Map();
 
 // 1. User Verification Endpoint
@@ -48,19 +48,18 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Helper function to register an order mapping before payment
+// 2. Register order mapping
 app.post('/api/register-order', (req, res) => {
     const { orderId, uid, coins } = req.body;
     if (orderId && uid) {
         pendingOrders.set(orderId, { uid, coins });
-        // 1 घंटे बाद आर्डर मेमोरी से हटा दें ताकि सर्वर पर लोड न बढ़े
         setTimeout(() => pendingOrders.delete(orderId), 3600000);
         return res.json({ status: true });
     }
     return res.status(400).json({ status: false });
 });
 
-// 3. Helper function to deliver coins using Coin Sale API
+// 3. Helper function to deliver coins
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -87,31 +86,38 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. KwikUPI Webhook Endpoint
+// 4. KwikUPI Webhook Endpoint (Updated to handle Fix-Link payload)
 app.post('/api/kwikupi-webhook', async (req, res) => {
     try {
         console.log("Webhook Received from KwikUPI:", req.body);
 
-        const { status, order_id, txid, amount, customer_name } = req.body;
+        const { status, order_id, txid, amount, customer_name, customer_phone, custom_order_id } = req.body;
 
         if (status === "success" || status === "SUCCESS" || req.body.success === true) {
             let uid = null;
             let coins = 0;
-            const targetOrderId = order_id || txid;
+            const targetOrderId = custom_order_id || order_id || txid || ("ORD_" + Date.now());
 
-            // तरीका 1: अगर हमारे पास आर्डर मैपिंग में UID सेव है
-            if (targetOrderId && pendingOrders.has(targetOrderId)) {
-                const orderData = pendingOrders.get(targetOrderId);
+            // तरीका 1: चेक करें कि क्या हमारे पास pendingOrders में यह आर्डर सेव है
+            if (order_id && pendingOrders.has(order_id)) {
+                const orderData = pendingOrders.get(order_id);
                 uid = orderData.uid;
                 coins = orderData.coins;
-                pendingOrders.delete(targetOrderId); // काम होने के बाद हटा दें
+                pendingOrders.delete(order_id);
             } 
-            // तरीका 2: अगर KwikUPI ने customer_name में UID भेजा है
-            else if (customer_name && !isNaN(customer_name)) {
-                uid = customer_name;
+            else if (custom_order_id && pendingOrders.has(custom_order_id)) {
+                const orderData = pendingOrders.get(custom_order_id);
+                uid = orderData.uid;
+                coins = orderData.coins;
+                pendingOrders.delete(custom_order_id);
             }
 
-            // अगर फिर भी कोइन्स तय नहीं हुए, तो अमाउंट से कैलकुलेट कर लें
+            // तरीका 2: अगर KwikUPI ने fixed link भेजा है और customer_name में UID है
+            if (!uid && customer_name && !isNaN(customer_name)) {
+                uid = customer_name.trim();
+            }
+
+            // तरीका 3: अमाउंट से कॉइन कैलकुलेट करें (अगर कॉइन पहले सेट नहीं थे)
             if (uid && (!coins || coins === 0)) {
                 const amtNum = Number(amount);
                 if (amtNum === 10) coins = 730;
@@ -120,15 +126,15 @@ app.post('/api/kwikupi-webhook', async (req, res) => {
                 else if (amtNum === 500) coins = 36500;
                 else if (amtNum === 1000) coins = 73000;
                 else if (amtNum === 1500) coins = 109500;
-                else coins = amtNum * 73;
+                else coins = Math.round(amtNum * 73); // डिफ़ॉल्ट कैलकुलेशन
             }
 
             if (uid && coins > 0) {
                 console.log(`Webhook Processing -> Delivering ${coins} coins to UID: ${uid} (Order: ${targetOrderId})`);
-                const result = await deliverCoinsToUser(uid, coins, targetOrderId || "ORD_" + Date.now());
+                const result = await deliverCoinsToUser(uid, coins, targetOrderId);
                 console.log("Duoo Coin Delivery Result via Webhook:", result);
             } else {
-                console.log("Webhook Warning: Could not find UID for order:", targetOrderId);
+                console.log("Webhook Warning: Could not find UID or Coins. Data received:", req.body);
             }
         }
 
