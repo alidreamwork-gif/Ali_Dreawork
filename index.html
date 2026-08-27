@@ -11,7 +11,8 @@
       --bg-color: #f3f4f6;
       --card-bg: #ffffff;
       --border-color: #e5e7eb;
-      --gold: #d97706;
+      --primary-blue: #2563eb;
+      --blue-dark: #1d4ed8;
       --text-main: #1f2937;
       --text-sub: #4b5563;
       --accent-purple: #7c3aed;
@@ -22,7 +23,7 @@
     
     /* Header */
     .header { text-align: center; margin-bottom: 20px; }
-    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 8px; box-shadow: 0 4px 15px rgba(217, 119, 6, 0.2); }
+    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--primary-blue); margin-bottom: 8px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2); }
     .brand-title { font-size: 22px; font-weight: bold; color: var(--text-main); letter-spacing: 0.5px; }
     .sub-title { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
     .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: var(--text-sub); margin-top: 10px; font-weight: 600; }
@@ -33,20 +34,20 @@
     label { display: block; margin-top: 14px; font-weight: 600; color: var(--text-main); text-align: left; font-size: 13px; }
     .id-group { display: flex; gap: 8px; margin-top: 6px; }
     input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
-    input:focus { border-color: var(--accent-purple); background: #fff; }
+    input:focus { border-color: var(--primary-blue); background: #fff; }
     
     .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; transition: 0.2s; }
     .verify-btn:hover { opacity: 0.9; }
 
     /* Verified Box */
     #verifyResult { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; background: #ecfdf5; border: 1px solid #10b981; }
-    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); }
+    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary-blue); }
     .user-info-text { display: flex; flex-direction: column; }
     .user-name { font-weight: bold; font-size: 15px; color: #065f46; }
     .user-id-small { font-size: 12px; color: #047857; }
 
     /* Plans Grid */
-    .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 10px; text-align: left; display: flex; align-items: center; gap: 6px; }
+    .section-title { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 18px; margin-bottom: 10px; text-align: left; display: flex; align-items: center; gap: 6px; }
     .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 2px; }
     .plan-card { border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 4px; cursor: pointer; transition: 0.2s; background: #f9fafb; text-align: center; position: relative; }
     .plan-card.selected { border: 2px solid var(--green); background: rgba(16, 185, 129, 0.08); }
@@ -60,8 +61,17 @@
     .summary-row span:last-child { color: var(--text-main); font-weight: 600; }
 
     /* Main Action Button */
-    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: 0.2s; }
+    .main-buy-btn { width: 100%; background: linear-gradient(135deg, var(--primary-blue), var(--blue-dark)); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: 0.2s; }
     .main-buy-btn:hover { opacity: 0.95; }
+
+    /* Agency Info & Support Section */
+    .agency-info-box { margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; text-align: center; }
+    .agency-logo-small { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary-blue); margin-bottom: 6px; }
+    .agency-tagline { font-size: 12px; font-weight: bold; color: var(--text-main); margin-bottom: 4px; }
+    .agency-desc { font-size: 11px; color: var(--text-sub); line-height: 1.4; margin-bottom: 10px; }
+    .support-divider { border: 0; border-top: 1px solid #e2e8f0; margin: 10px 0; }
+    .support-details { font-size: 11px; color: var(--text-sub); font-weight: 500; }
+    .support-details span { color: var(--primary-blue); font-weight: bold; }
 
     .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
   </style>
@@ -148,6 +158,18 @@
       </div>
 
       <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
+
+      <!-- Agency & Support Details Box -->
+      <div class="agency-info-box">
+        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Ali Dreamwork Logo" class="agency-logo-small">
+        <div class="agency-tagline">ALI DREAMWORK OFFICIAL AGENCY</div>
+        <div class="agency-desc">Official Coin Seller for Duoo and Doran. All payments are securely processed in real-time.</div>
+        <hr class="support-divider">
+        <div class="support-details">
+          📧 Email: <span>alidreamwork@gmail.com</span><br>
+          📞 WhatsApp Support: <span>+91 77688 14007</span>
+        </div>
+      </div>
     </div>
 
     <div class="footer-note">
