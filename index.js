@@ -12,6 +12,9 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
+// अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
+const activeOrders = new Map();
+
 // 1. User Verification Endpoint
 app.post('/api/verify-user', async (req, res) => {
     try {
@@ -54,6 +57,20 @@ app.post('/api/create-kwikupi-order', async (req, res) => {
         }
 
         const orderId = "ORD_" + Date.now();
+        let coins = 0;
+        const amtNum = Math.round(Number(amount));
+
+        // अमाउंट के हिसाब से कॉइन्स तय करें
+        if (amtNum === 10) coins = 730;
+        else if (amtNum === 200) coins = 14600;
+        else if (amtNum === 300) coins = 21900;
+        else if (amtNum === 500) coins = 36500;
+        else if (amtNum === 1000) coins = 73000;
+        else if (amtNum === 1500) coins = 109500;
+        else coins = amtNum * 73;
+
+        // ऑर्डर को मेमोरी में सेव करें ताकि वेबहुक आने पर UID मिल सके
+        activeOrders.set(orderId, { uid: uid.toString().trim(), coins: coins });
 
         const kwikResponse = await axios.post('https://kwikupi.com/api/create-payment', {
             amount: parseFloat(amount).toFixed(2),
@@ -121,31 +138,22 @@ app.post('/api/kwikupi-webhook', async (req, res) => {
         console.log("================== WEBHOOK RECEIVED ==================");
         console.log(JSON.stringify(req.body, null, 2));
 
-        const { status, order_id, customer_name, amount, payment_id, txid } = req.body;
+        const { status, order_id } = req.body;
 
-        // KwikUPI स्टेटस चेक करें
         if (status === "TXN_SUCCESS" || status === "success" || status === "SUCCESS" || req.body.success === true) {
-            const uid = customer_name; 
-            let coins = 0;
-            const targetOrderId = payment_id || txid || order_id || ("ORD_" + Date.now());
+            
+            // आर्डर आईडी से यूजर की UID और Coins ढूंढें
+            let orderData = activeOrders.get(order_id);
 
-            if (uid) {
-                const amtNum = Math.round(Number(amount));
-                
-                // आपके प्लान के हिसाब से कॉइन की गिनती
-                if (amtNum === 10) coins = 730;
-                else if (amtNum === 200) coins = 14600;
-                else if (amtNum === 300) coins = 21900;
-                else if (amtNum === 500) coins = 36500;
-                else if (amtNum === 1000) coins = 73000;
-                else if (amtNum === 1500) coins = 109500;
-                else coins = amtNum * 73; // अगर कोई दूसरा अमाउंट हो
-
-                console.log(`Calculated -> Delivering ${coins} coins to User UID: ${uid} (Order: ${targetOrderId})`);
-                const result = await deliverCoinsToUser(uid, coins, targetOrderId);
+            if (orderData) {
+                console.log(`Found order details for ${order_id}: UID = ${orderData.uid}, Coins = ${orderData.coins}`);
+                const result = await deliverCoinsToUser(orderData.uid, orderData.coins, order_id);
                 console.log("Final Coin Delivery Result:", result);
+                
+                // काम पूरा होने के बाद मेमोरी से हटा दें
+                activeOrders.delete(order_id);
             } else {
-                console.log("Error: UID (customer_name) is missing in Webhook body!");
+                console.log(`Error: Order ID ${order_id} not found in activeOrders memory map!`);
             }
         } else {
             console.log("Webhook received but transaction is not successful. Status:", status);
