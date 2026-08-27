@@ -5,7 +5,6 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 const SELLER_ID = "4851724";
@@ -20,22 +19,22 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // 1. Exact MD5 Signature generation
+        // 1. Exact MD5 Signature generation from manager's doc
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
         console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // 2. Sending parameters via URLSearchParams (x-www-form-urlencoded) 
-        // because many gaming APIs reject raw JSON body for security signatures.
-        const params = new URLSearchParams();
-        params.append('sellerId', SELLER_ID);
-        params.append('uid', cleanUid);
-        params.append('sign', sign);
+        // 2. Exact payload format requested by manager (Number types for sellerId & uid)
+        const payload = {
+            sellerId: Number(SELLER_ID),
+            uid: Number(cleanUid),
+            sign: sign,
+        };
 
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', params, {
+        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', payload, {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             }
         });
 
