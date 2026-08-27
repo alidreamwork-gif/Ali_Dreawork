@@ -12,6 +12,12 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
+// Cashfree API Credentials (Test Mode)
+const CASHFREE_APP_ID = "TEST112015221202dd6b5b8e4c910a4522510211";
+const CASHFREE_SECRET_KEY = "cfsk_ma_test_0166ef1044e42cc95f0848edb58c5f72_76bc73f6";
+// जब आप लाइव (Production) पर जाएं, तो यह URL बदलकर 'https://api.cashfree.com/pg/orders' कर दें
+const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
+
 // अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
 const activeOrders = new Map();
 
@@ -47,8 +53,8 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. KwikUPI Dynamic Payment Order Creation
-app.post('/api/create-kwikupi-order', async (req, res) => {
+// 2. Cashfree Dynamic Payment Order Creation
+app.post('/api/create-cashfree-order', async (req, res) => {
     try {
         const { uid, amount, whatsapp } = req.body;
         
@@ -72,32 +78,41 @@ app.post('/api/create-kwikupi-order', async (req, res) => {
         // ऑर्डर को मेमोरी में सेव करें ताकि वेबहुक आने पर UID मिल सके
         activeOrders.set(orderId, { uid: uid.toString().trim(), coins: coins });
 
-        const kwikResponse = await axios.post('https://kwikupi.com/api/create-payment', {
-            amount: parseFloat(amount).toFixed(2),
+        const cashfreePayload = {
             order_id: orderId,
-            customer_name: uid.toString(),
-            customer_email: `${uid}@duoo.live`,
-            redirect_url: `https://duoo-bot.onrender.com/`
-        }, {
+            order_amount: Number(amount).toFixed(2),
+            order_currency: "INR",
+            customer_details: {
+                customer_id: uid.toString().trim(),
+                customer_phone: whatsapp ? whatsapp.toString() : "9999999999",
+                customer_email: `${uid}@duoo.live`
+            },
+            order_meta: {
+                return_url: `https://duoo-bot.onrender.com/?order_id=${orderId}`
+            }
+        };
+
+        const cashfreeResponse = await axios.post(CASHFREE_API_URL, cashfreePayload, {
             headers: {
-                'X-API-KEY': 'pk_live_5n5Ipy5CauIlzMCT5UhkNpbe',
-                'X-API-SECRET': 'sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh',
+                'x-client-id': CASHFREE_APP_ID,
+                'x-client-secret': CASHFREE_SECRET_KEY,
+                'x-api-version': '2022-09-01',
                 'Content-Type': 'application/json'
             }
         });
 
-        if (kwikResponse.data && kwikResponse.data.payment_page) {
+        if (cashfreeResponse.data && cashfreeResponse.data.payment_session_id) {
             return res.json({
                 success: true,
-                payment_url: kwikResponse.data.payment_page,
+                payment_session_id: cashfreeResponse.data.payment_session_id,
                 order_id: orderId
             });
         } else {
-            return res.status(500).json({ success: false, message: "Failed to generate payment URL" });
+            return res.status(500).json({ success: false, message: "Failed to generate payment session" });
         }
 
     } catch (error) {
-        console.error("Payment Creation Error:", error.response?.data || error.message);
+        console.error("Cashfree Payment Creation Error:", error.response?.data || error.message);
         return res.status(500).json({ success: false, message: "Internal server error during payment creation" });
     }
 });
@@ -132,31 +147,30 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. KwikUPI Webhook Endpoint (Automatic Coin Delivery)
-app.post('/api/kwikupi-webhook', async (req, res) => {
+// 4. Cashfree Webhook Endpoint (Automatic Coin Delivery)
+app.post('/api/cashfree-webhook', async (req, res) => {
     try {
-        console.log("================== WEBHOOK RECEIVED ==================");
+        console.log("================== CASHFREE WEBHOOK RECEIVED ==================");
         console.log(JSON.stringify(req.body, null, 2));
 
-        const { status, order_id } = req.body;
-
-        if (status === "TXN_SUCCESS" || status === "success" || status === "SUCCESS" || req.body.success === true) {
-            
-            // आर्डर आईडी से यूजर की UID और Coins ढूंढें
-            let orderData = activeOrders.get(order_id);
+        const eventData = req.body;
+        
+        // कैशफ्री वेबहुक स्ट्रक्चर के अनुसार पेमेंट सक्सेस चेक करना
+        if (eventData && eventData.data && eventData.data.payment && eventData.data.payment.payment_status === "SUCCESS") {
+            const orderId = eventData.data.order.order_id;
+            let orderData = activeOrders.get(orderId);
 
             if (orderData) {
-                console.log(`Found order details for ${order_id}: UID = ${orderData.uid}, Coins = ${orderData.coins}`);
-                const result = await deliverCoinsToUser(orderData.uid, orderData.coins, order_id);
+                console.log(`Found order details for ${orderId}: UID = ${orderData.uid}, Coins = ${orderData.coins}`);
+                const result = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
                 console.log("Final Coin Delivery Result:", result);
                 
-                // काम पूरा होने के बाद मेमोरी से हटा दें
-                activeOrders.delete(order_id);
+                activeOrders.delete(orderId);
             } else {
-                console.log(`Error: Order ID ${order_id} not found in activeOrders memory map!`);
+                console.log(`Error: Order ID ${orderId} not found in activeOrders memory map!`);
             }
         } else {
-            console.log("Webhook received but transaction is not successful. Status:", status);
+            console.log("Webhook received but payment is not successful.");
         }
 
         return res.status(200).json({ status: true, message: "Webhook processed successfully" });
