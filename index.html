@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Self Duoo and Doran Coin Top-up Panel</title>
+  <!-- Cashfree JS SDK -->
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   <style>
     :root {
       --bg-color: #0b0f19;
@@ -129,7 +131,7 @@
     </div>
 
     <div class="footer-note">
-      © 2026 Ali Dreamwork. All rights reserved. Secure payments powered by KwikUPI API.
+      © 2026 Ali Dreamwork. All rights reserved. Secure payments powered by Cashfree.
     </div>
   </div>
 
@@ -137,6 +139,9 @@
     let selectedCoins = 0;
     let selectedPrice = 0;
     let isVerified = false;
+    let cashfree = window.Cashfree({
+      mode: "sandbox" // जब लाइव (Production) पर जाएं तो इसे "production" कर दें
+    });
 
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
@@ -210,14 +215,13 @@
         return;
       }
 
-      // Loader दिखाएं
       var buyBtn = document.querySelector('.main-buy-btn');
       buyBtn.innerText = "Processing...";
       buyBtn.disabled = true;
 
       try {
-        // हमारे नए बैकएंड एपीआई को कॉल करें जो KwikUPI से आर्डर बनाएगा
-        const response = await fetch('/api/create-kwikupi-order', {
+        // हमारे नए Cashfree बैकएंड को कॉल करें
+        const response = await fetch('/api/create-cashfree-order', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
@@ -229,11 +233,24 @@
 
         const data = await response.json();
 
-        if (data.success && data.payment_url) {
-          // सीधा KwikUPI के डायनेमिक पेमेंट पेज पर रीडायरेक्ट करें
-          window.location.href = data.payment_url;
+        if (data.success && data.payment_session_id) {
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_self"
+          };
+          
+          cashfree.checkout(checkoutOptions).then(function(result) {
+            if(result.error){
+              alert(result.error.message);
+              buyBtn.innerText = "TOP-UP NOW ➔";
+              buyBtn.disabled = false;
+            }
+            if(result.redirect){
+              console.log("Payment will be redirected");
+            }
+          });
         } else {
-          alert(data.message || 'Failed to create payment link. Please try again.');
+          alert(data.message || 'Failed to create payment session. Please try again.');
           buyBtn.innerText = "TOP-UP NOW ➔";
           buyBtn.disabled = false;
         }
