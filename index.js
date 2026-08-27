@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
 const SELLER_ID = "4851724";
-const API_KEY = "DU00a49Jeyu8Zx7AKei6";
+const API_KEY = "DUOOa49Jeyu8Zx7AKei6"; // यहाँ हमने सही API Key (OO के साथ) अपडेट कर दी है
 
 app.post('/api/verify-user', async (req, res) => {
     try {
@@ -21,13 +21,13 @@ app.post('/api/verify-user', async (req, res) => {
 
         const cleanUid = uid.toString().trim();
         
-        // 1. MD5 Signature Generation
+        // 1. MD5 Signature Generation with correct API Key
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
         console.log(`Checking UID: ${cleanUid}, Sign: ${sign}`);
 
-        // 2. Exact payload format with Number types as required by manager
+        // 2. Exact payload format with Number types
         const payload = {
             sellerId: Number(SELLER_ID),
             uid: Number(cleanUid),
