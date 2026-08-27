@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Self Duoo and Doran Coin Top-up Panel</title>
-  <!-- Cashfree JS SDK -->
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   <style>
     :root {
@@ -26,7 +25,7 @@
     .menu-icon { font-size: 22px; cursor: pointer; color: var(--primary-blue); background: white; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); user-select: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
     /* Sidebar Drawer */
-    .sidebar { position: fixed; top: 0; right: -260px; width: 250px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 9999; transition: 0.3s ease; padding-top: 20px; box-sizing: border-box; text-align: left; }
+    .sidebar { position: fixed; top: 0; right: -260px; width: 250px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 9999; transition: 0.3s ease; padding-top: 20px; box-sizing: border-box; }
     .sidebar.active { right: 0; }
     .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 15px 15px 15px; border-bottom: 1px solid var(--border-color); }
     .sidebar-title { font-weight: bold; font-size: 16px; color: var(--primary-blue); }
@@ -36,14 +35,9 @@
     .sidebar-menu li a { display: block; padding: 14px 20px; color: var(--text-main); text-decoration: none; font-size: 14px; font-weight: 500; cursor: pointer; }
     .sidebar-menu li a:hover { background: #f8fafc; color: var(--primary-blue); }
 
-    /* Submenu under Terms & Policies */
-    .submenu { list-style: none; padding: 0; margin: 0; background: #f8fafc; display: none; }
-    .submenu.active { display: block; }
-    .submenu li a { padding: 12px 20px 12px 30px; font-size: 13px; color: var(--text-sub); border-bottom: 1px solid #edf2f7; }
-
-    /* Overlay - जब साइडबार बंद हो तो pointer-events बंद रहेगा ताकि क्लिक्स ब्लॉक न हों */
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); opacity: 0; visibility: hidden; pointer-events: none; transition: 0.3s ease; z-index: 9998; }
-    .overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+    /* Overlay - जब साइडबार बंद हो तो pointer-events बंद रहेगा ताकि क्लिक ब्लॉक न हों */
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transition: 0.3s ease; z-index: 9998; }
+    .overlay.active { opacity: 1; visibility: visible; }
 
     /* Header */
     .header { text-align: center; margin-bottom: 20px; }
@@ -101,35 +95,18 @@
     .support-details span { color: var(--primary-blue); font-weight: bold; }
 
     .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
-
-    /* Policy Pages Styling */
-    .policy-page { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 15px; text-align: left; }
-    .back-btn { display: inline-block; color: var(--primary-blue); font-weight: bold; font-size: 13px; text-decoration: none; margin-bottom: 15px; cursor: pointer; }
-    .policy-title { font-size: 18px; font-weight: bold; color: var(--text-main); margin-bottom: 5px; }
-    .policy-date { font-size: 11px; color: var(--text-sub); margin-bottom: 15px; }
-    .policy-content h3 { font-size: 14px; color: var(--primary-blue); margin-top: 15px; margin-bottom: 5px; }
-    .policy-content p, .policy-content li { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
-    .policy-content ul { padding-left: 15px; margin-top: 5px; }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar Menu -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <span class="sidebar-title">Ali Dreamwork</span>
       <span class="close-btn" onclick="toggleSidebar()">✕</span>
     </div>
     <ul class="sidebar-menu">
-      <li><a onclick="showSection('mainContainer'); toggleSidebar();">Home / Recharge</a></li>
-      <li>
-        <a onclick="toggleSubmenu()">Terms & Policies ▼</a>
-        <ul class="submenu" id="policySubmenu">
-          <li><a onclick="showPolicyPage('termsPage')">Terms & Conditions</a></li>
-          <li><a onclick="showPolicyPage('refundPage')">Refund Policy</a></li>
-          <li><a onclick="showPolicyPage('privacyPage')">Privacy Policy</a></li>
-        </ul>
-      </li>
+      <li><a onclick="toggleSidebar()">Home / Recharge</a></li>
+      <li><a onclick="alert('Policies are available in the footer terms.'); toggleSidebar();">Terms & Policies</a></li>
     </ul>
   </div>
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
@@ -139,139 +116,98 @@
       <div class="menu-icon" onclick="toggleSidebar()">☰</div>
     </div>
 
-    <!-- MAIN RECHARGE PANEL -->
-    <div id="mainContainer">
-      <div class="header">
-        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-        <div class="brand-title">ALI DREAMWORK</div>
-        <div class="sub-title">SELF DUOO AND DORAN COIN TOP-UP PANEL</div>
-        <div class="features-top">
-          <span>🔒 100% Secure</span>
-          <span>⚡ Instant Delivery</span>
-          <span>🎧 24/7 Support</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <label>Enter your User ID:</label>
-        <div class="id-group">
-          <input type="text" id="userId" placeholder="Enter Duoo / Doran ID">
-          <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
-        </div>
-        <div id="verifyResult"></div>
-
-        <div class="section-title" style="color: var(--primary-blue);">🪙 SELECT COIN TOP-UP PLAN</div>
-        <div class="plans-grid">
-          <div class="plan-card" onclick="selectPlan(this, 730, 10)">
-            <div class="plan-badge" style="background: #ef4444;">TEST</div>
-            <div class="plan-coins">730 Coins</div>
-            <div class="plan-price">₹10</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
-            <div class="plan-coins">14,600 Coins</div>
-            <div class="plan-price">₹200</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
-            <div class="plan-coins">21,900 Coins</div>
-            <div class="plan-price">₹300</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
-            <div class="plan-badge">POPULAR</div>
-            <div class="plan-coins">36,500 Coins</div>
-            <div class="plan-price">₹500</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
-            <div class="plan-coins">73,000 Coins</div>
-            <div class="plan-price">₹1,000</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
-            <div class="plan-badge">BEST</div>
-            <div class="plan-coins">109,500 Coins</div>
-            <div class="plan-price">₹1,500</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
-            <div class="plan-coins">146,000 Coins</div>
-            <div class="plan-price">₹2,000</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
-            <div class="plan-coins">219,000 Coins</div>
-            <div class="plan-price">₹3,000</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
-            <div class="plan-coins">328,500 Coins</div>
-            <div class="plan-price">₹4,500</div>
-          </div>
-          <div class="plan-card" onclick="selectPlan(this, 500000, 6850)">
-            <div class="plan-badge" style="background: #059669;">MEGA</div>
-            <div class="plan-coins">500,000 Coins</div>
-            <div class="plan-price">₹6,850</div>
-          </div>
-        </div>
-
-        <label style="margin-top: 18px;">Enter your WhatsApp Number:</label>
-        <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
-
-        <div class="terms-group">
-          <input type="checkbox" id="termsCheck" checked>
-          <label for="termsCheck" style="margin-top: 0; font-weight: normal; font-size: 11.5px; color: var(--text-sub); display: inline;">
-            I accept the T&C, Refund Policy and Privacy Policy.
-          </label>
-        </div>
-
-        <div class="summary-box">
-          <div class="summary-row"><span>Selected Plan:</span> <span id="sumPlan">None</span></div>
-          <div class="summary-row"><span>Total Amount:</span> <span id="sumPrice">₹0</span></div>
-        </div>
-
-        <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
-
-        <div class="agency-info-box">
-          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Ali Dreamwork Logo" class="agency-logo-small">
-          <div class="agency-desc">Official Coin Seller for Duoo and Doran. All payments are securely processed by Ali Dreamwork.</div>
-          <hr class="support-divider">
-          <div class="support-details">
-            📧 Email: <span>alidreamwork@gmail.com</span><br>
-            📞 WhatsApp Support: <span>+91 77768 81407</span>
-          </div>
-        </div>
+    <div class="header">
+      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
+      <div class="brand-title">ALI DREAMWORK</div>
+      <div class="sub-title">SELF DUOO AND DORAN COIN TOP-UP PANEL</div>
+      <div class="features-top">
+        <span>🔒 100% Secure</span>
+        <span>⚡ Instant Delivery</span>
+        <span>🎧 24/7 Support</span>
       </div>
     </div>
 
-    <!-- TERMS & CONDITIONS PAGE -->
-    <div id="termsPage" class="policy-page">
-      <a class="back-btn" onclick="showSection('mainContainer')">← Back to Recharge</a>
-      <div class="policy-title">Terms & Conditions</div>
-      <div class="policy-date">Last updated: June 2026</div>
-      <div class="policy-content">
-        <p>These Terms & Conditions apply to the official coin recharge store operated by <b>Ali Dreamwork</b>. By using the store, you agree to these Terms.</p>
-        <h3>1. Service</h3>
-        <p>The Store allows users to purchase virtual coins for use in the Duoo/Doran application. Coins are digital goods delivered automatically by crediting coins to the User ID you provide at checkout.</p>
-        <h3>2. Orders & Payment</h3>
-        <p>All prices are shown in Indian Rupees (INR). Payment is accepted via UPI and other available methods through our secure gateway.</p>
+    <div class="card">
+      <label>Enter your User ID:</label>
+      <div class="id-group">
+        <input type="text" id="userId" placeholder="Enter Duoo / Doran ID">
+        <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
       </div>
-    </div>
+      <div id="verifyResult"></div>
 
-    <!-- REFUND POLICY PAGE -->
-    <div id="refundPage" class="policy-page">
-      <a class="back-btn" onclick="showSection('mainContainer')">← Back to Recharge</a>
-      <div class="policy-title">Refund & Cancellation Policy</div>
-      <div class="policy-date">Last updated: June 2026</div>
-      <div class="policy-content">
-        <p>Once coins have been successfully credited to the User ID provided in your order, the sale is generally <b>final and non-refundable</b>.</p>
-        <h3>1. Exceptions</h3>
-        <p>Refunds are only issued if payment was charged but no coins were credited due to a system error, or in case of a verified duplicate payment.</p>
+      <div class="section-title" style="color: var(--primary-blue);">🪙 SELECT COIN TOP-UP PLAN</div>
+      <div class="plans-grid">
+        <div class="plan-card" onclick="selectPlan(this, 730, 10)">
+          <div class="plan-badge" style="background: #ef4444;">TEST</div>
+          <div class="plan-coins">730 Coins</div>
+          <div class="plan-price">₹10</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
+          <div class="plan-coins">14,600 Coins</div>
+          <div class="plan-price">₹200</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
+          <div class="plan-coins">21,900 Coins</div>
+          <div class="plan-price">₹300</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
+          <div class="plan-badge">POPULAR</div>
+          <div class="plan-coins">36,500 Coins</div>
+          <div class="plan-price">₹500</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
+          <div class="plan-coins">73,000 Coins</div>
+          <div class="plan-price">₹1,000</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
+          <div class="plan-badge">BEST</div>
+          <div class="plan-coins">109,500 Coins</div>
+          <div class="plan-price">₹1,500</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
+          <div class="plan-coins">146,000 Coins</div>
+          <div class="plan-price">₹2,000</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
+          <div class="plan-coins">219,000 Coins</div>
+          <div class="plan-price">₹3,000</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
+          <div class="plan-coins">328,500 Coins</div>
+          <div class="plan-price">₹4,500</div>
+        </div>
+        <div class="plan-card" onclick="selectPlan(this, 500000, 6850)">
+          <div class="plan-badge" style="background: #059669;">MEGA</div>
+          <div class="plan-coins">500,000 Coins</div>
+          <div class="plan-price">₹6,850</div>
+        </div>
       </div>
-    </div>
 
-    <!-- PRIVACY POLICY PAGE -->
-    <div id="privacyPage" class="policy-page">
-      <a class="back-btn" onclick="showSection('mainContainer')">← Back to Recharge</a>
-      <div class="policy-title">Privacy Policy</div>
-      <div class="policy-date">Last updated: June 2026</div>
-      <div class="policy-content">
-        <p>This Privacy Policy describes how <b>Ali Dreamwork</b> collects and protects information when you use our official coin recharge store.</p>
-        <h3>1. Data Collected</h3>
-        <p>We collect your User ID, WhatsApp number for support, and order payment status to ensure smooth delivery of your virtual coins.</p>
+      <label style="margin-top: 18px;">Enter your WhatsApp Number:</label>
+      <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+
+      <div class="terms-group">
+        <input type="checkbox" id="termsCheck" checked>
+        <label for="termsCheck" style="margin-top: 0; font-weight: normal; font-size: 11.5px; color: var(--text-sub); display: inline;">
+          I accept the T&C, Refund Policy and Privacy Policy.
+        </label>
+      </div>
+
+      <div class="summary-box">
+        <div class="summary-row"><span>Selected Plan:</span> <span id="sumPlan">None</span></div>
+        <div class="summary-row"><span>Total Amount:</span> <span id="sumPrice">₹0</span></div>
+      </div>
+
+      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
+
+      <div class="agency-info-box">
+        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Ali Dreamwork Logo" class="agency-logo-small">
+        <div class="agency-desc">Official Coin Seller for Duoo and Doran. All payments are securely processed by Ali Dreamwork.</div>
+        <hr class="support-divider">
+        <div class="support-details">
+          📧 Email: <span>alidreamwork@gmail.com</span><br>
+          📞 WhatsApp Support: <span>+91 77768 81407</span>
+        </div>
       </div>
     </div>
 
@@ -292,29 +228,6 @@
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
       document.getElementById('overlay').classList.toggle('active');
-    }
-
-    // Toggle Policy Submenu inside Sidebar
-    function toggleSubmenu() {
-      let submenu = document.getElementById('policySubmenu');
-      submenu.classList.toggle('active');
-    }
-
-    // Show specific section/page
-    function showSection(sectionId) {
-      document.getElementById('mainContainer').style.display = 'none';
-      document.getElementById('termsPage').style.display = 'none';
-      document.getElementById('refundPage').style.display = 'none';
-      document.getElementById('privacyPage').style.display = 'none';
-
-      document.getElementById(sectionId).style.display = 'block';
-      window.scrollTo(0, 0);
-    }
-
-    // Show Policy and close sidebar
-    function showPolicyPage(pageId) {
-      showSection(pageId);
-      toggleSidebar();
     }
 
     function verifyUser() {
@@ -366,4 +279,79 @@
       });
     }
 
-    function selectPlan
+    function selectPlan(element, coins, price) {
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedCoins = coins;
+      selectedPrice = price;
+
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
+    }
+
+    async function initiateGatewayPayment() {
+      var userId = document.getElementById('userId').value.trim();
+      var userPhone = document.getElementById('userPhone').value.trim();
+      var termsChecked = document.getElementById('termsCheck').checked;
+      
+      if (!userId || selectedPrice === 0 || !userPhone) { 
+        alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
+        return; 
+      }
+      if (!isVerified) {
+        alert('Please click Verify button and verify your User ID first!');
+        return;
+      }
+      if (!termsChecked) {
+        alert('Please accept the Terms & Conditions, Refund Policy and Privacy Policy to proceed!');
+        return;
+      }
+
+      var buyBtn = document.querySelector('.main-buy-btn');
+      buyBtn.innerText = "Processing...";
+      buyBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/create-cashfree-order', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            uid: userId, 
+            amount: selectedPrice, 
+            whatsapp: userPhone 
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.payment_session_id) {
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_self"
+          };
+          
+          cashfree.checkout(checkoutOptions).then(function(result) {
+            if(result.error){
+              alert(result.error.message);
+              buyBtn.innerText = "TOP-UP NOW ➔";
+              buyBtn.disabled = false;
+            }
+            if(result.redirect){
+              console.log("Payment will be redirected");
+            }
+          });
+        } else {
+          alert(data.message || 'Failed to create payment session. Please try again.');
+          buyBtn.innerText = "TOP-UP NOW ➔";
+          buyBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error("Payment error:", err);
+        alert('Server connection error. Please try again.');
+        buyBtn.innerText = "TOP-UP NOW ➔";
+        buyBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
