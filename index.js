@@ -9,8 +9,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-const SELLER_ID = 
-const API_KEY = 
+const SELLER_ID = "4851724";
+const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // Cashfree API Credentials (Test Mode)
 const CASHFREE_APP_ID = "TEST112015221202dd6b5b8e4c910a4522510211";
