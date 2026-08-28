@@ -9,14 +9,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// सभी सेंसिटिव क्रेडेंशियल्स को एनवायरनमेंट वेरिएबल्स (Environment Variables) से सुरक्षित किया गया है
-const SELLER_ID = process.env.SELLER_ID;
-const API_KEY = process.env.API_KEY;
+const SELLER_ID = 
+const API_KEY = 
 
-// Cashfree API Credentials
-const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;TEST112015221202dd6b5b8e4c910a4522510211
-const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;cfsk_ma_test_0166ef1044e42cc95f0848edb58c5f72_76bc73f6
-const CASHFREE_API_URL = process.env.CASHFREE_API_URL || "https://sandbox.cashfree.com/pg/orders";
+// Cashfree API Credentials (Test Mode)
+const CASHFREE_APP_ID = "TEST112015221202dd6b5b8e4c910a4522510211";
+const CASHFREE_SECRET_KEY = "cfsk_ma_test_0166ef1044e42cc95f0848edb58c5f72_76bc73f6";
+// जब आप लाइव (Production) पर जाएं, तो यह URL बदलकर 'https://api.cashfree.com/pg/orders' कर दें
+const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
 
 // अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
 const activeOrders = new Map();
@@ -155,6 +155,7 @@ app.post('/api/cashfree-webhook', async (req, res) => {
 
         const eventData = req.body;
         
+        // कैशफ्री वेबहुक स्ट्रक्चर के अनुसार पेमेंट सक्सेस चेक करना
         if (eventData && eventData.data && eventData.data.payment && eventData.data.payment.payment_status === "SUCCESS") {
             const orderId = eventData.data.order.order_id;
             let orderData = activeOrders.get(orderId);
