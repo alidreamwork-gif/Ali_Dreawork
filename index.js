@@ -14,8 +14,8 @@ const SELLER_ID = process.env.SELLER_ID;
 const API_KEY = process.env.API_KEY;
 
 // Cashfree API Credentials
-const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;
-const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
+const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;TEST112015221202dd6b5b8e4c910a4522510211
+const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;cfsk_ma_test_0166ef1044e42cc95f0848edb58c5f72_76bc73f6
 const CASHFREE_API_URL = process.env.CASHFREE_API_URL || "https://sandbox.cashfree.com/pg/orders";
 
 // अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
