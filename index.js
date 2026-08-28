@@ -39,7 +39,7 @@ app.post('/api/verify-user', async (req, res) => {
             sign: sign
         };
 
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', payload, {
+        const response = await axios, payload, {
             headers: { 'Content-Type': 'application/json' }
         });
 
