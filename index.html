@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Platform & E-Books Store</title>
+    <title>Ali Dream Work - Digital Store</title>
     <style>
+        * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; text-align: center; }
         
         /* Highlighted Top Navigation Bar */
         .navbar { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 18px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .navbar h1 { font-size: 22px; margin: 0; color: #ffffff; letter-spacing: 0.5px; }
+        .navbar h1 { font-size: 22px; margin: 0; color: #ffffff; letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px; }
         .nav-links { display: flex; gap: 15px; }
         
         /* Highly Visible Highlighted Buttons/Tabs */
@@ -18,8 +19,14 @@
 
         .container { max-width: 1100px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         
-        h2.section-title { color: #2c3e50; margin-bottom: 5px; font-size: 24px; }
-        p.subtitle { color: #7f8c8d; margin-bottom: 30px; }
+        /* Section Header Layout with Golden Logo & Ali Dream Work Branding */
+        .section-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
+        .golden-logo { width: 60px; height: 60px; background: linear-gradient(135deg, #f39c12, #f1c40f, #d4ac0d); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4); margin-bottom: 10px; border: 2px solid #fff; }
+        .golden-logo span { font-size: 28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        
+        .brand-subtitle { font-size: 13px; font-weight: 700; color: #d4ac0d; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+        h2.section-title { color: #2c3e50; margin: 0 0 5px 0; font-size: 24px; }
+        p.subtitle { color: #7f8c8d; margin: 0; font-size: 14px; }
         
         .products-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
         .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 240px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
@@ -42,7 +49,7 @@
 
 <!-- Highlighted Top Navigation Bar -->
 <div class="navbar">
-    <h1>Digital Platform Store</h1>
+    <h1>✨ Ali Dream Work Store</h1>
     <div class="nav-links">
         <a id="nav-books" class="active" onclick="switchSection('books')">📚 Digital E-Books</a>
         <a id="nav-coins" onclick="switchSection('coins')">⚡ Digital Top-Up Coins</a>
@@ -51,10 +58,14 @@
 
 <div class="container">
 
-    <!-- Section 1: Digital E-Books -->
+    <!-- Section 1: Digital E-Books with Golden Logo & Ali Dream Work -->
     <div id="section-books" class="section-box active">
-        <h2 class="section-title">Digital E-Books & Publications</h2>
-        <p class="subtitle">Explore our professional library of digital books, research guides, and technical publications.</p>
+        <div class="section-header">
+            <div class="golden-logo"><span>👑</span></div>
+            <div class="brand-subtitle">Ali Dream Work</div>
+            <h2 class="section-title">Digital E-Books & Publications</h2>
+            <p class="subtitle">Explore our professional library of digital books, research guides, and technical publications.</p>
+        </div>
 
         <div class="products-grid">
             <!-- Book 1: ₹200 -->
@@ -147,10 +158,14 @@
         </div>
     </div>
 
-    <!-- Section 2: Digital Top-Up Coins for Platform (Exact Plans Added) -->
+    <!-- Section 2: Digital Top-Up Coins for Platform with Golden Logo & Ali Dream Work -->
     <div id="section-coins" class="section-box">
-        <h2 class="section-title">Digital Top-Up Coins for Platform</h2>
-        <p class="subtitle">Purchase utility credits and platform top-up packages for seamless digital operations.</p>
+        <div class="section-header">
+            <div class="golden-logo"><span>👑</span></div>
+            <div class="brand-subtitle">Ali Dream Work</div>
+            <h2 class="section-title">Digital Top-Up Coins for Platform</h2>
+            <p class="subtitle">Purchase utility credits and platform top-up packages for seamless digital operations.</p>
+        </div>
 
         <div class="products-grid">
             <!-- Plan 1: ₹200 -->
