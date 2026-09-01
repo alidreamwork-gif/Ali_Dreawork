@@ -62,7 +62,10 @@
     .inline-contact-box strong { color: #1f2937; }
 
     .page-section { display: none; background: #ffffff; border: 1px solid #e5e7eb; padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
-    .page-section h2 { color: #2563eb; font-size: 18px; margin-top: 0; }
+    .page-section h2 { color: #2563eb; font-size: 18px; margin-top: 0; margin-bottom: 15px; }
+    .page-section p, .page-section ul { color: #4b5563; margin-bottom: 12px; }
+    .page-section ul { padding-left: 20px; }
+    .page-section li { margin-bottom: 6px; }
 
     .footer-note { text-align: center; font-size: 11px; color: #4b5563; margin-top: 20px; }
   </style>
@@ -70,6 +73,7 @@
 </head>
 <body>
 
+  <!-- Top Navigation Bar -->
   <div class="top-navbar">
     <div class="nav-brand">✨ Ali DreamWork E-Store</div>
     <div class="nav-buttons">
@@ -84,6 +88,7 @@
 
   <div class="container">
 
+    <!-- TOP-UP COINS PAGE -->
     <div id="page-topup" class="page-section" style="display: block;">
       <div class="header">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
@@ -168,7 +173,7 @@
             <div class="plan-badge" style="background: #d97706;">SPECIAL</div>
             <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
             <div class="plan-body">
-              <div class="plan-title">Elite Pack</div>
+              <div class="plan-title5">Elite Pack</div>
               <div class="plan-desc">328,500 E-Coins</div>
               <div class="plan-price">₹4,500</div>
             </div>
@@ -193,25 +198,57 @@
       </div>
     </div>
 
+    <!-- E-BOOKS PAGE -->
     <div id="page-ebooks" class="page-section">
       <h2>📖 Digital E-Books Library</h2>
-      <p>Explore our professional library of digital books and guides.</p>
+      <p>Explore our professional library of digital books and guides designed to help you grow your online presence and technical skills.</p>
+      <ul>
+        <li>Beginner's Web Guide & Technical Handbook</li>
+        <li>Advanced Digital Marketing & Strategy Manual</li>
+        <li>E-Commerce Mastery Blueprint</li>
+      </ul>
+      <p style="color: #d97706; font-weight: bold;">Instant access links provided immediately upon successful purchase verification.</p>
     </div>
+
+    <!-- TERMS PAGE -->
     <div id="page-terms" class="page-section">
       <h2>📜 Terms & Conditions</h2>
-      <p>All digital transactions are final.</p>
+      <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, verifying your user ID, and purchasing digital items or e-coins, you agree to comply with our service guidelines.</p>
+      <ul>
+        <li><strong>User ID Accuracy:</strong> Users must provide a valid and correct User ID before initiating any digital coin top-up. We are not responsible for credits sent to incorrect IDs entered by users.</li>
+        <li><strong>Service Usage:</strong> All digital goods, e-coins, and e-books provided are for legitimate use within designated platforms.</li>
+        <li><strong>Transaction Policy:</strong> Transactions must be completed via our official secure checkout gateway (Cashfree).</li>
+      </ul>
     </div>
+
+    <!-- PRIVACY PAGE -->
     <div id="page-privacy" class="page-section">
       <h2>🔒 Privacy Policy</h2>
-      <p>Your privacy is important to us.</p>
+      <p>Your privacy is of utmost importance to us at <strong>Ali Dreamwork</strong>.</p>
+      <ul>
+        <li><strong>Data Protection:</strong> We guarantee that <em>we do not leak, sell, or share your personal details</em> (such as your WhatsApp numbers or User IDs) with any third parties.</li>
+        <li><strong>Secure Information:</strong> All information collected from you is strictly used for order processing, delivering your digital assets securely, and customer support coordination.</li>
+        <li><strong>Payment Security:</strong> We do not store any sensitive banking credentials or payment info on our servers; all payment transactions are handled with high encryption through authorized gateways.</li>
+      </ul>
     </div>
+
+    <!-- REFUND PAGE -->
     <div id="page-refund" class="page-section">
-      <h2>🔄 Refund Policy</h2>
-      <p>All sales are final and non-refundable.</p>
+      <h2>🔄 Refund & Cancellation Policy</h2>
+      <p>At <strong>Ali Dreamwork</strong>, customer satisfaction is a priority, and we maintain a fair refund framework:</p>
+      <ul>
+        <li><strong>15-Minute Support Window:</strong> If a user faces an issue, wrong deduction, or raises a valid objection within <strong>15 minutes</strong> of completing the transaction, our support team reviews the case promptly.</li>
+        <li><strong>Eligibility for Refund:</strong> If coins or books have not been successfully utilized/credited or if an erroneous transaction occurs, eligible refunds can be processed back to the original payment source after verifying order details.</li>
+        <li><strong>Resolution Process:</strong> To claim a refund within the 15-minute window, please contact our support immediately via WhatsApp with your transaction receipt.</li>
+      </ul>
     </div>
+
+    <!-- CONTACT PAGE -->
     <div id="page-contact" class="page-section">
-      <h2>🎧 Contact Us</h2>
-      <p>Email: alidreamwork@gmail.com | WhatsApp: +91 777 688 1407</p>
+      <h2>🎧 Contact Us & Support</h2>
+      <p>Need assistance or have queries regarding your top-up? Our team is here to help 24/7.</p>
+      <p><strong>Email Support:</strong> alidreamwork@gmail.com</p>
+      <p><strong>WhatsApp Support:</strong> +91 777 688 1407</p>
     </div>
 
     <div class="footer-note">
@@ -319,22 +356,4 @@
           if (cashfree) {
             cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: "_self" });
           } else {
-            alert('Cashfree SDK not loaded properly.');
-            buyBtn.innerText = "TOP-UP NOW ➔";
-            buyBtn.disabled = false;
-          }
-        } else {
-          alert(data.message || 'Failed to create payment session.');
-          buyBtn.innerText = "TOP-UP NOW ➔";
-          buyBtn.disabled = false;
-        }
-      })
-      .catch(() => {
-        alert('Server connection error.');
-        buyBtn.innerText = "TOP-UP NOW ➔";
-        buyBtn.disabled = false;
-      });
-    }
-  </script>
-</body>
-</html>
+            alert('Cashfree
