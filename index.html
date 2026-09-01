@@ -6,15 +6,15 @@
     <title>Digital Store & Coin Top-Up Portal</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         h2 { color: #2c3e50; margin-bottom: 5px; }
         p.subtitle { color: #7f8c8d; margin-bottom: 30px; }
-        .products-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
+        .products-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
         .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 260px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
         .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 150px; object-fit: cover; background-color: #eef2f3; }
+        .product-img { width: 100%; height: 140px; object-fit: cover; background-color: #eef2f3; }
         .product-content { padding: 15px; }
-        .product-card h3 { font-size: 18px; margin: 0 0 8px 0; color: #2c3e50; }
+        .product-card h3 { font-size: 17px; margin: 0 0 8px 0; color: #2c3e50; }
         .product-card p { font-size: 13px; color: #666; margin: 0 0 15px 0; line-height: 1.4; }
         .price-row { display: flex; justify-content: space-between; align-items: center; padding: 0 15px 15px 15px; }
         .price { font-size: 18px; font-weight: bold; color: #27ae60; }
@@ -26,9 +26,9 @@
 
 <div class="container">
     <h2>Digital Products & Coin Top-Up Portal</h2>
-    <p class="subtitle">Explore our digital e-books, media resources, and instant coin top-ups.</p>
+    <p class="subtitle">Explore our digital e-books, software guides, media resources, and platform top-ups.</p>
 
-    <!-- Products Section -->
+    <!-- Products Section (5 Items) -->
     <div class="products-grid">
         
         <!-- Product 1: E-Book -->
@@ -44,7 +44,7 @@
             <button class="buy-btn" onclick="initiatePayment('E-Book Guide', 199)">Buy Now</button>
         </div>
 
-        <!-- Product 2: Digital Media Assets -->
+        <!-- Product 2: Media Assets -->
         <div class="product-card">
             <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=60" alt="Media Assets" class="product-img">
             <div class="product-content">
@@ -57,12 +57,38 @@
             <button class="buy-btn" onclick="initiatePayment('Digital Media Pack', 499)">Buy Now</button>
         </div>
 
-        <!-- Product 3: Platform Coin Top-Up -->
+        <!-- Product 3: Software Utility Tool -->
         <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&auto=format&fit=crop&q=60" alt="Software Tool" class="product-img">
+            <div class="product-content">
+                <h3>Web Automation Script</h3>
+                <p>Ready-to-use utility scripts and developer productivity software guides.</p>
+            </div>
+            <div class="price-row">
+                <span class="price">₹299</span>
+            </div>
+            <button class="buy-btn" onclick="initiatePayment('Web Automation Script', 299)">Buy Now</button>
+        </div>
+
+        <!-- Product 4: Premium Graphics Pack -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&auto=format&fit=crop&q=60" alt="Graphics Pack" class="product-img">
+            <div class="product-content">
+                <h3>UI/UX Design Kit</h3>
+                <p>Clean and modern user interface templates for digital web creators.</p>
+            </div>
+            <div class="price-row">
+                <span class="price">₹349</span>
+            </div>
+            <button class="buy-btn" onclick="initiatePayment('UI/UX Design Kit', 349)">Buy Now</button>
+        </div>
+
+        <!-- Product 5: Platform Coin Top-Up -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Platform Coins" class="product-img">
             <div class="product-content">
                 <h3>Platform Coins (Top-Up)</h3>
-                <p>Instant automated delivery of platform utility coins to your account.</p>
+                <p>Instant automated delivery of internal platform utility credits and tokens.</p>
             </div>
             <div class="price-row">
                 <span class="price">₹100</span>
@@ -76,7 +102,6 @@
 <script>
     function initiatePayment(productName, amount) {
         alert("Redirecting to secure gateway for: " + productName + " (Amount: ₹" + amount + ")");
-        // आगे चलकर यहाँ PayU या Instamojo का एपीआई कॉल जोड़ दिया जाएगा
     }
 </script>
 
