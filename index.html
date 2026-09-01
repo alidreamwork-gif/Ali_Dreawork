@@ -41,7 +41,11 @@
     .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
     .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
     .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
-    .plan-price { font-size: 13px; font-weight: bold; color: #059669; margin-top: 2px; }
+    
+    /* Price & Coins Styling */
+    .plan-price-box { font-size: 13px; margin-top: 2px; }
+    .price-highlight { font-weight: bold; color: #059669; }
+    .coins-dim { font-size: 11px; color: #6b7280; font-weight: normal; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
@@ -92,42 +96,44 @@
             <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
               <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
               <div class="plan-title">Basic E-Book</div>
-              <div class="plan-price">₹200 (14,600 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Coins)</span></div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
               <div class="plan-title">Standard E-Book</div>
-              <div class="plan-price">₹300 (21,900 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Coins)</span></div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
               <div class="plan-title">Pro E-Book</div>
-              <div class="plan-price">₹500 (36,500 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Coins)</span></div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
               <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
               <div class="plan-title">Advanced E-Book</div>
-              <div class="plan-price">₹1,000 (73,000 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Coins)</span></div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
               <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
               <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price">₹1,500 (109,500 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Coins)</span></div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
               <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
               <div class="plan-title">Mega E-Book</div>
-              <div class="plan-price">₹2,000 (146,000 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Coins)</span></div>
             </div>
+            <!-- Premium Image for Super E-Book (₹3,000) -->
             <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
-              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" class="plan-img">
+              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
               <div class="plan-title">Super E-Book</div>
-              <div class="plan-price">₹3,000 (219,000 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Coins)</span></div>
             </div>
+            <!-- Premium Image for Elite E-Book (₹4,500) -->
             <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
-              <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300" class="plan-img">
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
               <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price">₹4,500 (328,500 Coins)</div>
+              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Coins)</span></div>
             </div>
           </div>
 
