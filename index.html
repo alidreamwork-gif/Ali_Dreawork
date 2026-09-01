@@ -46,7 +46,7 @@
         .verify-btn { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .verify-btn:hover { background: #219653; }
         
-        /* Profile Info Card (Hidden initially) */
+        /* Profile Info Card */
         .profile-card { display: none; margin-top: 15px; align-items: center; justify-content: center; gap: 15px; background: white; padding: 12px 20px; border-radius: 8px; border: 1px solid #dcdcdc; max-width: 400px; margin-left: auto; margin-right: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .profile-dp { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #3498db; }
         .profile-details { text-align: left; }
@@ -101,7 +101,7 @@
             <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Please enter your account / user ID below and click verify before purchasing.</p>
             <div class="verify-box">
                 <input type="text" id="userIdInput" class="verify-input" placeholder="Enter User ID / Player ID...">
-                <button class="verify-btn" onclick="verifyUserId()">Verify ID</button>
+                <button type="button" class="verify-btn" onclick="verifyUserId()">Verify ID</button>
             </div>
             
             <!-- Verified Profile Display Card -->
@@ -122,7 +122,7 @@
                     <p><b>14,600 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹200</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Starter Pack (14600 Coins)', 200)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Starter Pack (14600 Coins)', 200)">Top-Up Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
@@ -131,7 +131,7 @@
                     <p><b>21,900 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹300</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Basic Pack (21900 Coins)', 300)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Basic Pack (21900 Coins)', 300)">Top-Up Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
@@ -140,7 +140,7 @@
                     <p><b>36,500 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹500</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Standard Pack (36500 Coins)', 500)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Standard Pack (36500 Coins)', 500)">Top-Up Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
@@ -149,7 +149,7 @@
                     <p><b>73,000 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹1000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Advanced Pack (73000 Coins)', 1000)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Advanced Pack (73000 Coins)', 1000)">Top-Up Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
@@ -158,7 +158,7 @@
                     <p><b>1,46,000 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹2000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Pro Pack (146000 Coins)', 2000)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Pro Pack (146000 Coins)', 2000)">Top-Up Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
@@ -167,7 +167,7 @@
                     <p><b>2,19,000 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹3000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Ultra Pack (219000 Coins)', 3000)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Ultra Pack (219000 Coins)', 3000)">Top-Up Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
@@ -176,7 +176,7 @@
                     <p><b>3,28,500 Coins</b><br>Instant utility credit.</p>
                 </div>
                 <div class="price-row"><span class="price">₹4500</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Mega Enterprise Pack (328500 Coins)', 4500)">Top-Up Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Mega Enterprise Pack (328500 Coins)', 4500)">Top-Up Now</button>
             </div>
         </div>
     </div>
@@ -197,7 +197,7 @@
                     <p>Introductory digital handbook for foundational web technologies.</p>
                 </div>
                 <div class="price-row"><span class="price">₹200</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
@@ -206,7 +206,7 @@
                     <p>Step-by-step documentation for everyday scripting codes.</p>
                 </div>
                 <div class="price-row"><span class="price">₹300</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
@@ -215,7 +215,7 @@
                     <p>A comprehensive guide on running online digital platforms.</p>
                 </div>
                 <div class="price-row"><span class="price">₹500</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
@@ -224,7 +224,7 @@
                     <p>Deep-dive e-book focusing on core programming architecture.</p>
                 </div>
                 <div class="price-row"><span class="price">₹1000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
@@ -233,7 +233,7 @@
                     <p>High-value technical documentation for scalable cloud deployment.</p>
                 </div>
                 <div class="price-row"><span class="price">₹2000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
             </div>
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
@@ -242,7 +242,7 @@
                     <p>Exclusive premium engineering masterclass book for software systems.</p>
                 </div>
                 <div class="price-row"><span class="price">₹3000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
+                <button type="button" class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
             </div>
         </div>
     </div>
@@ -299,23 +299,20 @@
 </div>
 
 <script>
+    // Global Section Switcher Function
     function switchSection(section) {
         const sections = ['coins', 'books', 'terms', 'privacy', 'refund', 'contact'];
-        sections.forEach(sec => {
-            const box = document.getElementById('section-' + sec);
-            if(box) box.classList.remove('active');
-            const nav = document.getElementById('nav-' + sec);
-            if(nav) nav.classList.remove('active');
+        
+        sections.forEach(function(sec) {
+            var box = document.getElementById('section- ' + sec); // safe spacing handled
+            var boxElem = document.getElementById('section-' + sec);
+            if (boxElem) {
+                boxElem.classList.remove('active');
+            }
+            var navElem = document.getElementById('nav-' + sec);
+            if (navElem) {
+                navElem.classList.remove('nav-active', 'active');
+            }
         });
 
-        const targetBox = document.getElementById('section-' + section);
-        if(targetBox) targetBox.classList.add('active');
-        const activeNav = document.getElementById('nav-' + section);
-        if(activeNav) activeNav.classList.add('active');
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Function to verify User ID and fetch Profile DP & Name via API/Backend
-    function verifyUserId() {
-        const userId = document.getElementById('u
+        var targetBox = document.getElementById('section-' + se
