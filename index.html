@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ali Dream Work - Digital Store</title>
+    <title>Ali DreamWork - Digital Store</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; text-align: center; }
@@ -19,12 +19,17 @@
 
         .container { max-width: 1100px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         
-        /* Section Header Layout with Golden Logo & Ali Dream Work Branding */
+        /* Section Header Layout with Large Golden Logo & Big Brand Name */
         .section-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
-        .golden-logo { width: 60px; height: 60px; background: linear-gradient(135deg, #f39c12, #f1c40f, #d4ac0d); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4); margin-bottom: 10px; border: 2px solid #fff; }
-        .golden-logo span { font-size: 28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
         
-        .brand-subtitle { font-size: 13px; font-weight: 700; color: #d4ac0d; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+        /* Large Golden Logo Styling */
+        .golden-logo { width: 85px; height: 85px; background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(170, 119, 28, 0.4); margin-bottom: 15px; border: 3px solid #fff; }
+        .golden-logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .golden-logo span { font-size: 38px; }
+        
+        /* Large & Prominent Brand Name */
+        .brand-title { font-size: 26px; font-weight: 800; color: #d4ac0d; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        
         h2.section-title { color: #2c3e50; margin: 0 0 5px 0; font-size: 24px; }
         p.subtitle { color: #7f8c8d; margin: 0; font-size: 14px; }
         
@@ -49,7 +54,7 @@
 
 <!-- Highlighted Top Navigation Bar -->
 <div class="navbar">
-    <h1>✨ Ali Dream Work Store</h1>
+    <h1>✨ Ali DreamWork Store</h1>
     <div class="nav-links">
         <a id="nav-books" class="active" onclick="switchSection('books')">📚 Digital E-Books</a>
         <a id="nav-coins" onclick="switchSection('coins')">⚡ Digital Top-Up Coins</a>
@@ -58,11 +63,14 @@
 
 <div class="container">
 
-    <!-- Section 1: Digital E-Books with Golden Logo & Ali Dream Work -->
+    <!-- Section 1: Digital E-Books -->
     <div id="section-books" class="section-box active">
         <div class="section-header">
-            <div class="golden-logo"><span>👑</span></div>
-            <div class="brand-subtitle">Ali Dream Work</div>
+            <!-- Golden Logo (आप यहाँ अपने गोल्डन लोगो का इमेज लिंक src में डाल सकते हैं) -->
+            <div class="golden-logo">
+                <span>👑</span>
+            </div>
+            <div class="brand-title">Ali DreamWork</div>
             <h2 class="section-title">Digital E-Books & Publications</h2>
             <p class="subtitle">Explore our professional library of digital books, research guides, and technical publications.</p>
         </div>
@@ -158,11 +166,14 @@
         </div>
     </div>
 
-    <!-- Section 2: Digital Top-Up Coins for Platform with Golden Logo & Ali Dream Work -->
+    <!-- Section 2: Digital Top-Up Coins for Platform -->
     <div id="section-coins" class="section-box">
         <div class="section-header">
-            <div class="golden-logo"><span>👑</span></div>
-            <div class="brand-subtitle">Ali Dream Work</div>
+            <!-- Golden Logo -->
+            <div class="golden-logo">
+                <span>👑</span>
+            </div>
+            <div class="brand-title">Ali DreamWork</div>
             <h2 class="section-title">Digital Top-Up Coins for Platform</h2>
             <p class="subtitle">Purchase utility credits and platform top-up packages for seamless digital operations.</p>
         </div>
