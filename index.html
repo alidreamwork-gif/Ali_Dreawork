@@ -3,61 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Store & Coin Top-Up</title>
+    <title>Digital Store & Coin Top-Up Portal</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h2 { color: #333; }
-        .products-grid { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
-        .product-card { background: #fafafa; border: 1px solid #ddd; border-radius: 6px; padding: 15px; width: 220px; margin-bottom: 15px; text-align: left; }
-        .product-card h3 { font-size: 18px; margin-bottom: 5px; color: #007bff; }
-        .product-card p { font-size: 14px; color: #666; }
-        .price { font-weight: bold; color: #28a745; margin-bottom: 10px; }
-        .buy-btn { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; width: 100%; }
-        .buy-btn:hover { background: #0056b3; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h2 { color: #2c3e50; margin-bottom: 5px; }
+        p.subtitle { color: #7f8c8d; margin-bottom: 30px; }
+        .products-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
+        .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 260px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 150px; object-fit: cover; background-color: #eef2f3; }
+        .product-content { padding: 15px; }
+        .product-card h3 { font-size: 18px; margin: 0 0 8px 0; color: #2c3e50; }
+        .product-card p { font-size: 13px; color: #666; margin: 0 0 15px 0; line-height: 1.4; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; padding: 0 15px 15px 15px; }
+        .price { font-size: 18px; font-weight: bold; color: #27ae60; }
+        .buy-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: calc(100% - 30px); margin: 0 15px 15px 15px; font-weight: bold; }
+        .buy-btn:hover { background: #2980b9; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Digital Products & Coin Top-Up Portal</h2>
-    <p>Explore our digital media, e-books, and top-up your account instantly.</p>
+    <p class="subtitle">Explore our digital e-books, media resources, and instant coin top-ups.</p>
 
-    <!-- Digital Products Section -->
+    <!-- Products Section -->
     <div class="products-grid">
-        <!-- Product 1: E-Book / Digital Guide -->
+        
+        <!-- Product 1: E-Book -->
         <div class="product-card">
-            <h3>Digital E-Book Guide</h3>
-            <p>Comprehensive guide to web tools and digital resources.</p>
-            <div class="price">₹199</div>
-            <button class="buy-btn" onclick="initiatePayment('E-Book', 199)">Buy Now</button>
+            <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book Guide" class="product-img">
+            <div class="product-content">
+                <h3>Digital E-Book Guide</h3>
+                <p>Comprehensive guide to web tools, programming resources, and digital tips.</p>
+            </div>
+            <div class="price-row">
+                <span class="price">₹199</span>
+            </div>
+            <button class="buy-btn" onclick="initiatePayment('E-Book Guide', 199)">Buy Now</button>
         </div>
 
-        <!-- Product 2: Digital Media Pack -->
+        <!-- Product 2: Digital Media Assets -->
         <div class="product-card">
-            <h3>Digital Media Assets</h3>
-            <p>High-quality digital media files and templates.</p>
-            <div class="price">₹499</div>
-            <button class="buy-btn" onclick="initiatePayment('Media Pack', 499)">Buy Now</button>
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=60" alt="Media Assets" class="product-img">
+            <div class="product-content">
+                <h3>Digital Media Assets</h3>
+                <p>High-resolution digital graphics, media templates, and creative assets.</p>
+            </div>
+            <div class="price-row">
+                <span class="price">₹499</span>
+            </div>
+            <button class="buy-btn" onclick="initiatePayment('Digital Media Pack', 499)">Buy Now</button>
         </div>
 
-        <!-- Product 3: Coin Top-Up -->
+        <!-- Product 3: Platform Coin Top-Up -->
         <div class="product-card">
-            <h3>Platform Coins (Top-Up)</h3>
-            <p>Instant delivery of platform utility coins.</p>
-            <div class="price">₹100</div>
+            <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <div class="product-content">
+                <h3>Platform Coins (Top-Up)</h3>
+                <p>Instant automated delivery of platform utility coins to your account.</p>
+            </div>
+            <div class="price-row">
+                <span class="price">₹100</span>
+            </div>
             <button class="buy-btn" onclick="initiatePayment('Coin Top-Up', 100)">Top-Up Now</button>
         </div>
+
     </div>
 </div>
 
 <script>
     function initiatePayment(productName, amount) {
-        // यहाँ आपका पेमेंट गेटवे (PayU / Instamojo) का API इंटीग्रेशन ट्रिगर होगा
-        alert("Initiating payment for " + productName + " of Amount: ₹" + amount);
-        
-        // उदाहरण के लिए, अपने backend endpoint पर रिक्वेस्ट भेजने का कोड यहाँ आएगा:
-        // fetch('/create-order', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({item: productName, price: amount}) })
+        alert("Redirecting to secure gateway for: " + productName + " (Amount: ₹" + amount + ")");
+        // आगे चलकर यहाँ PayU या Instamojo का एपीआई कॉल जोड़ दिया जाएगा
     }
 </script>
 
