@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Platform & Coin Top-Up Portal</title>
+    <title>Digital E-Books & Publications Store</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; text-align: center; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         h2 { color: #2c3e50; margin-bottom: 5px; }
         p.subtitle { color: #7f8c8d; margin-bottom: 30px; }
         .products-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
-        .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 260px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+        .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 240px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
         .product-card:hover { transform: translateY(-5px); }
         .product-img { width: 100%; height: 140px; object-fit: cover; background-color: #eef2f3; }
         .product-content { padding: 15px; }
-        .product-card h3 { font-size: 17px; margin: 0 0 8px 0; color: #2c3e50; }
-        .product-card p { font-size: 13px; color: #666; margin: 0 0 15px 0; line-height: 1.4; }
+        .product-card h3 { font-size: 16px; margin: 0 0 8px 0; color: #2c3e50; }
+        .product-card p { font-size: 12px; color: #666; margin: 0 0 15px 0; line-height: 1.4; }
         .price-row { display: flex; justify-content: space-between; align-items: center; padding: 0 15px 15px 15px; }
         .price { font-size: 18px; font-weight: bold; color: #27ae60; }
         .buy-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: calc(100% - 30px); margin: 0 15px 15px 15px; font-weight: bold; }
@@ -25,83 +25,106 @@
 <body>
 
 <div class="container">
-    <h2>Digital Platform & Coin Top-Up Portal</h2>
-    <p class="subtitle">Select your preferred digital asset or platform coin top-up package.</p>
+    <h2>Digital E-Books & Publications Store</h2>
+    <p class="subtitle">Explore our professional library of digital books, research guides, and advanced technical publications.</p>
 
-    <!-- Products & Coin Packs Section -->
+    <!-- Products Grid (8 Digital E-Books with Specified Prices) -->
     <div class="products-grid">
         
-        <!-- Pack 1: Starter Coin Top-Up -->
+        <!-- Book 1: ₹200 -->
         <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
             <div class="product-content">
-                <h3>Starter Coin Pack</h3>
-                <p>Instant automated delivery of platform utility coins to your account.</p>
+                <h3>Beginner's Web Guide</h3>
+                <p>Introductory digital handbook for foundational web technologies and basics.</p>
             </div>
-            <div class="price-row">
-                <span class="price">₹100</span>
-            </div>
-            <button class="buy-btn" onclick="initiatePayment('Starter Coin Pack (₹100)', 100)">Top-Up Now</button>
+            <div class="price-row"><span class="price">₹200</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
         </div>
 
-        <!-- Pack 2: Basic Coin Top-Up -->
+        <!-- Book 2: ₹300 -->
         <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
             <div class="product-content">
-                <h3>Basic Coin Pack</h3>
-                <p>Instant automated delivery of platform utility coins to your account.</p>
+                <h3>Digital Scripting Manual</h3>
+                <p>Step-by-step documentation for understanding everyday scripting codes.</p>
             </div>
-            <div class="price-row">
-                <span class="price">₹200</span>
-            </div>
-            <button class="buy-btn" onclick="initiatePayment('Basic Coin Pack (₹200)', 200)">Top-Up Now</button>
+            <div class="price-row"><span class="price">₹300</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
         </div>
 
-        <!-- Pack 3: Standard Coin Top-Up -->
+        <!-- Book 3: ₹500 -->
         <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
             <div class="product-content">
-                <h3>Standard Coin Pack</h3>
-                <p>Instant automated delivery of platform utility coins to your account.</p>
+                <h3>Modern E-Commerce Strategy</h3>
+                <p>A comprehensive guide on running digital platforms and online stores efficiently.</p>
             </div>
-            <div class="price-row">
-                <span class="price">₹300</span>
-            </div>
-            <button class="buy-btn" onclick="initiatePayment('Standard Coin Pack (₹300)', 300)">Top-Up Now</button>
+            <div class="price-row"><span class="price">₹500</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
         </div>
 
-        <!-- Pack 4: Advanced Coin Top-Up -->
+        <!-- Book 4: ₹1000 -->
         <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
             <div class="product-content">
-                <h3>Advanced Coin Pack</h3>
-                <p>Instant automated delivery of platform utility coins to your account.</p>
+                <h3>Advanced Data Structures</h3>
+                <p>Deep-dive e-book focusing on core programming architecture and data management.</p>
             </div>
-            <div class="price-row">
-                <span class="price">₹500</span>
-            </div>
-            <button class="buy-btn" onclick="initiatePayment('Advanced Coin Pack (₹500)', 500)">Top-Up Now</button>
+            <div class="price-row"><span class="price">₹1000</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
         </div>
 
-        <!-- Pack 5: Pro/Max Coin Top-Up -->
+        <!-- Book 5: ₹1500 -->
         <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Top-Up" class="product-img">
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
             <div class="product-content">
-                <h3>Pro Coin Top-Up Pack</h3>
-                <p>Instant automated delivery of platform utility coins to your account.</p>
+                <h3>Enterprise Security Handbook</h3>
+                <p>Professional resource guide for securing digital applications and data privacy.</p>
             </div>
-            <div class="price-row">
-                <span class="price">₹1000</span>
+            <div class="price-row"><span class="price">₹1500</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Enterprise Security Handbook', 1500)">Buy Now</button>
+        </div>
+
+        <!-- Book 6: ₹2000 -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+            <div class="product-content">
+                <h3>Cloud Architecture Blueprint</h3>
+                <p>High-value technical documentation for scalable cloud deployment and services.</p>
             </div>
-            <button class="buy-btn" onclick="initiatePayment('Pro Coin Top-Up Pack (₹1000)', 1000)">Top-Up Now</button>
+            <div class="price-row"><span class="price">₹2000</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
+        </div>
+
+        <!-- Book 7: ₹3000 (Costly Book) -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="Costly E-Book" class="product-img">
+            <div class="product-content">
+                <h3>Mastering System Design</h3>
+                <p>Exclusive premium engineering masterclass book for high-scale software systems.</p>
+            </div>
+            <div class="price-row"><span class="price">₹3000</span></div>
+            <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
+        </div>
+
+        <!-- Book 8: ₹5000 (High-End Costly Book) -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&auto=format&fit=crop&q=60" alt="Costly E-Book" class="product-img">
+            <div class="product-content">
+                <h3>AI & Machine Learning Compendium</h3>
+                <p>Ultimate research-grade compendium and enterprise toolkit for advanced AI modeling.</p>
+            </div>
+            <div class="price-row"><span class="price">₹5000</span></div>
+            <button class="buy-btn" onclick="initiatePayment('AI Compendium', 5000)">Buy Now</button>
         </div>
 
     </div>
 </div>
 
 <script>
-    function initiatePayment(packageName, amount) {
-        alert("Redirecting to secure gateway for: " + packageName + " (Amount: ₹" + amount + ")");
+    function initiatePayment(bookName, amount) {
+        alert("Proceeding to secure checkout for: " + bookName + " (Price: ₹" + amount + ")");
     }
 </script>
 
