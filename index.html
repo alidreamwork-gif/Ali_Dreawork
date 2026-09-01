@@ -3,63 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ali Dreamwork - Digital Top-Up Panel</title>
+  <title>Ali Dreamwork - Digital Store</title>
   <style>
     :root {
-      --bg-color: #0b0f19;
-      --card-bg: #111827;
-      --border-color: #1f2937;
-      --gold: #f3ba2f;
-      --text-main: #f9fafb;
-      --text-sub: #9ca3af;
-      --accent-purple: #7c3aed;
-      --green: #10b981;
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --border-color: #e5e7eb;
+      --gold: #d97706;
+      --text-main: #1f2937;
+      --text-sub: #4b5563;
+      --accent-blue: #2563eb;
+      --green: #059669;
     }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    
+    /* Top Navigation Header bar */
+    .top-navbar { width: 100%; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 15px 10px; box-sizing: border-box; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .nav-brand { color: #fff; font-size: 18px; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .nav-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 480px; margin: 0 auto; }
+    .nav-btn { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-btn.active, .nav-btn:hover { background: #ffffff; color: #1e40af; border-color: #ffffff; }
+
     .container { width: 100%; max-width: 480px; padding: 20px 15px; box-sizing: border-box; }
     
     /* Header */
     .header { text-align: center; margin-bottom: 20px; }
-    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 8px; box-shadow: 0 0 15px rgba(243, 186, 47, 0.3); }
-    .brand-title { font-size: 22px; font-weight: bold; color: var(--gold); letter-spacing: 0.5px; }
+    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 8px; box-shadow: 0 0 15px rgba(217, 119, 6, 0.2); background: white; }
+    .brand-title { font-size: 22px; font-weight: bold; color: var(--text-main); letter-spacing: 0.5px; }
     .sub-title { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
-    .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: var(--text-sub); margin-top: 10px; }
+    .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: var(--text-sub); margin-top: 10px; font-weight: 600; }
 
     /* Card Box */
-    .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.5); margin-bottom: 15px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 15px; }
     
     label { display: block; margin-top: 14px; font-weight: 600; color: var(--text-main); text-align: left; font-size: 13px; }
     .id-group { display: flex; gap: 8px; margin-top: 6px; }
-    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border-color); color: white; border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
-    input:focus { border-color: var(--accent-purple); }
+    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); color: #1f2937; border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
+    input:focus { border-color: var(--accent-blue); background: #fff; }
     
     .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; transition: 0.2s; }
     .verify-btn:hover { opacity: 0.9; }
 
     /* Verified Box */
-    #verifyResult { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; background: #064e3b; border: 1px solid #059669; }
+    #verifyResult { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; background: #ecfdf5; border: 1px solid #10b981; }
     .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); }
     .user-info-text { display: flex; flex-direction: column; }
-    .user-name { font-weight: bold; font-size: 15px; color: white; }
-    .user-id-small { font-size: 12px; color: #34d399; }
+    .user-name { font-weight: bold; font-size: 15px; color: #065f46; }
+    .user-id-small { font-size: 12px; color: #047857; }
 
-    /* Plans Grid */
-    .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 10px; text-align: left; display: flex; align-items: center; gap: 6px; }
-    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .plan-card { border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 6px; cursor: pointer; transition: 0.2s; background: #0b0f19; text-align: center; position: relative; }
-    .plan-card.selected { border: 2px solid var(--green); background: rgba(16, 185, 129, 0.1); }
-    .plan-coins { font-size: 12px; font-weight: bold; color: var(--text-main); }
-    .plan-price { font-size: 14px; font-weight: bold; color: var(--green); margin-top: 4px; }
-    .plan-badge { position: absolute; top: -6px; right: 4px; background: var(--accent-purple); color: white; font-size: 8px; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+    /* Plans Grid with Image Style */
+    .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 12px; text-align: left; display: flex; align-items: center; gap: 6px; }
+    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .plan-card { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; background: #ffffff; text-align: left; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .plan-card.selected { border: 2px solid var(--green); background: rgba(5, 150, 105, 0.02); }
+    
+    .plan-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+    .plan-body { padding: 10px; }
+    .plan-title { font-size: 13px; font-weight: bold; color: var(--text-main); margin-bottom: 2px; }
+    .plan-desc { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
+    .plan-price { font-size: 14px; font-weight: bold; color: var(--green); }
+    .plan-badge { position: absolute; top: 8px; right: 8px; background: var(--accent-blue); color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 2; }
 
     /* Summary Box */
-    .summary-box { background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
+    .summary-box { background: #f9fafb; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-sub); }
-    .summary-row span:last-child { color: white; font-weight: 600; }
+    .summary-row span:last-child { color: var(--text-main); font-weight: 600; }
 
     /* Main Action Button */
-    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: 0.2s; }
+    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: 0.2s; }
     .main-buy-btn:hover { opacity: 0.95; }
+
+    /* Sections Content View */
+    .content-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
+    .content-section h2 { color: var(--accent-blue); font-size: 18px; margin-top: 0; }
 
     .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
   </style>
@@ -68,66 +84,148 @@
 </head>
 <body>
 
+  <!-- Top Navigation Bar -->
+  <div class="top-navbar">
+    <div class="nav-brand">✨ Ali DreamWork E-Store</div>
+    <div class="nav-buttons">
+      <button class="nav-btn active" onclick="switchTab('topup', this)">⚡ Top-Up Coins</button>
+      <button class="nav-btn" onclick="switchTab('ebooks', this)">📖 E-Books</button>
+      <button class="nav-btn" onclick="switchTab('terms', this)">Terms</button>
+      <button class="nav-btn" onclick="switchTab('privacy', this)">Privacy</button>
+      <button class="nav-btn" onclick="switchTab('refund', this)">Refund Policy</button>
+      <button class="nav-btn" onclick="switchTab('contact', this)">Contact Us</button>
+    </div>
+  </div>
+
   <div class="container">
-    <div class="header">
-      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-      <div class="brand-title">ALI DREAMWORK</div>
-      <div class="sub-title">DIGITAL TOP-UP COINS PANEL</div>
-      <div class="features-top">
-        <span>🔒 100% Secure</span>
-        <span>⚡ Instant Delivery</span>
-        <span>🎧 24/7 Support</span>
+
+    <!-- TOP-UP COINS TAB (Default Active) -->
+    <div id="tab-topup" class="tab-content">
+      <div class="header">
+        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
+        <div class="brand-title">ALI DREAMWORK</div>
+        <div class="sub-title">DIGITAL E-COINS PANEL</div>
+        <div class="features-top">
+          <span>🔒 100% Secure</span>
+          <span>⚡ Instant Delivery</span>
+          <span>🎧 24/7 Support</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Enter your User ID:</label>
+        <div class="id-group">
+          <input type="text" id="userId" placeholder="Enter User ID">
+          <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
+        </div>
+        <div id="verifyResult"></div>
+
+        <div class="section-title">🪙 SELECT E-COIN TOP-UP PLAN</div>
+        <div class="plans-grid">
+          <div class="plan-card" onclick="selectPlan(this, 730, 10)">
+            <div class="plan-badge" style="background: #ef4444;">TEST</div>
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
+            <div class="plan-body">
+              <div class="plan-title">Starter Pack</div>
+              <div class="plan-desc">730 E-Coins</div>
+              <div class="plan-price">₹10</div>
+            </div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
+            <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
+            <div class="plan-body">
+              <div class="plan-title">Basic Pack</div>
+              <div class="plan-desc">14,600 E-Coins</div>
+              <div class="plan-price">₹200</div>
+            </div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
+            <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
+            <div class="plan-body">
+              <div class="plan-title">Standard Pack</div>
+              <div class="plan-desc">21,900 E-Coins</div>
+              <div class="plan-price">₹300</div>
+            </div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
+            <div class="plan-badge">POPULAR</div>
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
+            <div class="plan-body">
+              <div class="plan-title">Pro Pack</div>
+              <div class="plan-desc">36,500 E-Coins</div>
+              <div class="plan-price">₹500</div>
+            </div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
+            <div class="plan-body">
+              <div class="plan-title">Advanced Pack</div>
+              <div class="plan-desc">73,000 E-Coins</div>
+              <div class="plan-price">₹1,000</div>
+            </div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
+            <div class="plan-badge" style="background: #059669;">BEST</div>
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
+            <div class="plan-body">
+              <div class="plan-title">Ultimate Pack</div>
+              <div class="plan-desc">109,500 E-Coins</div>
+              <div class="plan-price">₹1,500</div>
+            </div>
+          </div>
+        </div>
+
+        <label style="margin-top: 18px;">Enter your WhatsApp Number:</label>
+        <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+
+        <div class="summary-box">
+          <div class="summary-row"><span>Selected Plan:</span> <span id="sumPlan">None</span></div>
+          <div class="summary-row"><span>Total Amount:</span> <span id="sumPrice">₹0</span></div>
+        </div>
+
+        <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
       </div>
     </div>
 
-    <div class="card">
-      <label>Enter your User ID:</label>
-      <div class="id-group">
-        <input type="text" id="userId" placeholder="Enter User ID">
-        <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
-      </div>
-      <div id="verifyResult"></div>
+    <!-- E-BOOKS TAB -->
+    <div id="tab-ebooks" class="content-section">
+      <h2>📖 Digital E-Books Library</h2>
+      <p>Explore our professional library of digital books and guides designed to scale your technical knowledge and online presence.</p>
+      <ul>
+        <li>Beginner's Web Guide & Technical Handbook</li>
+        <li>Advanced Digital Marketing & Strategy Manual</li>
+        <li>E-Commerce Mastery Blueprint</li>
+      </ul>
+      <p style="color: var(--gold); font-weight: bold;">Coming soon with direct download links after purchase!</p>
+    </div>
 
-      <div class="section-title">🪙 SELECT COIN TOP-UP PLAN</div>
-      <div class="plans-grid">
-        <div class="plan-card" onclick="selectPlan(this, 730, 10)">
-          <div class="plan-badge" style="background: #ef4444;">TEST</div>
-          <div class="plan-coins">730 Coins</div>
-          <div class="plan-price">₹10</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
-          <div class="plan-coins">14,600 Coins</div>
-          <div class="plan-price">₹200</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
-          <div class="plan-coins">21,900 Coins</div>
-          <div class="plan-price">₹300</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
-          <div class="plan-badge">POPULAR</div>
-          <div class="plan-coins">36,500 Coins</div>
-          <div class="plan-price">₹500</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
-          <div class="plan-coins">73,000 Coins</div>
-          <div class="plan-price">₹1,000</div>
-        </div>
-        <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
-          <div class="plan-badge">BEST</div>
-          <div class="plan-coins">109,500 Coins</div>
-          <div class="plan-price">₹1,500</div>
-        </div>
-      </div>
+    <!-- TERMS TAB -->
+    <div id="tab-terms" class="content-section">
+      <h2>📜 Terms & Conditions</h2>
+      <p>Welcome to Ali Dreamwork. By accessing our platform and purchasing digital top-up e-coins or e-books, you agree to comply with and be bound by the following terms and conditions.</p>
+      <p>All digital transactions are final. Users must ensure their User ID is correctly entered before completing any transaction to avoid delivery delays.</p>
+    </div>
 
-      <label style="margin-top: 18px;">Enter your WhatsApp Number:</label>
-      <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+    <!-- PRIVACY TAB -->
+    <div id="tab-privacy" class="content-section">
+      <h2>🔒 Privacy Policy</h2>
+      <p>Your privacy is important to us. Ali Dreamwork collects basic contact information (like WhatsApp numbers and User IDs) solely for processing and delivering your digital items securely.</p>
+      <p>We do not store or share your payment credentials, as all secure transactions are handled through authorized payment gateways like Cashfree.</p>
+    </div>
 
-      <div class="summary-box">
-        <div class="summary-row"><span>Selected Plan:</span> <span id="sumPlan">None</span></div>
-        <div class="summary-row"><span>Total Amount:</span> <span id="sumPrice">₹0</span></div>
-      </div>
+    <!-- REFUND POLICY TAB -->
+    <div id="tab-refund" class="content-section">
+      <h2>🔄 Refund & Cancellation Policy</h2>
+      <p>Due to the digital nature of E-Coins and E-Books, all sales are final and non-refundable once the digital assets have been successfully credited to the specified User ID.</p>
+      <p>If a transaction fails or gets deducted erroneously while the items are not credited, please reach out via our Support/Contact section with your order proof for a prompt resolution.</p>
+    </div>
 
-      <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
+    <!-- CONTACT US TAB -->
+    <div id="tab-contact" class="content-section">
+      <h2>🎧 Contact Us & Support System</h2>
+      <p>Need assistance or facing issues with your top-up? Our support team is available 24/7 to help you out.</p>
+      <p><strong>Email Support:</strong> support@alidreamwork.com</p>
+      <p><strong>WhatsApp Support:</strong> Available via the panel or directly reach out to our helpdesk.</p>
     </div>
 
     <div class="footer-note">
@@ -137,12 +235,28 @@
 
   <script>
     const cashfree = Cashfree({
-      mode: "production" // चूंकि आपकी लाइव एपीआई की है, इसलिए mode 'production' रहेगा
+      mode: "production"
     });
 
     let selectedCoins = 0;
     let selectedPrice = 0;
     let isVerified = false;
+
+    // Navigation Tab Switcher Logic
+    function switchTab(tabName, btnElement) {
+      document.querySelectorAll('.tab-content, .content-section').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      if (tabName === 'topup') {
+        document.getElementById('tab-topup').style.display = 'block';
+      } else {
+        document.getElementById('tab-' + tabName).style.display = 'block';
+      }
+      btnElement.classList.add('active');
+    }
+
+    // Default show topup tab
+    document.getElementById('tab-topup').style.display = 'block';
 
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
@@ -166,8 +280,8 @@
       .then(data => {
         if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
           isVerified = true;
-          resBox.style.background = "#064e3b";
-          resBox.style.border = "1px solid #059669";
+          resBox.style.background = "#ecfdf5";
+          resBox.style.border = "1px solid #10b981";
           var userInfo = data.data || data;
           var nick = userInfo.nick || userInfo.name || "Verified User";
           var avatar = userInfo.avatar || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
@@ -180,16 +294,16 @@
           `;
         } else {
           isVerified = false;
-          resBox.style.background = "#7f1d1d";
+          resBox.style.background = "#fef2f2";
           resBox.style.border = "1px solid #ef4444";
-          resBox.innerHTML = "<span style='color: #fca5a5;'>❌ User not found or invalid ID!</span>";
+          resBox.innerHTML = "<span style='color: #dc2626;'>❌ User not found or invalid ID!</span>";
         }
       })
       .catch(err => {
         isVerified = false;
-        resBox.style.background = "#7f1d1d";
+        resBox.style.background = "#fef2f2";
         resBox.style.border = "1px solid #ef4444";
-        resBox.innerHTML = "<span style='color: #fca5a5;'>❌ Connection failed to server!</span>";
+        resBox.innerHTML = "<span style='color: #dc2626;'>❌ Connection failed to server!</span>";
       });
     }
 
@@ -199,7 +313,7 @@
       selectedCoins = coins;
       selectedPrice = price;
 
-      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " E-Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
