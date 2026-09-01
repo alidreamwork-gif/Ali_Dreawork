@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    /* सभी एलिमेंट्स के लिए बॉक्स-साइजिंग और पॉइंटर-इवेंट्स को पूरी तरह चालू रखना */
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      pointer-events: auto !important; 
+    }
     
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -19,7 +23,7 @@
       min-height: 100vh; 
     }
     
-    /* Master Wrapper to keep top header and lower panel in exact same width alignment */
+    /* मास्टर रैपर जिससे नेविगेशन और नीचे का पैनल दोनों एक बराबर साइज (480px) में रहें */
     .app-wrapper {
       width: 100%;
       max-width: 480px;
@@ -161,7 +165,7 @@
 <body>
 
   <div class="app-wrapper">
-    <!-- Top Navigation Bar Inside Wrapper to Match Exact Width -->
+    <!-- Top Navigation Bar -->
     <div class="top-navbar">
       <div class="nav-brand">✨ Ali DreamWork E-Store</div>
       <div class="nav-buttons">
@@ -437,6 +441,4 @@
 
     function initiateGatewayPayment() {
       var userIdEl = document.getElementById('userId');
-      var userPhoneEl = document.getElementById('userPhone');
-      if (!userIdEl || !userPhoneEl) return;
-      var userId = userIdEl.value.trim();
+      var userPhoneEl = document.getElementById(
