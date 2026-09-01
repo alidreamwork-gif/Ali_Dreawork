@@ -18,7 +18,7 @@ const CASHFREE_SECRET_KEY = "cfsk_ma_prod_a8e5b898b6d34c6505ce3c5b2efe41ff_3fbb9
 // Production Live URL for Cashfree Orders
 const CASHFREE_API_URL = "https://api.cashfree.com/pg/orders";
 
-// अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
+// अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins جوड़ने के लिए)
 const activeOrders = new Map();
 
 // 1. User Verification Endpoint
@@ -66,14 +66,16 @@ app.post('/api/create-cashfree-order', async (req, res) => {
         let coins = 0;
         const amtNum = Math.round(Number(amount));
 
-        // अमाउंट के हिसाब से कॉइन्स तय करें
-        if (amtNum === 10) coins = 730;
-        else if (amtNum === 200) coins = 14600;
+        // नए प्लान्स के अनुसार कॉइन्स की सटीक वैल्यू
+        if (amtNum === 200) coins = 14600;
         else if (amtNum === 300) coins = 21900;
         else if (amtNum === 500) coins = 36500;
         else if (amtNum === 1000) coins = 73000;
         else if (amtNum === 1500) coins = 109500;
-        else coins = amtNum * 73;
+        else if (amtNum === 2000) coins = 146000;
+        else if (amtNum === 3000) coins = 219000;
+        else if (amtNum === 4500) coins = 328500;
+        else coins = amtNum * 73; // डिफ़ॉल्ट कैलकुलेशन
 
         // ऑर्डर को मेमोरी में सेव करें ताकि वेबहुक आने पर UID मिल सके
         activeOrders.set(orderId, { uid: uid.toString().trim(), coins: coins });
