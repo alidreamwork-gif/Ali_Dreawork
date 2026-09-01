@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   <style>
-    /* सभी एलिमेंट्स के लिए बॉक्स-साइजिंग और पॉइंटर-इवेंट्स को पूरी तरह चालू रखना */
+    /* बेसिक रिसेट और पॉइंटर इवेंट्स इनेबल */
     *, *::before, *::after { 
       box-sizing: border-box; 
       pointer-events: auto !important; 
@@ -23,7 +23,6 @@
       min-height: 100vh; 
     }
     
-    /* मास्टर रैपर जिससे नेविगेशन और नीचे का पैनल दोनों एक बराबर साइज (480px) में रहें */
     .app-wrapper {
       width: 100%;
       max-width: 480px;
@@ -40,6 +39,9 @@
       padding: 15px 12px; 
       text-align: center; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
     .nav-brand { color: #fff; font-size: 17px; font-weight: bold; margin-bottom: 10px; }
     .nav-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
@@ -122,12 +124,12 @@
     .plan-card:hover { border-color: #9ca3af; }
     .plan-card.selected { border: 2px solid #059669; background: rgba(5, 150, 105, 0.02); }
     
-    .plan-img { width: 100%; height: 100px; object-fit: cover; border-bottom: 1px solid #e5e7eb; pointer-events: none; }
-    .plan-body { padding: 10px; pointer-events: none; }
+    .plan-img { width: 100%; height: 100px; object-fit: cover; border-bottom: 1px solid #e5e7eb; }
+    .plan-body { padding: 10px; }
     .plan-title { font-size: 13px; font-weight: bold; color: #1f2937; margin-bottom: 2px; }
     .plan-desc { font-size: 11px; color: #4b5563; margin-bottom: 6px; }
     .plan-price { font-size: 14px; font-weight: bold; color: #059669; }
-    .plan-badge { position: absolute; top: 8px; right: 8px; background: #2563eb; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .plan-badge { position: absolute; top: 8px; right: 8px; background: #2563eb; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 2; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #4b5563; }
@@ -363,12 +365,15 @@
 
     function switchPage(pageName, btnElement) {
       try {
-        document.querySelectorAll('.page-section').forEach(function(sec) {
-          sec.style.display = 'none';
-        });
-        document.querySelectorAll('.nav-btn').forEach(function(btn) {
-          btn.classList.remove('active');
-        });
+        var sections = document.querySelectorAll('.page-section');
+        for (var i = 0; i < sections.length; i++) {
+          sections[i].style.display = 'none';
+        }
+
+        var buttons = document.querySelectorAll('.nav-btn');
+        for (var j = 0; j < buttons.length; j++) {
+          buttons[j].classList.remove('active');
+        }
 
         var target = document.getElementById('page-' + pageName);
         if (target) {
@@ -377,7 +382,10 @@
         if (btnElement) {
           btnElement.classList.add('active');
         }
-      } catch(err) {}
+        window.scrollTo(0, 0);
+      } catch(err) {
+        console.log(err);
+      }
     }
 
     function verifyUser() {
@@ -425,9 +433,10 @@
     }
 
     function selectPlan(element, coins, price) {
-      document.querySelectorAll('.plan-card').forEach(function(c) {
-        c.classList.remove('selected');
-      });
+      var cards = document.querySelectorAll('.plan-card');
+      for (var i = 0; i < cards.length; i++) {
+        cards[i].classList.remove('selected');
+      }
       element.classList.add('selected');
       
       selectedCoins = coins;
@@ -440,5 +449,3 @@
     }
 
     function initiateGatewayPayment() {
-      var userIdEl = document.getElementById('userId');
-      var userPhoneEl = document.getElementById(
