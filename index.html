@@ -92,22 +92,42 @@
             <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
               <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
               <div class="plan-title">Basic E-Book</div>
-              <div class="plan-price">₹200 (14.6K Coins)</div>
+              <div class="plan-price">₹200 (14,600 Coins)</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
+              <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
+              <div class="plan-title">Standard E-Book</div>
+              <div class="plan-price">₹300 (21,900 Coins)</div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
               <div class="plan-title">Pro E-Book</div>
-              <div class="plan-price">₹500 (36.5K Coins)</div>
+              <div class="plan-price">₹500 (36,500 Coins)</div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
               <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
               <div class="plan-title">Advanced E-Book</div>
-              <div class="plan-price">₹1,000 (73K Coins)</div>
+              <div class="plan-price">₹1,000 (73,000 Coins)</div>
             </div>
             <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
               <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
               <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price">₹1,500 (109K Coins)</div>
+              <div class="plan-price">₹1,500 (109,500 Coins)</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
+              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
+              <div class="plan-title">Mega E-Book</div>
+              <div class="plan-price">₹2,000 (146,000 Coins)</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" class="plan-img">
+              <div class="plan-title">Super E-Book</div>
+              <div class="plan-price">₹3,000 (219,000 Coins)</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
+              <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300" class="plan-img">
+              <div class="plan-title">Elite E-Book</div>
+              <div class="plan-price">₹4,500 (328,500 Coins)</div>
             </div>
           </div>
 
@@ -130,6 +150,7 @@
         <ul>
           <li>Beginner's Web Guide & Technical Handbook</li>
           <li>Advanced Digital Marketing Strategy Manual</li>
+          <li>E-Commerce Mastery Blueprint</li>
         </ul>
       </div>
 
@@ -174,23 +195,17 @@
   </div>
 
   <script>
-    // Tab switching function
     function changeTab(tabId, btnElement) {
-      // Hide all sections
       var sections = document.querySelectorAll('.page-section');
       for (var i = 0; i < sections.length; i++) {
         sections[i].classList.remove('active-page');
       }
 
-      // Remove active class from buttons
       var buttons = document.querySelectorAll('.nav-btn');
       for (var j = 0; j < buttons.length; j++) {
         buttons[j].classList.remove('active');
       }
 
-      // Show selected section
-      var target = document.getElementById('tab-tabular') || document.getElementById('tab-' + tabId);
-      // Safe targeted element
       var activeTarget = document.getElementById('tab-' + tabId);
       if (activeTarget) {
         activeTarget.classList.add('active-page');
@@ -269,7 +284,6 @@
         return;
       }
 
-      // Cashfree integration call
       fetch('/api/create-cashfree-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
