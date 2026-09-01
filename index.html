@@ -105,7 +105,7 @@
   <div class="container">
 
     <!-- TOP-UP COINS TAB (Default Active) -->
-    <div id="tab-topup" class="tab-content">
+    <div id="tab-topup" class="tab-content" style="display: block;">
       <div class="header">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
         <div class="brand-title">ALI DREAMWORK</div>
@@ -214,7 +214,6 @@
 
         <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
 
-        <!-- Contact Us Section added right below Top-Up button -->
         <div class="inline-contact-box">
           <p><strong>Contact Us:</strong></p>
           <p>Email: alidreamwork@gmail.com</p>
@@ -224,7 +223,7 @@
     </div>
 
     <!-- E-BOOKS TAB -->
-    <div id="tab-ebooks" class="content-section">
+    <div id="tab-ebooks" class="content-section" style="display: none;">
       <h2>📖 Digital E-Books Library</h2>
       <p>Explore our professional library of digital books and guides designed to scale your technical knowledge and online presence.</p>
       <ul>
@@ -236,28 +235,28 @@
     </div>
 
     <!-- TERMS TAB -->
-    <div id="tab-terms" class="content-section">
+    <div id="tab-terms" class="content-section" style="display: none;">
       <h2>📜 Terms & Conditions</h2>
       <p>Welcome to Ali Dreamwork. By accessing our platform and purchasing digital top-up e-coins or e-books, you agree to comply with and be bound by the following terms and conditions.</p>
       <p>All digital transactions are final. Users must ensure their User ID is correctly entered before completing any transaction to avoid delivery delays.</p>
     </div>
 
     <!-- PRIVACY TAB -->
-    <div id="tab-privacy" class="content-section">
+    <div id="tab-privacy" class="content-section" style="display: none;">
       <h2>🔒 Privacy Policy</h2>
       <p>Your privacy is important to us. Ali Dreamwork collects basic contact information (like WhatsApp numbers and User IDs) solely for processing and delivering your digital items securely.</p>
       <p>We do not store or share your payment credentials, as all secure transactions are handled through authorized payment gateways like Cashfree.</p>
     </div>
 
     <!-- REFUND POLICY TAB -->
-    <div id="tab-refund" class="content-section">
+    <div id="tab-refund" class="content-section" style="display: none;">
       <h2>🔄 Refund & Cancellation Policy</h2>
       <p>Due to the digital nature of E-Coins and E-Books, all sales are final and non-refundable once the digital assets have been successfully credited to the specified User ID.</p>
       <p>If a transaction fails or gets deducted erroneously while the items are not credited, please reach out via our Support/Contact section with your order proof for a prompt resolution.</p>
     </div>
 
     <!-- CONTACT US TAB -->
-    <div id="tab-contact" class="content-section">
+    <div id="tab-contact" class="content-section" style="display: none;">
       <h2>🎧 Contact Us & Support System</h2>
       <p>Need assistance or facing issues with your top-up? Our support team is available 24/7 to help you out.</p>
       <p><strong>Email Support:</strong> alidreamwork@gmail.com</p>
@@ -280,19 +279,28 @@
 
     // Navigation Tab Switcher Logic
     function switchTab(tabName, btnElement) {
-      document.querySelectorAll('.tab-content, .content-section').forEach(el => el.style.display = 'none');
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.content-section').forEach(el => el.style.display = 'none');
+      
+      // Remove active class from all nav buttons
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
+      // Show selected tab
       if (tabName === 'topup') {
         document.getElementById('tab-topup').style.display = 'block';
       } else {
-        document.getElementById('tab-' + tabName).style.display = 'block';
+        const targetSection = document.getElementById('tab-' + tabName);
+        if (targetSection) {
+          targetSection.style.display = 'block';
+        }
       }
-      btnElement.classList.add('active');
+      
+      // Highlight clicked button
+      if (btnElement) {
+        btnElement.classList.add('active');
+      }
     }
-
-    // Default show topup tab
-    document.getElementById('tab-topup').style.display = 'block';
 
     function verifyUser() {
       var uid = document.getElementById('userId').value.trim();
@@ -373,15 +381,4 @@
       try {
         const response = await fetch('/api/create-cashfree-order', {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            uid: userId, 
-            amount: selectedPrice, 
-            whatsapp: userPhone 
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.success && data.payment_session_id) {
-          let checkoutOptions = {
+          headers: { "Content-Type": "a
