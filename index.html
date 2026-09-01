@@ -77,16 +77,6 @@
     .content-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
     .content-section h2 { color: var(--accent-blue); font-size: 18px; margin-top: 0; }
 
-    /* E-Books Grid Styles */
-    .ebooks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-    .ebook-card { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fff; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
-    .ebook-img { width: 100%; height: 120px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
-    .ebook-body { padding: 10px; }
-    .ebook-title { font-size: 12px; font-weight: bold; color: var(--text-main); margin-bottom: 4px; }
-    .ebook-price { font-size: 13px; font-weight: bold; color: var(--green); margin-bottom: 8px; }
-    .ebook-buy-btn { width: 100%; background: var(--accent-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
-    .ebook-buy-btn:hover { opacity: 0.9; }
-
     .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
   </style>
   <!-- Cashfree JS SDK -->
@@ -199,62 +189,14 @@
 
     <!-- E-BOOKS TAB -->
     <div id="tab-ebooks" class="content-section">
-      <h2>📖 Digital E-Books Catalog</h2>
-      <p style="font-size: 13px; color: var(--text-sub);">Explore our professional library of digital books and guides. Instant download link will be provided after successful payment.</p>
-      
-      <div class="ebooks-grid">
-        <!-- E-Book 1 -->
-        <div class="ebook-card">
-          <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop&q=60" class="ebook-img" alt="EBook">
-          <div class="ebook-body">
-            <div class="ebook-title">Beginner's Web Guide</div>
-            <div class="ebook-price">₹200</div>
-            <button class="ebook-buy-btn" onclick="buyEBook('Beginner\'s Web Guide', 200)">Buy Now</button>
-          </div>
-        </div>
-
-        <!-- E-Book 2 -->
-        <div class="ebook-card">
-          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&auto=format&fit=crop&q=60" class="ebook-img" alt="EBook">
-          <div class="ebook-body">
-            <div class="ebook-title">Digital Marketing Manual</div>
-            <div class="ebook-price">₹300</div>
-            <button class="ebook-buy-btn" onclick="buyEBook('Digital Marketing Manual', 300)">Buy Now</button>
-          </div>
-        </div>
-
-        <!-- E-Book 3 -->
-        <div class="ebook-card">
-          <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&auto=format&fit=crop&q=60" class="ebook-img" alt="EBook">
-          <div class="ebook-body">
-            <div class="ebook-title">E-Commerce Mastery</div>
-            <div class="ebook-price">₹500</div>
-            <button class="ebook-buy-btn" onclick="buyEBook('E-Commerce Mastery', 500)">Buy Now</button>
-          </div>
-        </div>
-
-        <!-- E-Book 4 -->
-        <div class="ebook-card">
-          <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&auto=format&fit=crop&q=60" class="ebook-img" alt="EBook">
-          <div class="ebook-body">
-            <div class="ebook-title">Advanced Coding Handbook</div>
-            <div class="ebook-price">₹1,000</div>
-            <button class="ebook-buy-btn" onclick="buyEBook('Advanced Coding Handbook', 1000)">Buy Now</button>
-          </div>
-        </div>
-
-        <!-- E-Book 5 -->
-        <div class="ebook-card" style="grid-column: span 2;">
-          <div style="display: flex;">
-            <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b67?w=400&auto=format&fit=crop&q=60" class="ebook-img" style="width: 40%; height: auto;" alt="EBook">
-            <div class="ebook-body" style="width: 60%; display: flex; flex-direction: column; justify-content: center;">
-              <div class="ebook-title" style="font-size: 14px;">Ultimate Business Empire Blueprint</div>
-              <div class="ebook-price">₹1,500</div>
-              <button class="ebook-buy-btn" onclick="buyEBook('Ultimate Business Empire Blueprint', 1500)">Buy Now</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2>📖 Digital E-Books Library</h2>
+      <p>Explore our professional library of digital books and guides designed to scale your technical knowledge and online presence.</p>
+      <ul>
+        <li>Beginner's Web Guide & Technical Handbook</li>
+        <li>Advanced Digital Marketing & Strategy Manual</li>
+        <li>E-Commerce Mastery Blueprint</li>
+      </ul>
+      <p style="color: var(--gold); font-weight: bold;">Coming soon with direct download links after purchase!</p>
     </div>
 
     <!-- TERMS TAB -->
@@ -274,16 +216,16 @@
     <!-- REFUND POLICY TAB -->
     <div id="tab-refund" class="content-section">
       <h2>🔄 Refund & Cancellation Policy</h2>
-      <p>Due to the digital nature of E-Coins and E-Books, all sales are final and non-refundable once the digital assets have been successfully credited to the specified User ID or download link provided.</p>
-      <p>If a transaction fails or gets deducted erroneously while items are not delivered, please reach out via our Support/Contact section with your order proof for a prompt resolution.</p>
+      <p>Due to the digital nature of E-Coins and E-Books, all sales are final and non-refundable once the digital assets have been successfully credited to the specified User ID.</p>
+      <p>If a transaction fails or gets deducted erroneously while the items are not credited, please reach out via our Support/Contact section with your order proof for a prompt resolution.</p>
     </div>
 
     <!-- CONTACT US TAB -->
     <div id="tab-contact" class="content-section">
       <h2>🎧 Contact Us & Support System</h2>
-      <p>Need assistance or facing issues with your order? Our support team is available 24/7 to help you out.</p>
-      <p><strong>Email Support:</strong> alidreamwork@gmail.com</p>
-      <p><strong>WhatsApp Support:</strong> +91 7776881407</p>
+      <p>Need assistance or facing issues with your top-up? Our support team is available 24/7 to help you out.</p>
+      <p><strong>Email Support:</strong> support@alidreamwork.com</p>
+      <p><strong>WhatsApp Support:</strong> Available via the panel or directly reach out to our helpdesk.</p>
     </div>
 
     <div class="footer-note">
@@ -359,3 +301,70 @@
       })
       .catch(err => {
         isVerified = false;
+        resBox.style.background = "#fef2f2";
+        resBox.style.border = "1px solid #ef4444";
+        resBox.innerHTML = "<span style='color: #dc2626;'>❌ Connection failed to server!</span>";
+      });
+    }
+
+    function selectPlan(element, coins, price) {
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedCoins = coins;
+      selectedPrice = price;
+
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " E-Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
+    }
+
+    async function initiateGatewayPayment() {
+      var userId = document.getElementById('userId').value.trim();
+      var userPhone = document.getElementById('userPhone').value.trim();
+      
+      if (!userId || selectedPrice === 0 || !userPhone) { 
+        alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
+        return; 
+      }
+      if (!isVerified) {
+        alert('Please click Verify button and verify your User ID first!');
+        return;
+      }
+
+      var buyBtn = document.querySelector('.main-buy-btn');
+      buyBtn.innerText = "Processing...";
+      buyBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/create-cashfree-order', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            uid: userId, 
+            amount: selectedPrice, 
+            whatsapp: userPhone 
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.payment_session_id) {
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_self"
+          };
+          cashfree.checkout(checkoutOptions);
+        } else {
+          alert(data.message || 'Failed to create payment session. Please try again.');
+          buyBtn.innerText = "TOP-UP NOW ➔";
+          buyBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error("Payment error:", err);
+        alert('Server connection error. Please try again.');
+        buyBtn.innerText = "TOP-UP NOW ➔";
+        buyBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
