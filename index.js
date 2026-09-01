@@ -15,12 +15,13 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // Cashfree API Credentials (Test Mode)
 const CASHFREE_APP_ID = "TEST112015221202dd6b5b8e4c910a4522510211";
 const CASHFREE_SECRET_KEY = "cfsk_ma_test_0166ef1044e42cc95f0848edb58c5f72_76bc73f6";
+// जब आप लाइव (Production) पर जाएं, तो यह URL बदलकर 'https://api.cashfree.com/pg/orders' कर दें
 const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
 
-// अस्थायी आर्डर स्टोरेज
+// अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
 const activeOrders = new Map();
 
-// 1. User Verification Endpoint (Security Protected for Testing Mode)
+// 1. User Verification Endpoint
 app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
@@ -29,25 +30,6 @@ app.post('/api/verify-user', async (req, res) => {
         }
         const cleanUid = uid.toString().trim();
         
-        // सुरक्षा नियम: चेकिंग टीम के अलावा कोई भी असली यूजर आईडी वेरीफाई न हो पाए
-        if (cleanUid !== "12345" && cleanUid !== "111" && cleanUid !== "000") {
-            return res.status(200).json({ status: 400, message: "User not found or invalid ID!" });
-        }
-
-        // अगर चेकिंग टीम की टेस्ट आईडी है, तो उन्हें पास दिखाने के लिए डमी रिस्पॉन्स दें
-        if (cleanUid === "12345" || cleanUid === "111" || cleanUid === "000") {
-            return res.status(200).json({
-                status: 200,
-                code: 200,
-                success: true,
-                data: {
-                    nick: "Test Merchant User",
-                    avatar: "https://i.ibb.co/21P3nGZR/logo.jpg",
-                    uid: cleanUid
-                }
-            });
-        }
-
         const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
         const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
 
@@ -64,7 +46,10 @@ app.post('/api/verify-user', async (req, res) => {
         return res.json(response.data);
     } catch (error) {
         console.error("API Error Response:", error.response ? error.response.data : error.message);
-        return res.status(200).json({ status: 400, message: "User not found or invalid ID!" });
+        if (error.response && error.response.data) {
+            return res.status(200).json(error.response.data);
+        }
+        return res.status(500).json({ status: 400, message: "User not found or invalid ID!" });
     }
 });
 
@@ -77,16 +62,11 @@ app.post('/api/create-cashfree-order', async (req, res) => {
             return res.status(400).json({ success: false, message: "UID and Amount are required" });
         }
 
-        // सुरक्षा जांच: केवल टेस्ट आईडी पर ही आर्डर बनने दें
-        const cleanUid = uid.toString().trim();
-        if (cleanUid !== "12345" && cleanUid !== "111" && cleanUid !== "000") {
-            return res.status(400).json({ success: false, message: "Invalid User ID for payment processing!" });
-        }
-
         const orderId = "ORD_" + Date.now();
         let coins = 0;
         const amtNum = Math.round(Number(amount));
 
+        // अमाउंट के हिसाब से कॉइन्स तय करें
         if (amtNum === 10) coins = 730;
         else if (amtNum === 200) coins = 14600;
         else if (amtNum === 300) coins = 21900;
@@ -95,16 +75,17 @@ app.post('/api/create-cashfree-order', async (req, res) => {
         else if (amtNum === 1500) coins = 109500;
         else coins = amtNum * 73;
 
-        activeOrders.set(orderId, { uid: cleanUid, coins: coins });
+        // ऑर्डर को मेमोरी में सेव करें ताकि वेबहुक आने पर UID मिल सके
+        activeOrders.set(orderId, { uid: uid.toString().trim(), coins: coins });
 
         const cashfreePayload = {
             order_id: orderId,
             order_amount: Number(amount).toFixed(2),
             order_currency: "INR",
             customer_details: {
-                customer_id: cleanUid,
+                customer_id: uid.toString().trim(),
                 customer_phone: whatsapp ? whatsapp.toString() : "9999999999",
-                customer_email: `${cleanUid}@duoo.live`
+                customer_email: `${uid}@duoo.live`
             },
             order_meta: {
                 return_url: `https://duoo-bot.onrender.com/?order_id=${orderId}`
@@ -174,6 +155,7 @@ app.post('/api/cashfree-webhook', async (req, res) => {
 
         const eventData = req.body;
         
+        // कैशफ्री वेबहुक स्ट्रक्चर के अनुसार पेमेंट सक्सेस चेक करना
         if (eventData && eventData.data && eventData.data.payment && eventData.data.payment.payment_status === "SUCCESS") {
             const orderId = eventData.data.order.order_id;
             let orderData = activeOrders.get(orderId);
