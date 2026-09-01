@@ -5,96 +5,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   <style>
-    :root {
-      --bg-color: #f3f4f6;
-      --card-bg: #ffffff;
-      --border-color: #e5e7eb;
-      --gold: #d97706;
-      --text-main: #1f2937;
-      --text-sub: #4b5563;
-      --accent-blue: #2563eb;
-      --green: #059669;
-    }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; pointer-events: auto !important; }
     
-    .top-navbar { width: 100%; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 15px 10px; box-sizing: border-box; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .nav-brand { color: #fff; font-size: 18px; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .top-navbar { width: 100%; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 15px 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; z-index: 100; }
+    .nav-brand { color: #fff; font-size: 18px; font-weight: bold; margin-bottom: 12px; }
     .nav-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 480px; margin: 0 auto; }
-    .nav-btn { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-    .nav-btn.active, .nav-btn:hover { background: #ffffff; color: #1e40af; border-color: #ffffff; }
+    .nav-btn { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; pointer-events: auto; }
+    .nav-btn.active, .nav-btn:hover { background: #ffffff; color: #1e40af; }
 
-    .container { width: 100%; max-width: 480px; padding: 20px 15px; box-sizing: border-box; }
+    .container { width: 100%; max-width: 480px; padding: 20px 15px; position: relative; z-index: 10; }
     
     .header { text-align: center; margin-bottom: 20px; }
-    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 8px; box-shadow: 0 0 15px rgba(217, 119, 6, 0.2); background: white; }
-    .brand-title { font-size: 22px; font-weight: bold; color: var(--text-main); letter-spacing: 0.5px; }
-    .sub-title { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
-    .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: var(--text-sub); margin-top: 10px; font-weight: 600; }
+    .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid #d97706; margin-bottom: 8px; background: white; }
+    .brand-title { font-size: 22px; font-weight: bold; color: #1f2937; }
+    .sub-title { font-size: 13px; color: #4b5563; margin-top: 4px; }
+    .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: #4b5563; margin-top: 10px; font-weight: 600; }
 
-    .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 15px; }
+    .card { background: #ffffff; border: 1px solid #e5e7eb; padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; z-index: 20; }
     
-    label { display: block; margin-top: 14px; font-weight: 600; color: var(--text-main); text-align: left; font-size: 13px; }
+    label { display: block; margin-top: 14px; font-weight: 600; color: #1f2937; text-align: left; font-size: 13px; }
     .id-group { display: flex; gap: 8px; margin-top: 6px; }
-    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); color: #1f2937; border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
-    input:focus { border-color: var(--accent-blue); background: #fff; }
+    input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; color: #1f2937; border-radius: 10px; font-size: 14px; outline: none; pointer-events: auto !important; }
+    input:focus { border-color: #2563eb; background: #fff; }
     
-    .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; }
+    .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; pointer-events: auto !important; }
     .verify-btn:hover { opacity: 0.9; }
 
     #verifyResult { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; background: #ecfdf5; border: 1px solid #10b981; }
-    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); }
+    .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #d97706; }
     .user-info-text { display: flex; flex-direction: column; }
     .user-name { font-weight: bold; font-size: 15px; color: #065f46; }
     .user-id-small { font-size: 12px; color: #047857; }
 
-    .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 12px; text-align: left; display: flex; align-items: center; gap: 6px; }
+    .section-title { font-size: 14px; font-weight: bold; color: #d97706; margin-top: 18px; margin-bottom: 12px; text-align: left; }
     .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .plan-card { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; background: #ffffff; text-align: left; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .plan-card.selected { border: 2px solid var(--green); background: rgba(5, 150, 105, 0.02); }
+    .plan-card { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; cursor: pointer !important; background: #ffffff; text-align: left; position: relative; pointer-events: auto !important; }
+    .plan-card.selected { border: 2px solid #059669; background: rgba(5, 150, 105, 0.02); }
     
-    .plan-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+    .plan-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid #e5e7eb; }
     .plan-body { padding: 10px; }
-    .plan-title { font-size: 13px; font-weight: bold; color: var(--text-main); margin-bottom: 2px; }
-    .plan-desc { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
-    .plan-price { font-size: 14px; font-weight: bold; color: var(--green); }
-    .plan-badge { position: absolute; top: 8px; right: 8px; background: var(--accent-blue); color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 2; }
+    .plan-title { font-size: 13px; font-weight: bold; color: #1f2937; margin-bottom: 2px; }
+    .plan-desc { font-size: 11px; color: #4b5563; margin-bottom: 8px; }
+    .plan-price { font-size: 14px; font-weight: bold; color: #059669; }
+    .plan-badge { position: absolute; top: 8px; right: 8px; background: #2563eb; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
 
-    .summary-box { background: #f9fafb; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-sub); }
-    .summary-row span:last-child { color: var(--text-main); font-weight: 600; }
+    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #4b5563; }
+    .summary-row span:last-child { color: #1f2937; font-weight: 600; }
 
-    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer !important; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); pointer-events: auto !important; }
     .main-buy-btn:hover { opacity: 0.95; }
 
-    .inline-contact-box { margin-top: 15px; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; color: var(--text-sub); text-align: center; }
+    .inline-contact-box { margin-top: 15px; padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 12px; color: #4b5563; text-align: center; }
     .inline-contact-box p { margin: 4px 0; }
-    .inline-contact-box strong { color: var(--text-main); }
+    .inline-contact-box strong { color: #1f2937; }
 
-    .page-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
-    .page-section h2 { color: var(--accent-blue); font-size: 18px; margin-top: 0; }
+    .page-section { display: none; background: #ffffff; border: 1px solid #e5e7eb; padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
+    .page-section h2 { color: #2563eb; font-size: 18px; margin-top: 0; }
 
-    .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
+    .footer-note { text-align: center; font-size: 11px; color: #4b5563; margin-top: 20px; }
   </style>
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
   <div class="top-navbar">
     <div class="nav-brand">✨ Ali DreamWork E-Store</div>
     <div class="nav-buttons">
-      <button class="nav-btn active" type="button" onclick="switchPage('topup', this)">⚡Digital Top-Up e Coins</button>
+      <button class="nav-btn active" type="button" onclick="switchPage('topup', this)">⚡ Digital Top-Up</button>
       <button class="nav-btn" type="button" onclick="switchPage('ebooks', this)">📖 E-Books</button>
       <button class="nav-btn" type="button" onclick="switchPage('terms', this)">Terms</button>
       <button class="nav-btn" type="button" onclick="switchPage('privacy', this)">Privacy</button>
-      <button class="nav-btn" type="button" onclick="switchPage('refund', this)">Refund Policy</button>
-      <button class="nav-btn" type="button" onclick="switchPage('contact', this)">Contact Us</button>
+      <button class="nav-btn" type="button" onclick="switchPage('refund', this)">Refund</button>
+      <button class="nav-btn" type="button" onclick="switchPage('contact', this)">Contact</button>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- TOP-UP COINS PAGE -->
     <div id="page-topup" class="page-section" style="display: block;">
       <div class="header">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
@@ -204,47 +193,29 @@
       </div>
     </div>
 
-    <!-- E-BOOKS PAGE -->
     <div id="page-ebooks" class="page-section">
       <h2>📖 Digital E-Books Library</h2>
-      <p>Explore our professional library of digital books and guides designed to scale your technical knowledge and online presence.</p>
-      <ul>
-        <li>Beginner's Web Guide & Technical Handbook</li>
-        <li>Advanced Digital Marketing & Strategy Manual</li>
-        <li>E-Commerce Mastery Blueprint</li>
-      </ul>
-      <p style="color: var(--gold); font-weight: bold;">Coming soon with direct download links after purchase!</p>
+      <p>Explore our professional library of digital books and guides.</p>
     </div>
-
-    <!-- TERMS PAGE -->
     <div id="page-terms" class="page-section">
       <h2>📜 Terms & Conditions</h2>
-      <p>Welcome to Ali Dreamwork. By accessing our platform and purchasing digital top-up e-coins or e-books, you agree to comply with and be bound by the following terms and conditions.</p>
-      <p>All digital transactions are final. Users must ensure their User ID is correctly entered before completing any transaction to avoid delivery delays.</p>
+      <p>All digital transactions are final.</p>
     </div>
-
-    <!-- PRIVACY PAGE -->
     <div id="page-privacy" class="page-section">
       <h2>🔒 Privacy Policy</h2>
-      <p>Your privacy is important to us. Ali Dreamwork collects basic contact information (like WhatsApp numbers and User IDs) solely for processing and delivering your digital items securely.</p>
+      <p>Your privacy is important to us.</p>
     </div>
-
-    <!-- REFUND PAGE -->
     <div id="page-refund" class="page-section">
-      <h2>🔄 Refund & Cancellation Policy</h2>
-      <p>Due to the digital nature of E-Coins and E-Books, all sales are final and non-refundable once the digital assets have been successfully credited to the specified User ID.</p>
+      <h2>🔄 Refund Policy</h2>
+      <p>All sales are final and non-refundable.</p>
     </div>
-
-    <!-- CONTACT PAGE -->
     <div id="page-contact" class="page-section">
-      <h2>🎧 Contact Us & Support System</h2>
-      <p>Need assistance or facing issues with your top-up? Our support team is available 24/7 to help you out.</p>
-      <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-      <p><strong>WhatsApp:</strong> +91 777 688 1407</p>
+      <h2>🎧 Contact Us</h2>
+      <p>Email: alidreamwork@gmail.com | WhatsApp: +91 777 688 1407</p>
     </div>
 
     <div class="footer-note">
-      © 2026 Ali Dreamwork. All rights reserved. Secure payments powered by Cashfree.
+      © 2026 Ali Dreamwork. All rights reserved.
     </div>
   </div>
 
@@ -252,46 +223,24 @@
     let cashfree;
     try {
       cashfree = Cashfree({ mode: "production" });
-    } catch(e) {
-      console.log("Cashfree SDK init error:", e);
-    }
+    } catch(e) {}
 
     let selectedCoins = 0;
     let selectedPrice = 0;
     let isVerified = false;
 
-    // Safe Page Switcher
     function switchPage(pageName, btnElement) {
-      try {
-        const sections = document.querySelectorAll('.page-section');
-        sections.forEach(function(sec) {
-          sec.style.display = 'none';
-        });
+      document.querySelectorAll('.page-section').forEach(sec => sec.style.display = 'none');
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
-        const buttons = document.querySelectorAll('.nav-btn');
-        buttons.forEach(function(btn) {
-          btn.classList.remove('active');
-        });
-
-        const target = document.getElementById('page- ' + pageName) || document.getElementById('page-' + pageName);
-        if (target) {
-          target.style.display = 'block';
-        }
-
-        if (btnElement) {
-          btnElement.classList.add('active');
-        }
-      } catch(err) {
-        console.error("Tab switch error:", err);
-      }
+      const target = document.getElementById('page-' + pageName);
+      if (target) target.style.display = 'block';
+      if (btnElement) btnElement.classList.add('active');
     }
 
     function verifyUser() {
-      var uidInput = document.getElementById('userId');
-      var resBox = document.getElementById('verifyResult');
-      
-      if (!uidInput) return;
-      var uid = uidInput.value.trim();
+      const uid = document.getElementById('userId').value.trim();
+      const resBox = document.getElementById('verifyResult');
       
       if (!uid) {
         alert('Please enter User ID first!');
@@ -299,7 +248,6 @@
       }
 
       resBox.style.display = "flex";
-      resBox.className = "";
       resBox.innerHTML = "⏳ Verifying user from server...";
 
       fetch('/api/verify-user', {
@@ -307,16 +255,16 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid })
       })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
+      .then(res => res.json())
+      .then(data => {
         if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
           isVerified = true;
           resBox.style.background = "#ecfdf5";
           resBox.style.border = "1px solid #10b981";
-          var userInfo = data.data || data;
-          var nick = userInfo.nick || userInfo.name || "Verified User";
-          var avatar = userInfo.avatar || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" alt="DP"><div class="user-info-text"><span class="user-name">' + nick + '</span><span class="user-id-small">ID: ' + uid + ' (Verified Successfully ✅)</span></div>';
+          const userInfo = data.data || data;
+          const nick = userInfo.nick || userInfo.name || "Verified User";
+          const avatar = userInfo.avatar || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          resBox.innerHTML = `<img src="${avatar}" class="user-avatar" alt="DP"><div class="user-info-text"><span class="user-name">${nick}</span><span class="user-id-small">ID: ${uid} (Verified Successfully ✅)</span></div>`;
         } else {
           isVerified = false;
           resBox.style.background = "#fef2f2";
@@ -324,7 +272,7 @@
           resBox.innerHTML = "<span style='color: #dc2626;'>❌ User not found or invalid ID!</span>";
         }
       })
-      .catch(function(err) {
+      .catch(() => {
         isVerified = false;
         resBox.style.background = "#fef2f2";
         resBox.style.border = "1px solid #ef4444";
@@ -333,29 +281,19 @@
     }
 
     function selectPlan(element, coins, price) {
-      var cards = document.querySelectorAll('.plan-card');
-      cards.forEach(function(c) {
-        c.classList.remove('selected');
-      });
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
       element.classList.add('selected');
       
       selectedCoins = coins;
       selectedPrice = price;
 
-      var sumPlan = document.getElementById('sumPlan');
-      var sumPrice = document.getElementById('sumPrice');
-      
-      if (sumPlan) sumPlan.innerText = coins.toLocaleString() + " E-Coins";
-      if (sumPrice) sumPrice.innerText = "₹" + price;
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " E-Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
     function initiateGatewayPayment() {
-      var userIdEl = document.getElementById('userId');
-      var userPhoneEl = document.getElementById('userPhone');
-      
-      if (!userIdEl || !userPhoneEl) return;
-      var userId = userIdEl.value.trim();
-      var userPhone = userPhoneEl.value.trim();
+      const userId = document.getElementById('userId').value.trim();
+      const userPhone = document.getElementById('userPhone').value.trim();
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
         alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
@@ -366,37 +304,37 @@
         return;
       }
 
-      var buyBtn = document.querySelector('.main-buy-btn');
-      if (buyBtn) {
-        buyBtn.innerText = "Processing...";
-        buyBtn.disabled = true;
-      }
+      const buyBtn = document.querySelector('.main-buy-btn');
+      buyBtn.innerText = "Processing...";
+      buyBtn.disabled = true;
 
       fetch('/api/create-cashfree-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          uid: userId, 
-          amount: selectedPrice, 
-          whatsapp: userPhone 
-        })
+        body: JSON.stringify({ uid: userId, amount: selectedPrice, whatsapp: userPhone })
       })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
+      .then(res => res.json())
+      .then(data => {
         if (data.success && data.payment_session_id) {
           if (cashfree) {
-            cashfree.checkout({
-              paymentSessionId: data.payment_session_id,
-              redirectTarget: "_self"
-            });
+            cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: "_self" });
           } else {
             alert('Cashfree SDK not loaded properly.');
-            resetBuyBtn(buyBtn);
+            buyBtn.innerText = "TOP-UP NOW ➔";
+            buyBtn.disabled = false;
           }
         } else {
           alert(data.message || 'Failed to create payment session.');
-          resetBuyBtn(buyBtn);
+          buyBtn.innerText = "TOP-UP NOW ➔";
+          buyBtn.disabled = false;
         }
       })
-      .catch(function(err) {
-        console.error(
+      .catch(() => {
+        alert('Server connection error.');
+        buyBtn.innerText = "TOP-UP NOW ➔";
+        buyBtn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
