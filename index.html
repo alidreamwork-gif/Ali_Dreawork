@@ -73,6 +73,11 @@
     .main-buy-btn { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: 0.2s; }
     .main-buy-btn:hover { opacity: 0.95; }
 
+    /* Inline Contact Us Box below Top-Up Button */
+    .inline-contact-box { margin-top: 15px; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; color: var(--text-sub); text-align: center; }
+    .inline-contact-box p { margin: 4px 0; }
+    .inline-contact-box strong { color: var(--text-main); }
+
     /* Sections Content View */
     .content-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
     .content-section h2 { color: var(--accent-blue); font-size: 18px; margin-top: 0; }
@@ -88,7 +93,7 @@
   <div class="top-navbar">
     <div class="nav-brand">✨ Ali DreamWork E-Store</div>
     <div class="nav-buttons">
-      <button class="nav-btn active" onclick="switchTab('topup', this)">⚡ Top-Up Coins</button>
+      <button class="nav-btn active" onclick="switchTab('topup', this)">⚡Digital Top-Up e Coins</button>
       <button class="nav-btn" onclick="switchTab('ebooks', this)">📖 E-Books</button>
       <button class="nav-btn" onclick="switchTab('terms', this)">Terms</button>
       <button class="nav-btn" onclick="switchTab('privacy', this)">Privacy</button>
@@ -184,6 +189,13 @@
         </div>
 
         <button type="button" class="main-buy-btn" onclick="initiateGatewayPayment()">TOP-UP NOW ➔</button>
+
+        <!-- Contact Us Section added right below Top-Up button -->
+        <div class="inline-contact-box">
+          <p><strong>Contact Us:</strong></p>
+          <p>Email: alidreamwork@gmail.com</p>
+          <p>WhatsApp Support: +91 777 688 1407</p>
+        </div>
       </div>
     </div>
 
@@ -224,8 +236,8 @@
     <div id="tab-contact" class="content-section">
       <h2>🎧 Contact Us & Support System</h2>
       <p>Need assistance or facing issues with your top-up? Our support team is available 24/7 to help you out.</p>
-      <p><strong>Email Support:</strong> support@alidreamwork.com</p>
-      <p><strong>WhatsApp Support:</strong> Available via the panel or directly reach out to our helpdesk.</p>
+      <p><strong>Email Support:</strong> alidreamwork@gmail.com</p>
+      <p><strong>WhatsApp Support:</strong> +91 777 688 1407</p>
     </div>
 
     <div class="footer-note">
