@@ -17,7 +17,6 @@
     }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
     
-    /* Top Navigation Header bar */
     .top-navbar { width: 100%; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 15px 10px; box-sizing: border-box; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .nav-brand { color: #fff; font-size: 18px; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .nav-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 480px; margin: 0 auto; }
@@ -26,14 +25,12 @@
 
     .container { width: 100%; max-width: 480px; padding: 20px 15px; box-sizing: border-box; }
     
-    /* Header */
     .header { text-align: center; margin-bottom: 20px; }
     .logo-img { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 8px; box-shadow: 0 0 15px rgba(217, 119, 6, 0.2); background: white; }
     .brand-title { font-size: 22px; font-weight: bold; color: var(--text-main); letter-spacing: 0.5px; }
     .sub-title { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
     .features-top { display: flex; justify-content: center; gap: 15px; font-size: 11px; color: var(--text-sub); margin-top: 10px; font-weight: 600; }
 
-    /* Card Box */
     .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 15px; }
     
     label { display: block; margin-top: 14px; font-weight: 600; color: var(--text-main); text-align: left; font-size: 13px; }
@@ -41,17 +38,15 @@
     input[type="text"], input[type="tel"] { width: 100%; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); color: #1f2937; border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
     input:focus { border-color: var(--accent-blue); background: #fff; }
     
-    .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; transition: 0.2s; }
+    .verify-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 0 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; }
     .verify-btn:hover { opacity: 0.9; }
 
-    /* Verified Box */
     #verifyResult { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; align-items: center; gap: 12px; text-align: left; background: #ecfdf5; border: 1px solid #10b981; }
     .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); }
     .user-info-text { display: flex; flex-direction: column; }
     .user-name { font-weight: bold; font-size: 15px; color: #065f46; }
     .user-id-small { font-size: 12px; color: #047857; }
 
-    /* Plans Grid with Image Style */
     .section-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-top: 18px; margin-bottom: 12px; text-align: left; display: flex; align-items: center; gap: 6px; }
     .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .plan-card { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; background: #ffffff; text-align: left; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
@@ -64,27 +59,22 @@
     .plan-price { font-size: 14px; font-weight: bold; color: var(--green); }
     .plan-badge { position: absolute; top: 8px; right: 8px; background: var(--accent-blue); color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 2; }
 
-    /* Summary Box */
     .summary-box { background: #f9fafb; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 15px; font-size: 13px; text-align: left; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-sub); }
     .summary-row span:last-child { color: var(--text-main); font-weight: 600; }
 
-    /* Main Action Button */
-    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: 0.2s; }
+    .main-buy-btn { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
     .main-buy-btn:hover { opacity: 0.95; }
 
-    /* Inline Contact Us Box below Top-Up Button */
     .inline-contact-box { margin-top: 15px; padding: 12px; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; color: var(--text-sub); text-align: center; }
     .inline-contact-box p { margin: 4px 0; }
     .inline-contact-box strong { color: var(--text-main); }
 
-    /* Sections Content View */
-    .content-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
-    .content-section h2 { color: var(--accent-blue); font-size: 18px; margin-top: 0; }
+    .page-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; text-align: left; font-size: 14px; line-height: 1.6; }
+    .page-section h2 { color: var(--accent-blue); font-size: 18px; margin-top: 0; }
 
     .footer-note { text-align: center; font-size: 11px; color: var(--text-sub); margin-top: 20px; }
   </style>
-  <!-- Cashfree JS SDK -->
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
 <body>
@@ -93,19 +83,19 @@
   <div class="top-navbar">
     <div class="nav-brand">✨ Ali DreamWork E-Store</div>
     <div class="nav-buttons">
-      <button class="nav-btn active" onclick="switchTab('topup', this)">⚡Digital Top-Up e Coins</button>
-      <button class="nav-btn" onclick="switchTab('ebooks', this)">📖 E-Books</button>
-      <button class="nav-btn" onclick="switchTab('terms', this)">Terms</button>
-      <button class="nav-btn" onclick="switchTab('privacy', this)">Privacy</button>
-      <button class="nav-btn" onclick="switchTab('refund', this)">Refund Policy</button>
-      <button class="nav-btn" onclick="switchTab('contact', this)">Contact Us</button>
+      <button class="nav-btn active" type="button" onclick="switchPage('topup', this)">⚡Digital Top-Up e Coins</button>
+      <button class="nav-btn" type="button" onclick="switchPage('ebooks', this)">📖 E-Books</button>
+      <button class="nav-btn" type="button" onclick="switchPage('terms', this)">Terms</button>
+      <button class="nav-btn" type="button" onclick="switchPage('privacy', this)">Privacy</button>
+      <button class="nav-btn" type="button" onclick="switchPage('refund', this)">Refund Policy</button>
+      <button class="nav-btn" type="button" onclick="switchPage('contact', this)">Contact Us</button>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- TOP-UP COINS TAB (Default Active) -->
-    <div id="tab-topup" class="tab-content" style="display: block;">
+    <!-- TOP-UP COINS PAGE -->
+    <div id="page-topup" class="page-section" style="display: block;">
       <div class="header">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
         <div class="brand-title">ALI DREAMWORK</div>
@@ -127,7 +117,6 @@
 
         <div class="section-title">🪙 SELECT E-COIN TOP-UP PLAN</div>
         <div class="plans-grid">
-          <!-- Basic Pack -->
           <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
             <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
             <div class="plan-body">
@@ -136,7 +125,6 @@
               <div class="plan-price">₹200</div>
             </div>
           </div>
-          <!-- Standard Pack -->
           <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
             <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
             <div class="plan-body">
@@ -145,7 +133,6 @@
               <div class="plan-price">₹300</div>
             </div>
           </div>
-          <!-- Pro Pack -->
           <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
             <div class="plan-badge">POPULAR</div>
             <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
@@ -155,7 +142,6 @@
               <div class="plan-price">₹500</div>
             </div>
           </div>
-          <!-- Advanced Pack -->
           <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
             <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
             <div class="plan-body">
@@ -164,7 +150,6 @@
               <div class="plan-price">₹1,000</div>
             </div>
           </div>
-          <!-- Ultimate Pack -->
           <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
             <div class="plan-badge" style="background: #059669;">BEST</div>
             <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
@@ -174,7 +159,6 @@
               <div class="plan-price">₹1,500</div>
             </div>
           </div>
-          <!-- Mega Pack (₹2000) -->
           <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
             <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
             <div class="plan-body">
@@ -183,7 +167,6 @@
               <div class="plan-price">₹2,000</div>
             </div>
           </div>
-          <!-- Super Pack (₹3000) -->
           <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
             <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
             <div class="plan-body">
@@ -192,7 +175,6 @@
               <div class="plan-price">₹3,000</div>
             </div>
           </div>
-          <!-- Elite Pack (₹4500) -->
           <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
             <div class="plan-badge" style="background: #d97706;">SPECIAL</div>
             <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&auto=format&fit=crop&q=60" class="plan-img" alt="Pack">
@@ -222,8 +204,8 @@
       </div>
     </div>
 
-    <!-- E-BOOKS TAB -->
-    <div id="tab-ebooks" class="content-section" style="display: none;">
+    <!-- E-BOOKS PAGE -->
+    <div id="page-ebooks" class="page-section">
       <h2>📖 Digital E-Books Library</h2>
       <p>Explore our professional library of digital books and guides designed to scale your technical knowledge and online presence.</p>
       <ul>
@@ -234,33 +216,31 @@
       <p style="color: var(--gold); font-weight: bold;">Coming soon with direct download links after purchase!</p>
     </div>
 
-    <!-- TERMS TAB -->
-    <div id="tab-terms" class="content-section" style="display: none;">
+    <!-- TERMS PAGE -->
+    <div id="page-terms" class="page-section">
       <h2>📜 Terms & Conditions</h2>
       <p>Welcome to Ali Dreamwork. By accessing our platform and purchasing digital top-up e-coins or e-books, you agree to comply with and be bound by the following terms and conditions.</p>
       <p>All digital transactions are final. Users must ensure their User ID is correctly entered before completing any transaction to avoid delivery delays.</p>
     </div>
 
-    <!-- PRIVACY TAB -->
-    <div id="tab-privacy" class="content-section" style="display: none;">
+    <!-- PRIVACY PAGE -->
+    <div id="page-privacy" class="page-section">
       <h2>🔒 Privacy Policy</h2>
       <p>Your privacy is important to us. Ali Dreamwork collects basic contact information (like WhatsApp numbers and User IDs) solely for processing and delivering your digital items securely.</p>
-      <p>We do not store or share your payment credentials, as all secure transactions are handled through authorized payment gateways like Cashfree.</p>
     </div>
 
-    <!-- REFUND POLICY TAB -->
-    <div id="tab-refund" class="content-section" style="display: none;">
+    <!-- REFUND PAGE -->
+    <div id="page-refund" class="page-section">
       <h2>🔄 Refund & Cancellation Policy</h2>
       <p>Due to the digital nature of E-Coins and E-Books, all sales are final and non-refundable once the digital assets have been successfully credited to the specified User ID.</p>
-      <p>If a transaction fails or gets deducted erroneously while the items are not credited, please reach out via our Support/Contact section with your order proof for a prompt resolution.</p>
     </div>
 
-    <!-- CONTACT US TAB -->
-    <div id="tab-contact" class="content-section" style="display: none;">
+    <!-- CONTACT PAGE -->
+    <div id="page-contact" class="page-section">
       <h2>🎧 Contact Us & Support System</h2>
       <p>Need assistance or facing issues with your top-up? Our support team is available 24/7 to help you out.</p>
-      <p><strong>Email Support:</strong> alidreamwork@gmail.com</p>
-      <p><strong>WhatsApp Support:</strong> +91 777 688 1407</p>
+      <p><strong>Email:</strong> alidreamwork@gmail.com</p>
+      <p><strong>WhatsApp:</strong> +91 777 688 1407</p>
     </div>
 
     <div class="footer-note">
@@ -269,42 +249,49 @@
   </div>
 
   <script>
-    const cashfree = Cashfree({
-      mode: "production"
-    });
+    let cashfree;
+    try {
+      cashfree = Cashfree({ mode: "production" });
+    } catch(e) {
+      console.log("Cashfree SDK init error:", e);
+    }
 
     let selectedCoins = 0;
     let selectedPrice = 0;
     let isVerified = false;
 
-    // Navigation Tab Switcher Logic
-    function switchTab(tabName, btnElement) {
-      // Hide all tabs
-      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-      document.querySelectorAll('.content-section').forEach(el => el.style.display = 'none');
-      
-      // Remove active class from all nav buttons
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    // Safe Page Switcher
+    function switchPage(pageName, btnElement) {
+      try {
+        const sections = document.querySelectorAll('.page-section');
+        sections.forEach(function(sec) {
+          sec.style.display = 'none';
+        });
 
-      // Show selected tab
-      if (tabName === 'topup') {
-        document.getElementById('tab-topup').style.display = 'block';
-      } else {
-        const targetSection = document.getElementById('tab-' + tabName);
-        if (targetSection) {
-          targetSection.style.display = 'block';
+        const buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach(function(btn) {
+          btn.classList.remove('active');
+        });
+
+        const target = document.getElementById('page- ' + pageName) || document.getElementById('page-' + pageName);
+        if (target) {
+          target.style.display = 'block';
         }
-      }
-      
-      // Highlight clicked button
-      if (btnElement) {
-        btnElement.classList.add('active');
+
+        if (btnElement) {
+          btnElement.classList.add('active');
+        }
+      } catch(err) {
+        console.error("Tab switch error:", err);
       }
     }
 
     function verifyUser() {
-      var uid = document.getElementById('userId').value.trim();
+      var uidInput = document.getElementById('userId');
       var resBox = document.getElementById('verifyResult');
+      
+      if (!uidInput) return;
+      var uid = uidInput.value.trim();
       
       if (!uid) {
         alert('Please enter User ID first!');
@@ -320,8 +307,8 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid })
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
         if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
           isVerified = true;
           resBox.style.background = "#ecfdf5";
@@ -329,13 +316,7 @@
           var userInfo = data.data || data;
           var nick = userInfo.nick || userInfo.name || "Verified User";
           var avatar = userInfo.avatar || userInfo.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = `
-            <img src="${avatar}" class="user-avatar" alt="DP">
-            <div class="user-info-text">
-              <span class="user-name">${nick}</span>
-              <span class="user-id-small">ID: ${uid} (Verified Successfully ✅)</span>
-            </div>
-          `;
+          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" alt="DP"><div class="user-info-text"><span class="user-name">' + nick + '</span><span class="user-id-small">ID: ' + uid + ' (Verified Successfully ✅)</span></div>';
         } else {
           isVerified = false;
           resBox.style.background = "#fef2f2";
@@ -343,7 +324,7 @@
           resBox.innerHTML = "<span style='color: #dc2626;'>❌ User not found or invalid ID!</span>";
         }
       })
-      .catch(err => {
+      .catch(function(err) {
         isVerified = false;
         resBox.style.background = "#fef2f2";
         resBox.style.border = "1px solid #ef4444";
@@ -352,18 +333,29 @@
     }
 
     function selectPlan(element, coins, price) {
-      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+      var cards = document.querySelectorAll('.plan-card');
+      cards.forEach(function(c) {
+        c.classList.remove('selected');
+      });
       element.classList.add('selected');
+      
       selectedCoins = coins;
       selectedPrice = price;
 
-      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " E-Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
+      var sumPlan = document.getElementById('sumPlan');
+      var sumPrice = document.getElementById('sumPrice');
+      
+      if (sumPlan) sumPlan.innerText = coins.toLocaleString() + " E-Coins";
+      if (sumPrice) sumPrice.innerText = "₹" + price;
     }
 
-    async function initiateGatewayPayment() {
-      var userId = document.getElementById('userId').value.trim();
-      var userPhone = document.getElementById('userPhone').value.trim();
+    function initiateGatewayPayment() {
+      var userIdEl = document.getElementById('userId');
+      var userPhoneEl = document.getElementById('userPhone');
+      
+      if (!userIdEl || !userPhoneEl) return;
+      var userId = userIdEl.value.trim();
+      var userPhone = userPhoneEl.value.trim();
       
       if (!userId || selectedPrice === 0 || !userPhone) { 
         alert('Please fill User ID, select a plan & enter WhatsApp number!'); 
@@ -375,10 +367,36 @@
       }
 
       var buyBtn = document.querySelector('.main-buy-btn');
-      buyBtn.innerText = "Processing...";
-      buyBtn.disabled = true;
+      if (buyBtn) {
+        buyBtn.innerText = "Processing...";
+        buyBtn.disabled = true;
+      }
 
-      try {
-        const response = await fetch('/api/create-cashfree-order', {
-          method: "POST",
-          headers: { "Content-Type": "a
+      fetch('/api/create-cashfree-order', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          uid: userId, 
+          amount: selectedPrice, 
+          whatsapp: userPhone 
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success && data.payment_session_id) {
+          if (cashfree) {
+            cashfree.checkout({
+              paymentSessionId: data.payment_session_id,
+              redirectTarget: "_self"
+            });
+          } else {
+            alert('Cashfree SDK not loaded properly.');
+            resetBuyBtn(buyBtn);
+          }
+        } else {
+          alert(data.message || 'Failed to create payment session.');
+          resetBuyBtn(buyBtn);
+        }
+      })
+      .catch(function(err) {
+        console.error(
