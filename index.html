@@ -1,1 +1,65 @@
-This Site Under Maintenance 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Store & Coin Top-Up</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; text-align: center; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        .products-grid { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
+        .product-card { background: #fafafa; border: 1px solid #ddd; border-radius: 6px; padding: 15px; width: 220px; margin-bottom: 15px; text-align: left; }
+        .product-card h3 { font-size: 18px; margin-bottom: 5px; color: #007bff; }
+        .product-card p { font-size: 14px; color: #666; }
+        .price { font-weight: bold; color: #28a745; margin-bottom: 10px; }
+        .buy-btn { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; width: 100%; }
+        .buy-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Digital Products & Coin Top-Up Portal</h2>
+    <p>Explore our digital media, e-books, and top-up your account instantly.</p>
+
+    <!-- Digital Products Section -->
+    <div class="products-grid">
+        <!-- Product 1: E-Book / Digital Guide -->
+        <div class="product-card">
+            <h3>Digital E-Book Guide</h3>
+            <p>Comprehensive guide to web tools and digital resources.</p>
+            <div class="price">₹199</div>
+            <button class="buy-btn" onclick="initiatePayment('E-Book', 199)">Buy Now</button>
+        </div>
+
+        <!-- Product 2: Digital Media Pack -->
+        <div class="product-card">
+            <h3>Digital Media Assets</h3>
+            <p>High-quality digital media files and templates.</p>
+            <div class="price">₹499</div>
+            <button class="buy-btn" onclick="initiatePayment('Media Pack', 499)">Buy Now</button>
+        </div>
+
+        <!-- Product 3: Coin Top-Up -->
+        <div class="product-card">
+            <h3>Platform Coins (Top-Up)</h3>
+            <p>Instant delivery of platform utility coins.</p>
+            <div class="price">₹100</div>
+            <button class="buy-btn" onclick="initiatePayment('Coin Top-Up', 100)">Top-Up Now</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function initiatePayment(productName, amount) {
+        // यहाँ आपका पेमेंट गेटवे (PayU / Instamojo) का API इंटीग्रेशन ट्रिगर होगा
+        alert("Initiating payment for " + productName + " of Amount: ₹" + amount);
+        
+        // उदाहरण के लिए, अपने backend endpoint पर रिक्वेस्ट भेजने का कोड यहाँ आएगा:
+        // fetch('/create-order', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({item: productName, price: amount}) })
+    }
+</script>
+
+</body>
+</html>
