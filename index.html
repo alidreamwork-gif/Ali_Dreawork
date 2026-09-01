@@ -60,8 +60,9 @@
 <div class="navbar">
     <h1>✨ Ali DreamWork E-Store</h1>
     <div class="nav-links">
-        <a id="nav-books" class="active" onclick="switchSection('books')">📚 E-Books</a>
-        <a id="nav-coins" onclick="switchSection('coins')">⚡ Top-Up Coins</a>
+        <!-- Top-Up Coins placed first and set as active by default -->
+        <a id="nav-coins" class="active" onclick="switchSection('coins')">⚡ Top-Up Coins</a>
+        <a id="nav-books" onclick="switchSection('books')">📚 E-Books</a>
         <a id="nav-terms" onclick="switchSection('terms')">Terms</a>
         <a id="nav-privacy" onclick="switchSection('privacy')">Privacy</a>
         <a id="nav-refund" onclick="switchSection('refund')">Refund Policy</a>
@@ -71,72 +72,8 @@
 
 <div class="container">
 
-    <div id="section-books" class="section-box active">
-        <div class="section-header">
-            <div class="golden-logo"><span>👑</span></div>
-            <div class="brand-title">Ali DreamWork</div>
-            <h2 class="section-title">Digital E-Books & Publications</h2>
-            <p class="subtitle">Explore our professional library of digital books and guides.</p>
-        </div>
-        <div class="products-grid">
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-                <div class="product-content">
-                    <h3>Beginner's Web Guide</h3>
-                    <p>Introductory digital handbook for foundational web technologies.</p>
-                </div>
-                <div class="price-row"><span class="price">₹200</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-                <div class="product-content">
-                    <h3>Digital Scripting Manual</h3>
-                    <p>Step-by-step documentation for everyday scripting codes.</p>
-                </div>
-                <div class="price-row"><span class="price">₹300</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-                <div class="product-content">
-                    <h3>Modern E-Commerce Strategy</h3>
-                    <p>A comprehensive guide on running online digital platforms.</p>
-                </div>
-                <div class="price-row"><span class="price">₹500</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-                <div class="product-content">
-                    <h3>Advanced Data Structures</h3>
-                    <p>Deep-dive e-book focusing on core programming architecture.</p>
-                </div>
-                <div class="price-row"><span class="price">₹1000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-                <div class="product-content">
-                    <h3>Cloud Architecture Blueprint</h3>
-                    <p>High-value technical documentation for scalable cloud deployment.</p>
-                </div>
-                <div class="price-row"><span class="price">₹2000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-                <div class="product-content">
-                    <h3>Mastering System Design</h3>
-                    <p>Exclusive premium engineering masterclass book for software systems.</p>
-                </div>
-                <div class="price-row"><span class="price">₹3000</span></div>
-                <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="section-coins" class="section-box">
+    <!-- 1. TOP-UP COINS SECTION (Now Default Active) -->
+    <div id="section-coins" class="section-box active">
         <div class="section-header">
             <div class="golden-logo"><span>👑</span></div>
             <div class="brand-title">Ali DreamWork</div>
@@ -210,6 +147,73 @@
         </div>
     </div>
 
+    <!-- 2. E-BOOKS SECTION -->
+    <div id="section-books" class="section-box">
+        <div class="section-header">
+            <div class="golden-logo"><span>👑</span></div>
+            <div class="brand-title">Ali DreamWork</div>
+            <h2 class="section-title">Digital E-Books & Publications</h2>
+            <p class="subtitle">Explore our professional library of digital books and guides.</p>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Beginner's Web Guide</h3>
+                    <p>Introductory digital handbook for foundational web technologies.</p>
+                </div>
+                <div class="price-row"><span class="price">₹200</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Digital Scripting Manual</h3>
+                    <p>Step-by-step documentation for everyday scripting codes.</p>
+                </div>
+                <div class="price-row"><span class="price">₹300</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Modern E-Commerce Strategy</h3>
+                    <p>A comprehensive guide on running online digital platforms.</p>
+                </div>
+                <div class="price-row"><span class="price">₹500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Advanced Data Structures</h3>
+                    <p>Deep-dive e-book focusing on core programming architecture.</p>
+                </div>
+                <div class="price-row"><span class="price">₹1000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Cloud Architecture Blueprint</h3>
+                    <p>High-value technical documentation for scalable cloud deployment.</p>
+                </div>
+                <div class="price-row"><span class="price">₹2000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Mastering System Design</h3>
+                    <p>Exclusive premium engineering masterclass book for software systems.</p>
+                </div>
+                <div class="price-row"><span class="price">₹3000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. LEGAL SECTIONS -->
     <div id="section-terms" class="section-box legal-content">
         <h2>Terms & Conditions</h2>
         <p>Welcome to Ali DreamWork. By accessing our website and purchasing our digital products or top-up coins, you agree to comply with and be bound by the following terms and conditions:</p>
@@ -250,6 +254,8 @@
 
 <div class="footer">
     <div class="footer-links">
+        <a onclick="switchSection('coins')">Top-Up Coins</a> | 
+        <a onclick="switchSection('books')">E-Books</a> | 
         <a onclick="switchSection('terms')">Terms & Conditions</a> | 
         <a onclick="switchSection('privacy')">Privacy Policy</a> | 
         <a onclick="switchSection('refund')">Refund Policy</a> | 
@@ -260,14 +266,16 @@
 
 <script>
     function switchSection(section) {
-        const sections = ['books', 'coins', 'terms', 'privacy', 'refund', 'contact'];
+        const sections = ['coins', 'books', 'terms', 'privacy', 'refund', 'contact'];
         sections.forEach(sec => {
-            document.getElementById('section-' + sec).classList.remove('active');
+            const box = document.getElementById('section-' + sec);
+            if(box) box.classList.remove('active');
             const nav = document.getElementById('nav-' + sec);
             if(nav) nav.classList.remove('active');
         });
 
-        document.getElementById('section-' + section).classList.add('active');
+        const targetBox = document.getElementById('section-' + section);
+        if(targetBox) targetBox.classList.add('active');
         const activeNav = document.getElementById('nav-' + section);
         if(activeNav) activeNav.classList.add('active');
         
