@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital E-Books & Publications Store</title>
+    <title>Digital Platform & E-Books Store</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        h2 { color: #2c3e50; margin-bottom: 5px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; text-align: center; }
+        
+        /* Top Navigation Bar */
+        .navbar { background-color: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .navbar h1 { font-size: 20px; margin: 0; color: #ecf0f1; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: #bdc3c7; text-decoration: none; font-weight: 600; font-size: 15px; cursor: pointer; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: #ffffff; border-bottom: 2px solid #3498db; padding-bottom: 2px; }
+
+        .container { max-width: 1100px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        
+        h2.section-title { color: #2c3e50; margin-bottom: 5px; }
         p.subtitle { color: #7f8c8d; margin-bottom: 30px; }
+        
         .products-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
         .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 240px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
         .product-card:hover { transform: translateY(-5px); }
@@ -20,111 +30,194 @@
         .price { font-size: 18px; font-weight: bold; color: #27ae60; }
         .buy-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: calc(100% - 30px); margin: 0 15px 15px 15px; font-weight: bold; }
         .buy-btn:hover { background: #2980b9; }
+
+        /* Section Display Control */
+        .section-box { display: none; }
+        .section-box.active { display: block; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Digital E-Books & Publications Store</h2>
-    <p class="subtitle">Explore our professional library of digital books, research guides, and advanced technical publications.</p>
-
-    <!-- Products Grid (8 Digital E-Books with Specified Prices) -->
-    <div class="products-grid">
-        
-        <!-- Book 1: ₹200 -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Beginner's Web Guide</h3>
-                <p>Introductory digital handbook for foundational web technologies and basics.</p>
-            </div>
-            <div class="price-row"><span class="price">₹200</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
-        </div>
-
-        <!-- Book 2: ₹300 -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Digital Scripting Manual</h3>
-                <p>Step-by-step documentation for understanding everyday scripting codes.</p>
-            </div>
-            <div class="price-row"><span class="price">₹300</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
-        </div>
-
-        <!-- Book 3: ₹500 -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Modern E-Commerce Strategy</h3>
-                <p>A comprehensive guide on running digital platforms and online stores efficiently.</p>
-            </div>
-            <div class="price-row"><span class="price">₹500</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
-        </div>
-
-        <!-- Book 4: ₹1000 -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Advanced Data Structures</h3>
-                <p>Deep-dive e-book focusing on core programming architecture and data management.</p>
-            </div>
-            <div class="price-row"><span class="price">₹1000</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
-        </div>
-
-        <!-- Book 5: ₹1500 -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Enterprise Security Handbook</h3>
-                <p>Professional resource guide for securing digital applications and data privacy.</p>
-            </div>
-            <div class="price-row"><span class="price">₹1500</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Enterprise Security Handbook', 1500)">Buy Now</button>
-        </div>
-
-        <!-- Book 6: ₹2000 -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Cloud Architecture Blueprint</h3>
-                <p>High-value technical documentation for scalable cloud deployment and services.</p>
-            </div>
-            <div class="price-row"><span class="price">₹2000</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
-        </div>
-
-        <!-- Book 7: ₹3000 (Costly Book) -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="Costly E-Book" class="product-img">
-            <div class="product-content">
-                <h3>Mastering System Design</h3>
-                <p>Exclusive premium engineering masterclass book for high-scale software systems.</p>
-            </div>
-            <div class="price-row"><span class="price">₹3000</span></div>
-            <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
-        </div>
-
-        <!-- Book 8: ₹5000 (High-End Costly Book) -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&auto=format&fit=crop&q=60" alt="Costly E-Book" class="product-img">
-            <div class="product-content">
-                <h3>AI & Machine Learning Compendium</h3>
-                <p>Ultimate research-grade compendium and enterprise toolkit for advanced AI modeling.</p>
-            </div>
-            <div class="price-row"><span class="price">₹5000</span></div>
-            <button class="buy-btn" onclick="initiatePayment('AI Compendium', 5000)">Buy Now</button>
-        </div>
-
+<!-- Top Navigation Bar with Options -->
+<div class="navbar">
+    <h1>Digital Platform Store</h1>
+    <div class="nav-links">
+        <a id="nav-books" class="active" onclick="switchSection('books')">Digital E-Books</a>
+        <a id="nav-coins" onclick="switchSection('coins')">Digital Top-Up Coins</a>
     </div>
 </div>
 
+<div class="container">
+
+    <!-- Section 1: Digital E-Books -->
+    <div id="section-books" class="section-box active">
+        <h2 class="section-title">Digital E-Books & Publications</h2>
+        <p class="subtitle">Explore our professional library of digital books, research guides, and technical publications.</p>
+
+        <div class="products-grid">
+            <!-- Book 1: ₹200 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Beginner's Web Guide</h3>
+                    <p>Introductory digital handbook for foundational web technologies and basics.</p>
+                </div>
+                <div class="price-row"><span class="price">₹200</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
+            </div>
+
+            <!-- Book 2: ₹300 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Digital Scripting Manual</h3>
+                    <p>Step-by-step documentation for understanding everyday scripting codes.</p>
+                </div>
+                <div class="price-row"><span class="price">₹300</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
+            </div>
+
+            <!-- Book 3: ₹500 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Modern E-Commerce Strategy</h3>
+                    <p>A comprehensive guide on running digital platforms and online stores efficiently.</p>
+                </div>
+                <div class="price-row"><span class="price">₹500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
+            </div>
+
+            <!-- Book 4: ₹1000 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Advanced Data Structures</h3>
+                    <p>Deep-dive e-book focusing on core programming architecture and data management.</p>
+                </div>
+                <div class="price-row"><span class="price">₹1000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
+            </div>
+
+            <!-- Book 5: ₹1500 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Enterprise Security Handbook</h3>
+                    <p>Professional resource guide for securing digital applications and data privacy.</p>
+                </div>
+                <div class="price-row"><span class="price">₹1500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Enterprise Security Handbook', 1500)">Buy Now</button>
+            </div>
+
+            <!-- Book 6: ₹2000 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Cloud Architecture Blueprint</h3>
+                    <p>High-value technical documentation for scalable cloud deployment and services.</p>
+                </div>
+                <div class="price-row"><span class="price">₹2000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
+            </div>
+
+            <!-- Book 7: ₹3000 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="Costly E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Mastering System Design</h3>
+                    <p>Exclusive premium engineering masterclass book for high-scale software systems.</p>
+                </div>
+                <div class="price-row"><span class="price">₹3000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
+            </div>
+
+            <!-- Book 8: ₹5000 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&auto=format&fit=crop&q=60" alt="Costly E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>AI & Machine Learning Compendium</h3>
+                    <p>Ultimate research-grade compendium and enterprise toolkit for advanced AI modeling.</p>
+                </div>
+                <div class="price-row"><span class="price">₹5000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('AI Compendium', 5000)">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Digital Top-Up Coins for Platform -->
+    <div id="section-coins" class="section-box">
+        <h2 class="section-title">Digital Top-Up Coins for Platform</h2>
+        <p class="subtitle">Purchase utility credits and platform top-up packages for seamless digital operations.</p>
+
+        <div class="products-grid">
+            <!-- Coin Pack 1: ₹200 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Starter Platform Coins</h3>
+                    <p>Instant automated credit of utility coins to your digital portal account.</p>
+                </div>
+                <div class="price-row"><span class="price">₹200</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Starter Platform Coins (₹200)', 200)">Top-Up Now</button>
+            </div>
+
+            <!-- Coin Pack 2: ₹500 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Standard Platform Coins</h3>
+                    <p>Instant automated credit of utility coins to your digital portal account.</p>
+                </div>
+                <div class="price-row"><span class="price">₹500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Standard Platform Coins (₹500)', 500)">Top-Up Now</button>
+            </div>
+
+            <!-- Coin Pack 3: ₹1000 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Advanced Platform Coins</h3>
+                    <p>Instant automated credit of utility coins to your digital portal account.</p>
+                </div>
+                <div class="price-row"><span class="price">₹1000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Advanced Platform Coins (₹1000)', 1000)">Top-Up Now</button>
+            </div>
+
+            <!-- Coin Pack 4: ₹3000 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Pro Platform Coins</h3>
+                    <p>Instant automated credit of utility coins to your digital portal account.</p>
+                </div>
+                <div class="price-row"><span class="price">₹3000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Pro Platform Coins (₹3000)', 3000)">Top-Up Now</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 <script>
-    function initiatePayment(bookName, amount) {
-        alert("Proceeding to secure checkout for: " + bookName + " (Price: ₹" + amount + ")");
+    // Function to switch between E-Books and Coins sections smoothly
+    function switchSection(section) {
+        document.getElementById('section-books').classList.remove('active');
+        document.getElementById('section-coins').classList.remove('active');
+        document.getElementById('nav-books').classList.remove('active');
+        document.getElementById('nav-coins').classList.remove('active');
+
+        if (section === 'books') {
+            document.getElementById('section-books').classList.add('active');
+            document.getElementById('nav-books').classList.add('active');
+        } else if (section === 'coins') {
+            document.getElementById('section-coins').classList.add('active');
+            document.getElementById('nav-coins').classList.add('active');
+        }
+    }
+
+    function initiatePayment(itemName, amount) {
+        alert("Proceeding to secure gateway for: " + itemName + " (Amount: ₹" + amount + ")");
     }
 </script>
 
