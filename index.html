@@ -47,10 +47,11 @@
     .price-highlight { font-weight: bold; color: #059669; }
     .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
 
-    /* Quantity Controller */
-    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #f3f4f6; border-radius: 6px; padding: 3px 8px; margin-top: auto; }
-    .qty-btn { background: #1e40af; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-    .qty-num { font-size: 12px; font-weight: bold; color: #1f2937; }
+    /* Quantity Controller - Updated for larger buttons */
+    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #e0e7ff; border-radius: 8px; padding: 4px 10px; margin-top: auto; border: 1px solid #c7d2fe; }
+    .qty-btn { background: #1e40af; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .qty-btn:active { background: #1e3a8a; transform: scale(0.95); }
+    .qty-num { font-size: 13px; font-weight: bold; color: #1e40af; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
@@ -271,7 +272,7 @@
     }
 
     // Cart Management
-    var cart = {}; // index -> { coins, price, qty }
+    var cart = {}; 
     var isVerified = false;
 
     function updateQty(index, coinsPerItem, pricePerItem, change) {
@@ -285,10 +286,8 @@
         cart[index].qty = 0;
       }
 
-      // Update UI for quantity number
       document.getElementById('qty-' + index).innerText = cart[index].qty;
 
-      // Highlight card if qty > 0
       var cardElem = document.getElementById('card-' + index);
       if (cart[index].qty > 0) {
         cardElem.classList.add('selected');
@@ -364,7 +363,6 @@
       var uid = document.getElementById('userId').value.trim();
       var phone = document.getElementById('userPhone').value.trim();
 
-      // Calculate total amount from cart
       var totalPrice = 0;
       for (var key in cart) {
         totalPrice += cart[key].price * cart[key].qty;
