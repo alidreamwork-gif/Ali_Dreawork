@@ -47,7 +47,7 @@
     .price-highlight { font-weight: bold; color: #059669; }
     .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
 
-    /* Quantity Controller - Updated for larger buttons */
+    /* Quantity Controller */
     .qty-control { display: flex; align-items: center; justify-content: space-between; background: #e0e7ff; border-radius: 8px; padding: 4px 10px; margin-top: auto; border: 1px solid #c7d2fe; }
     .qty-btn { background: #1e40af; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .qty-btn:active { background: #1e3a8a; transform: scale(0.95); }
@@ -62,7 +62,6 @@
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
   </style>
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
 <body>
 
@@ -247,6 +246,10 @@
   </div>
 
   <script>
+    // Kwik API Configuration (From your dashboard screenshot)
+    const KWIK_API_KEY = "pk_live_5n5lpy5CaullzMCT5UhkNpbe";
+    const KWIK_API_SECRET = "sk_live_07yLG7sfCWnzgVfBryVXtKrYfVMxrhqjkJITRIMYNREaWh";
+
     function changeTab(tabId, btnElement) {
       var sections = document.querySelectorAll('.page-section');
       sections.forEach(function(sec) {
@@ -377,26 +380,39 @@
         return;
       }
 
-      fetch('/api/create-cashfree-order', {
+      // Kwik Payment Gateway Integration API Request
+      var orderId = 'ORD_' + new Date().getTime();
+
+      fetch('https://kwikupi.com/api/create-payment', {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: totalPrice, whatsapp: phone, cart: cart })
+        headers: { 
+          "Content-Type": "application/json",
+          "X-API-KEY": KWIK_API_KEY,
+          "X-API-SECRET": KWIK_API_SECRET
+        },
+        body: JSON.stringify({ 
+          amount: totalPrice, 
+          order_id: orderId,
+          customer_name: "User " + uid,
+          customer_email: uid + "@alidreamwork.com",
+          redirect_url: window.location.href
+        })
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (data.success && data.payment_session_id) {
-          if (typeof Cashfree !== 'undefined') {
-            var cashfree = Cashfree({ mode: "production" });
-            cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: "_self" });
-          } else {
-            alert('Payment SDK not loaded.');
-          }
+        // Handle Kwik payment link response redirection
+        if (data.payment_url || data.payment_link || data.url) {
+          window.location.href = data.payment_url || data.payment_link || data.url;
+        } else if (data.success && data.payment_session_id) {
+          // Fallback if using session ID format
+          alert('Redirecting to payment...');
         } else {
-          alert(data.message || 'Payment initiation failed.');
+          alert(data.message || 'Payment initiation failed. Please check backend API configuration.');
         }
       })
-      .catch(function() {
-        alert('Connection error.');
+      .catch(function(err) {
+        console.error(err);
+        alert('Connection error with payment gateway.');
       });
     }
   </script>
