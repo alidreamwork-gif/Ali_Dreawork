@@ -12,12 +12,11 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// Kwik API Credentials (जो आपने अभी दी हैं)
+// Kwik API Credentials
 const KWIK_API_KEY = "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe";
 const KWIK_API_SECRET = "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh";
 const KWIK_API_URL = "https://kwikupi.com/api/create-payment";
 
-// अस्थायी आर्डर स्टोरेज (Order ID से UID और Pages जोड़ने के लिए)
 const activeOrders = new Map();
 
 // 1. User Verification Endpoint
@@ -52,31 +51,28 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Kwik Dynamic Payment Order Creation
+// 2. Kwik Payment Order Creation Endpoint
 app.post('/api/create-payment', async (req, res) => {
     try {
-        const { uid, amount, whatsapp } = req.body;
+        const { uid, amount, whatsapp, cart } = req.body;
         
         if (!uid || !amount) {
             return res.status(400).json({ success: false, message: "UID and Amount are required" });
         }
 
         const orderId = "ORD_" + Date.now();
-        let pages = 0;
-        const amtNum = Math.round(Number(amount));
+        let totalPages = 0;
 
-        // प्लान्स के अनुसार पेजेज (Pages) की वैल्यू
-        if (amtNum === 200) pages = 14600;
-        else if (amtNum === 300) pages = 21900;
-        else if (amtNum === 500) pages = 36500;
-        else if (amtNum === 1000) pages = 73000;
-        else if (amtNum === 1500) pages = 109500;
-        else if (amtNum === 2000) pages = 146000;
-        else if (amtNum === 3000) pages = 219000;
-        else if (amtNum === 4500) pages = 328500;
-        else pages = amtNum * 73;
+        if (cart) {
+            for (let key in cart) {
+                totalPages += cart[key].pages * cart[key].qty;
+            }
+        }
+        if (totalPages === 0) {
+            totalPages = Number(amount) * 73;
+        }
 
-        activeOrders.set(orderId, { uid: uid.toString().trim(), pages: pages });
+        activeOrders.set(orderId, { uid: uid.toString().trim(), pages: totalPages });
 
         const hostUrl = `https://${req.get('host')}`;
 
@@ -114,7 +110,7 @@ app.post('/api/create-payment', async (req, res) => {
     }
 });
 
-// 3. Helper function to deliver items/coins
+// 3. Helper function to deliver items/pages
 async function deliverItemsToUser(uid, pages, orderId) {
     const cleanUid = Number(uid);
     const numPages = Number(pages);
@@ -141,7 +137,7 @@ async function deliverItemsToUser(uid, pages, orderId) {
     }
 }
 
-// 4. Kwik Webhook / Callback Endpoint
+// 4. Kwik Webhook Endpoint
 app.post('/api/kwik-webhook', async (req, res) => {
     try {
         const eventData = req.body;
