@@ -42,7 +42,7 @@
     .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
     .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
     
-    /* Price & Coins Styling */
+    /* Price & Pages Styling */
     .plan-price-box { font-size: 12px; margin-top: 2px; margin-bottom: 8px; }
     .price-highlight { font-weight: bold; color: #059669; }
     .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
@@ -70,7 +70,7 @@
     <div class="top-navbar">
       <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
       <div class="nav-buttons">
-        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-pages</button>
+        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Books</button>
         <button class="nav-btn" onclick="changeTab('ebooks', this)">E-Books</button>
         <button class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
         <button class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
@@ -95,13 +95,13 @@
           </div>
           <div id="verifyResult"></div>
 
-          <div class="section-title">SELECT BUNDLE & E-pages</div>
+          <div class="section-title">SELECT BUNDLE & PAGES</div>
           <div class="plans-grid">
             <!-- Plan 1 -->
             <div class="plan-card" id="card-0">
               <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
               <div class="plan-title">Basic E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="pages-dim">(14,600)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
                 <span class="qty-num" id="qty-0">0</span>
@@ -112,7 +112,7 @@
             <div class="plan-card" id="card-1">
               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
               <div class="plan-title">Standard E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="pages-dim">(21,900)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
                 <span class="qty-num" id="qty-1">0</span>
@@ -123,7 +123,7 @@
             <div class="plan-card" id="card-2">
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
               <div class="plan-title">Pro E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="pages-dim">(36,500)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
                 <span class="qty-num" id="qty-2">0</span>
@@ -134,7 +134,7 @@
             <div class="plan-card" id="card-3">
               <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
               <div class="plan-title">Advanced E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="pages-dim">(73,000)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
                 <span class="qty-num" id="qty-3">0</span>
@@ -145,7 +145,7 @@
             <div class="plan-card" id="card-4">
               <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
               <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="pages-dim">(109,500)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
                 <span class="qty-num" id="qty-4">0</span>
@@ -156,7 +156,7 @@
             <div class="plan-card" id="card-5">
               <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
               <div class="plan-title">Mega E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="pages-dim">(146,000)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
                 <span class="qty-num" id="qty-5">0</span>
@@ -167,7 +167,7 @@
             <div class="plan-card" id="card-6">
               <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
               <div class="plan-title">Super E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="pages-dim">(219,000)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
                 <span class="qty-num" id="qty-6">0</span>
@@ -178,7 +178,7 @@
             <div class="plan-card" id="card-7">
               <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
               <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="pages-dim">(328,500)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Pages)</span></div>
               <div class="qty-control">
                 <button class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
                 <span class="qty-num" id="qty-7">0</span>
@@ -232,7 +232,7 @@
         <p>We maintain a fair framework for customer satisfaction:</p>
         <ul>
           <li>If an issue occurs within <strong>15 minutes</strong>, our support team reviews the case promptly.</li>
-          <li>Eligible refunds can be processed back to the original source if coins/books are unused.</li>
+          <li>Eligible refunds can be processed back to the original source if items are unused.</li>
         </ul>
       </div>
 
@@ -275,9 +275,9 @@
     var cart = {}; 
     var isVerified = false;
 
-    function updateQty(index, coinsPerItem, pricePerItem, change) {
+    function updateQty(index, pagesPerItem, pricePerItem, change) {
       if (!cart[index]) {
-        cart[index] = { coins: coinsPerItem, price: pricePerItem, qty: 0, name: "Plan " + (index+1) };
+        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0, name: "Plan " + (index+1) };
       }
       
       cart[index].qty += change;
@@ -303,22 +303,22 @@
     }
 
     function updateSummary() {
-      var totalpages= 0;
+      var totalPages = 0;
       var totalPrice = 0;
       var summaryParts = [];
 
       for (var key in cart) {
         var item = cart[key];
-        totalCoins += item.pages * item.qty;
+        totalPages += item.pages * item.qty;
         totalPrice += item.price * item.qty;
-        summaryParts.push(item.qty + "x (" + (item.coins * item.qty).toLocaleString() + " pages)");
+        summaryParts.push(item.qty + "x (" + (item.pages * item.qty).toLocaleString() + " Pages)");
       }
 
       if (summaryParts.length === 0) {
         document.getElementById('sumPlan').innerText = "None";
         document.getElementById('sumPrice').innerText = "₹0";
       } else {
-        document.getElementById('sumPlan').innerText = total pages.toLocaleString() + " pages";
+        document.getElementById('sumPlan').innerText = totalPages.toLocaleString() + " Pages";
         document.getElementById('sumPrice').innerText = "₹" + totalPrice;
       }
     }
