@@ -1,404 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ali Dreamwork - Digital Store</title>
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-    
-    /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 999; }
-    .nav-brand { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
-    .nav-buttons { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
-    .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
-    .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali DreamWork - Digital Store</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; text-align: center; }
+        
+        /* Top Navigation Bar */
+        .navbar { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 18px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); flex-wrap: wrap; gap: 15px; }
+        .navbar h1 { font-size: 20px; margin: 0; color: #ffffff; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .nav-links a { background: rgba(255, 255, 255, 0.15); color: #ffffff; text-decoration: none; font-weight: bold; font-size: 14px; padding: 8px 15px; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; border: 2px solid rgba(255, 255, 255, 0.3); }
+        .nav-links a:hover, .nav-links a.active { background: #f1c40f; color: #2c3e50; border-color: #f1c40f; transform: translateY(-2px); }
 
-    /* Content Area */
-    .container { padding: 15px; flex: 1; }
-    .page-section { display: none; }
-    .page-section.active-page { display: block !important; }
+        .container { max-width: 1100px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: left; }
+        
+        .section-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; text-align: center; }
+        .golden-logo { width: 85px; height: 85px; background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(170, 119, 28, 0.4); margin-bottom: 15px; border: 3px solid #fff; }
+        .golden-logo span { font-size: 38px; }
+        
+        .brand-title { font-size: 26px; font-weight: 800; color: #d4ac0d; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+        h2.section-title { color: #2c3e50; margin: 0 0 5px 0; font-size: 24px; }
+        p.subtitle { color: #7f8c8d; margin: 0; font-size: 14px; }
+        
+        .products-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
+        .product-card { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; width: 240px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 140px; object-fit: cover; background-color: #eef2f3; }
+        .product-content { padding: 15px; }
+        .product-card h3 { font-size: 16px; margin: 0 0 8px 0; color: #2c3e50; }
+        .product-card p { font-size: 12px; color: #666; margin: 0 0 15px 0; line-height: 1.4; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; padding: 0 15px 15px 15px; }
+        .price { font-size: 18px; font-weight: bold; color: #27ae60; }
+        .buy-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: calc(100% - 30px); margin: 0 15px 15px 15px; font-weight: bold; }
+        .buy-btn:hover { background: #2980b9; }
 
-    /* UI Elements */
-    .header { text-align: center; margin-bottom: 15px; }
-    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
-    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
-    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-    
-    label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
-    .id-group { display: flex; gap: 6px; margin-top: 5px; }
-    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
-    
-    .verify-btn { background: #059669; color: white; border: none; padding: 0 14px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; }
-    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        /* Legal Content Styling */
+        .legal-content h3 { color: #2c3e50; margin-top: 20px; }
+        .legal-content p, .legal-content li { color: #555; font-size: 14px; line-height: 1.6; }
+        .legal-content ul { padding-left: 20px; }
 
-    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
-    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; background: #fff; text-align: left; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
-    .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
-    .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
-    
-    /* Price & Coins Styling */
-    .plan-price-box { font-size: 12px; margin-top: 2px; margin-bottom: 8px; }
-    .price-highlight { font-weight: bold; color: #059669; }
-    .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
+        /* Footer Style with Links */
+        .footer { margin-top: 40px; padding: 20px; background: #2c3e50; color: white; border-radius: 8px; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .footer-links a { color: #f1c40f; text-decoration: none; font-size: 13px; cursor: pointer; }
+        .footer-links a:hover { text-decoration: underline; }
+        .footer p { margin: 5px 0; font-size: 13px; color: #bdc3c7; }
 
-    /* Quantity Controller - Updated for larger buttons */
-    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #e0e7ff; border-radius: 8px; padding: 4px 10px; margin-top: auto; border: 1px solid #c7d2fe; }
-    .qty-btn { background: #1e40af; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .qty-btn:active { background: #1e3a8a; transform: scale(0.95); }
-    .qty-num { font-size: 13px; font-weight: bold; color: #1e40af; }
-
-    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
-    
-    .main-buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; }
-
-    /* Static Pages Styling */
-    .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
-    .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
-  </style>
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+        /* Section Display Control */
+        .section-box { display: none; }
+        .section-box.active { display: block; }
+    </style>
 </head>
 <body>
 
-  <div class="app-wrapper">
-    <div class="top-navbar">
-      <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
-      <div class="nav-buttons">
-        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Coins</button>
-        <button class="nav-btn" onclick="changeTab('ebooks', this)">E-Books</button>
-        <button class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
-        <button class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
-        <button class="nav-btn" onclick="changeTab('refund', this)">Refund</button>
-        <button class="nav-btn" onclick="changeTab('contact', this)">Contact</button>
-      </div>
+<div class="navbar">
+    <h1>✨ Ali DreamWork E-Store</h1>
+    <div class="nav-links">
+        <a id="nav-books" class="active" onclick="switchSection('books')">📚 E-Books</a>
+        <a id="nav-coins" onclick="switchSection('coins')">⚡ Top-Up Coins</a>
+        <a id="nav-terms" onclick="switchSection('terms')">Terms</a>
+        <a id="nav-privacy" onclick="switchSection('privacy')">Privacy</a>
+        <a id="nav-refund" onclick="switchSection('refund')">Refund Policy</a>
+        <a id="nav-contact" onclick="switchSection('contact')">Contact Us</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div id="section-books" class="section-box active">
+        <div class="section-header">
+            <div class="golden-logo"><span>👑</span></div>
+            <div class="brand-title">Ali DreamWork</div>
+            <h2 class="section-title">Digital E-Books & Publications</h2>
+            <p class="subtitle">Explore our professional library of digital books and guides.</p>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Beginner's Web Guide</h3>
+                    <p>Introductory digital handbook for foundational web technologies.</p>
+                </div>
+                <div class="price-row"><span class="price">₹200</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Beginner\'s Web Guide', 200)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Digital Scripting Manual</h3>
+                    <p>Step-by-step documentation for everyday scripting codes.</p>
+                </div>
+                <div class="price-row"><span class="price">₹300</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Digital Scripting Manual', 300)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Modern E-Commerce Strategy</h3>
+                    <p>A comprehensive guide on running online digital platforms.</p>
+                </div>
+                <div class="price-row"><span class="price">₹500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Modern E-Commerce Strategy', 500)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Advanced Data Structures</h3>
+                    <p>Deep-dive e-book focusing on core programming architecture.</p>
+                </div>
+                <div class="price-row"><span class="price">₹1000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Advanced Data Structures', 1000)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Cloud Architecture Blueprint</h3>
+                    <p>High-value technical documentation for scalable cloud deployment.</p>
+                </div>
+                <div class="price-row"><span class="price">₹2000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Cloud Architecture Blueprint', 2000)">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=500&auto=format&fit=crop&q=60" alt="E-Book" class="product-img">
+                <div class="product-content">
+                    <h3>Mastering System Design</h3>
+                    <p>Exclusive premium engineering masterclass book for software systems.</p>
+                </div>
+                <div class="price-row"><span class="price">₹3000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Mastering System Design', 3000)">Buy Now</button>
+            </div>
+        </div>
     </div>
 
-    <div class="container">
-      
-      <div id="tab-topup" class="page-section active-page">
-        <div class="header">
-          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-          <div class="brand-title">ALI DREAMWORK</div>
+    <div id="section-coins" class="section-box">
+        <div class="section-header">
+            <div class="golden-logo"><span>👑</span></div>
+            <div class="brand-title">Ali DreamWork</div>
+            <h2 class="section-title">Digital Top-Up Coins</h2>
+            <p class="subtitle">Purchase utility credits and platform top-up packages.</p>
         </div>
-
-        <div class="card">
-          <label>Enter your User ID:</label>
-          <div class="id-group">
-            <input type="text" id="userId" placeholder="Enter User ID">
-            <button class="verify-btn" onclick="verifyUser()">Verify</button>
-          </div>
-          <div id="verifyResult"></div>
-
-          <div class="section-title">SELECT BUNDLE & E-COINS</div>
-          <div class="plans-grid">
-            <!-- Plan 1 -->
-            <div class="plan-card" id="card-0">
-              <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
-              <div class="plan-title">Basic E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
-                <span class="qty-num" id="qty-0">0</span>
-                <button class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
-              </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Starter Pack</h3>
+                    <p><b>14,600 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹200</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Starter Pack (14600 Coins)', 200)">Top-Up Now</button>
             </div>
-            <!-- Plan 2 -->
-            <div class="plan-card" id="card-1">
-              <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
-              <div class="plan-title">Standard E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
-                <span class="qty-num" id="qty-1">0</span>
-                <button class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
-              </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Basic Pack</h3>
+                    <p><b>21,900 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹300</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Basic Pack (21900 Coins)', 300)">Top-Up Now</button>
             </div>
-            <!-- Plan 3 -->
-            <div class="plan-card" id="card-2">
-              <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
-              <div class="plan-title">Pro E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
-                <span class="qty-num" id="qty-2">0</span>
-                <button class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
-              </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Standard Pack</h3>
+                    <p><b>36,500 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Standard Pack (36500 Coins)', 500)">Top-Up Now</button>
             </div>
-            <!-- Plan 4 -->
-            <div class="plan-card" id="card-3">
-              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
-              <div class="plan-title">Advanced E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
-                <span class="qty-num" id="qty-3">0</span>
-                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
-              </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Advanced Pack</h3>
+                    <p><b>73,000 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹1000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Advanced Pack (73000 Coins)', 1000)">Top-Up Now</button>
             </div>
-            <!-- Plan 5 -->
-            <div class="plan-card" id="card-4">
-              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
-              <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
-                <span class="qty-num" id="qty-4">0</span>
-                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
-              </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Pro Pack</h3>
+                    <p><b>1,46,000 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹2000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Pro Pack (146000 Coins)', 2000)">Top-Up Now</button>
             </div>
-            <!-- Plan 6 -->
-            <div class="plan-card" id="card-5">
-              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
-              <div class="plan-title">Mega E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
-                <span class="qty-num" id="qty-5">0</span>
-                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
-              </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Ultra Pack</h3>
+                    <p><b>2,19,000 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹3000</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Ultra Pack (219000 Coins)', 3000)">Top-Up Now</button>
             </div>
-            <!-- Plan 7 -->
-            <div class="plan-card" id="card-6">
-              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
-              <div class="plan-title">Super E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
-                <span class="qty-num" id="qty-6">0</span>
-                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
-              </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60" alt="Coin Pack" class="product-img">
+                <div class="product-content">
+                    <h3>Mega Enterprise Pack</h3>
+                    <p><b>3,28,500 Coins</b><br>Instant utility credit.</p>
+                </div>
+                <div class="price-row"><span class="price">₹4500</span></div>
+                <button class="buy-btn" onclick="initiatePayment('Mega Enterprise Pack (328500 Coins)', 4500)">Top-Up Now</button>
             </div>
-            <!-- Plan 8 -->
-            <div class="plan-card" id="card-7">
-              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
-              <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
-                <span class="qty-num" id="qty-7">0</span>
-                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
-              </div>
-            </div>
-          </div>
-
-          <label>WhatsApp Number:</label>
-          <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
-
-          <div class="summary-box">
-            <div class="summary-row"><span>Selected:</span> <span id="sumPlan">None</span></div>
-            <div class="summary-row"><span>Total:</span> <span id="sumPrice">₹0</span></div>
-          </div>
-
-          <button class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
         </div>
-      </div>
-
-      <div id="tab-ebooks" class="page-section static-page">
-        <h2>📖 Digital E-Books Library</h2>
-        <p>Explore our professional guides and technical handbooks designed for online growth.</p>
-        <ul>
-          <li>Beginner's Web Guide & Technical Handbook</li>
-          <li>Advanced Digital Marketing Strategy Manual</li>
-          <li>E-Commerce Mastery Blueprint</li>
-        </ul>
-      </div>
-
-      <div id="tab-terms" class="page-section static-page">
-        <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, you agree to comply with our service guidelines.</p>
-        <ul>
-          <li>Users must provide a valid and correct User ID before transactions.</li>
-          <li>All digital goods and e-books provided are for legitimate use.</li>
-        </ul>
-      </div>
-
-      <div id="tab-privacy" class="page-section static-page">
-        <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy is important to us at <strong>Ali Dreamwork</strong>.</p>
-        <ul>
-          <li>We guarantee that <strong>we do not leak, sell, or share your personal details</strong> with any third parties.</li>
-          <li>Information collected is strictly used for secure order delivery.</li>
-        </ul>
-      </div>
-
-      <div id="tab-refund" class="page-section static-page">
-        <h2>🔄 Refund & Cancellation Policy</h2>
-        <p>We maintain a fair framework for customer satisfaction:</p>
-        <ul>
-          <li>If an issue occurs within <strong>15 minutes</strong>, our support team reviews the case promptly.</li>
-          <li>Eligible refunds can be processed back to the original source if coins/books are unused.</li>
-        </ul>
-      </div>
-
-      <div id="tab-contact" class="page-section static-page">
-        <h2>🎧 Contact Us</h2>
-        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-        <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
-      </div>
-
     </div>
-  </div>
 
-  <script>
-    function changeTab(tabId, btnElement) {
-      var sections = document.querySelectorAll('.page-section');
-      sections.forEach(function(sec) {
-        sec.classList.remove('active-page');
-        sec.style.display = 'none';
-      });
+    <div id="section-terms" class="section-box legal-content">
+        <h2>Terms & Conditions</h2>
+        <p>Welcome to Ali DreamWork. By accessing our website and purchasing our digital products or top-up coins, you agree to comply with and be bound by the following terms and conditions:</p>
+        <h3>1. Use of Website</h3>
+        <p>The content of the pages of this website is for your general information and use only. It is subject to change without notice.</p>
+        <h3>2. Digital Products & Purchases</h3>
+        <p>All purchases of e-books, digital downloads, and platform top-up coins are final upon successful payment execution.</p>
+        <h3>3. Limitation of Liability</h3>
+        <p>Ali DreamWork shall not be liable for any direct or indirect damages resulting from the use or inability to use our digital items or platform services.</p>
+    </div>
 
-      var buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(function(btn) {
-        btn.classList.remove('active');
-      });
+    <div id="section-privacy" class="section-box legal-content">
+        <h2>Privacy Policy</h2>
+        <p>At Ali DreamWork, we respect your privacy and are committed to protecting your personal data.</p>
+        <h3>1. Information We Collect</h3>
+        <p>We may collect your name, email address, phone number, and billing information when you register or make a purchase.</p>
+        <h3>2. How We Use Your Information</h3>
+        <p>Your information is used strictly to process transactions, deliver digital goods/coins, and provide customer support.</p>
+    </div>
 
-      var activeTarget = document.getElementById('tab-' + tabId);
-      if (activeTarget) {
-        activeTarget.style.display = 'block';
-        activeTarget.classList.add('active-page');
-      }
-      
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
-      window.scrollTo(0, 0);
+    <div id="section-refund" class="section-box legal-content">
+        <h2>Refund & Cancellation Policy</h2>
+        <p>Thank you for shopping at Ali DreamWork.</p>
+        <h3>1. Digital Goods & Top-Up Coins</h3>
+        <p>Due to the nature of digital books and instant platform top-up coins, **all sales are strictly non-refundable** once the transaction is completed.</p>
+    </div>
+
+    <div id="section-contact" class="section-box legal-content">
+        <h2>Contact Us</h2>
+        <p>If you have any questions or require support regarding your orders, feel free to reach out to us:</p>
+        <h3>Ali DreamWork Support</h3>
+        <p>📧 <b>Email:</b> alidreamwork@gmail.com</p>
+        <p>📞 <b>Phone:</b> +91 7776881407</p>
+        <p>🕒 <b>Support Hours:</b> Monday to Saturday (9:00 AM - 6:00 PM)</p>
+    </div>
+
+</div>
+
+<div class="footer">
+    <div class="footer-links">
+        <a onclick="switchSection('terms')">Terms & Conditions</a> | 
+        <a onclick="switchSection('privacy')">Privacy Policy</a> | 
+        <a onclick="switchSection('refund')">Refund Policy</a> | 
+        <a onclick="switchSection('contact')">Contact Us</a>
+    </div>
+    <p>&copy; 2026 Ali DreamWork E-Store. All Rights Reserved.</p>
+</div>
+
+<script>
+    function switchSection(section) {
+        const sections = ['books', 'coins', 'terms', 'privacy', 'refund', 'contact'];
+        sections.forEach(sec => {
+            document.getElementById('section-' + sec).classList.remove('active');
+            const nav = document.getElementById('nav-' + sec);
+            if(nav) nav.classList.remove('active');
+        });
+
+        document.getElementById('section-' + section).classList.add('active');
+        const activeNav = document.getElementById('nav-' + section);
+        if(activeNav) activeNav.classList.add('active');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Cart Management
-    var cart = {}; 
-    var isVerified = false;
-
-    function updateQty(index, coinsPerItem, pricePerItem, change) {
-      if (!cart[index]) {
-        cart[index] = { coins: coinsPerItem, price: pricePerItem, qty: 0, name: "Plan " + (index+1) };
-      }
-      
-      cart[index].qty += change;
-      
-      if (cart[index].qty < 0) {
-        cart[index].qty = 0;
-      }
-
-      document.getElementById('qty-' + index).innerText = cart[index].qty;
-
-      var cardElem = document.getElementById('card-' + index);
-      if (cart[index].qty > 0) {
-        cardElem.classList.add('selected');
-      } else {
-        cardElem.classList.remove('selected');
-      }
-
-      if (cart[index].qty === 0) {
-        delete cart[index];
-      }
-
-      updateSummary();
+    function initiatePayment(itemName, amount) {
+        alert("Proceeding to secure payment gateway for: " + itemName + " (Amount: ₹" + amount + ")");
     }
+</script>
 
-    function updateSummary() {
-      var totalCoins = 0;
-      var totalPrice = 0;
-      var summaryParts = [];
-
-      for (var key in cart) {
-        var item = cart[key];
-        totalCoins += item.coins * item.qty;
-        totalPrice += item.price * item.qty;
-        summaryParts.push(item.qty + "x (" + (item.coins * item.qty).toLocaleString() + " Coins)");
-      }
-
-      if (summaryParts.length === 0) {
-        document.getElementById('sumPlan').innerText = "None";
-        document.getElementById('sumPrice').innerText = "₹0";
-      } else {
-        document.getElementById('sumPlan').innerText = totalCoins.toLocaleString() + " Coins";
-        document.getElementById('sumPrice').innerText = "₹" + totalPrice;
-      }
-    }
-
-    function verifyUser() {
-      var uid = document.getElementById('userId').value.trim();
-      var resBox = document.getElementById('verifyResult');
-      
-      if (!uid) {
-        alert('Please enter User ID first');
-        return;
-      }
-
-      resBox.style.display = "flex";
-      resBox.innerHTML = "Verifying...";
-
-      fetch('/api/verify-user', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
-          isVerified = true;
-          var info = data.data || data;
-          var name = info.nick || info.name || "Verified User";
-          var avatar = info.avatar || info.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small>ID: ' + uid + ' (Verified ✅)</small></div>';
-        } else {
-          isVerified = false;
-          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
-        }
-      })
-      .catch(function() {
-        isVerified = false;
-        resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
-      });
-    }
-
-    function initiatePayment() {
-      var uid = document.getElementById('userId').value.trim();
-      var phone = document.getElementById('userPhone').value.trim();
-
-      var totalPrice = 0;
-      for (var key in cart) {
-        totalPrice += cart[key].price * cart[key].qty;
-      }
-
-      if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
-        return;
-      }
-      if (!isVerified) {
-        alert('Please verify your User ID first.');
-        return;
-      }
-
-      fetch('/api/create-cashfree-order', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: totalPrice, whatsapp: phone, cart: cart })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.success && data.payment_session_id) {
-          if (typeof Cashfree !== 'undefined') {
-            var cashfree = Cashfree({ mode: "production" });
-            cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: "_self" });
-          } else {
-            alert('Payment SDK not loaded.');
-          }
-        } else {
-          alert(data.message || 'Payment initiation failed.');
-        }
-      })
-      .catch(function() {
-        alert('Connection error.');
-      });
-    }
-  </script>
 </body>
 </html>
