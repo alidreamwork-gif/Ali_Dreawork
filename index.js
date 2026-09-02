@@ -13,8 +13,8 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // Kwik API Credentials (फ्रंटएंड और बैकएंड दोनों के लिए синх्रनाइज्ड)
-const KWIK_API_KEY = "pk_live_5n5lpy5CaullzMCT5UhkNpbe";
-const KWIK_API_SECRET = "sk_live_07yLG7sfCWnzgVfBryVXtKrYfVMxrhqjkJITRIMYNREaWh";
+const KWIK_API_KEY = "pk_live_5n5Ipy5CauIlzMCT5UhkNpbe";
+const KWIK_API_SECRET = "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh";
 const KWIK_API_URL = "https://kwikupi.com/api/create-payment";
 
 // अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
