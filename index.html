@@ -37,15 +37,20 @@
 
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
     .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; cursor: pointer; background: #fff; text-align: left; position: relative; }
+    .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; background: #fff; text-align: left; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
     .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
     .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
     .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
     
     /* Price & Coins Styling */
-    .plan-price-box { font-size: 13px; margin-top: 2px; }
+    .plan-price-box { font-size: 12px; margin-top: 2px; margin-bottom: 8px; }
     .price-highlight { font-weight: bold; color: #059669; }
-    .coins-dim { font-size: 11px; color: #6b7280; font-weight: normal; }
+    .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
+
+    /* Quantity Controller */
+    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #f3f4f6; border-radius: 6px; padding: 3px 8px; margin-top: auto; }
+    .qty-btn { background: #1e40af; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+    .qty-num { font-size: 12px; font-weight: bold; color: #1f2937; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
@@ -91,45 +96,93 @@
 
           <div class="section-title">SELECT BUNDLE & E-COINS</div>
           <div class="plans-grid">
-            <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
+            <!-- Plan 1 -->
+            <div class="plan-card" id="card-0">
               <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
               <div class="plan-title">Basic E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
+                <span class="qty-num" id="qty-0">0</span>
+                <button class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
+            <!-- Plan 2 -->
+            <div class="plan-card" id="card-1">
               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
               <div class="plan-title">Standard E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
+                <span class="qty-num" id="qty-1">0</span>
+                <button class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
+            <!-- Plan 3 -->
+            <div class="plan-card" id="card-2">
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
               <div class="plan-title">Pro E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
+                <span class="qty-num" id="qty-2">0</span>
+                <button class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
+            <!-- Plan 4 -->
+            <div class="plan-card" id="card-3">
               <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
               <div class="plan-title">Advanced E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
+                <span class="qty-num" id="qty-3">0</span>
+                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
+            <!-- Plan 5 -->
+            <div class="plan-card" id="card-4">
               <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
               <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
+                <span class="qty-num" id="qty-4">0</span>
+                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
+            <!-- Plan 6 -->
+            <div class="plan-card" id="card-5">
               <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
               <div class="plan-title">Mega E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
+                <span class="qty-num" id="qty-5">0</span>
+                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
+            <!-- Plan 7 -->
+            <div class="plan-card" id="card-6">
               <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
               <div class="plan-title">Super E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
+                <span class="qty-num" id="qty-6">0</span>
+                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
+              </div>
             </div>
-            <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
+            <!-- Plan 8 -->
+            <div class="plan-card" id="card-7">
               <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
               <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Coins)</span></div>
+              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500)</span></div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
+                <span class="qty-num" id="qty-7">0</span>
+                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
+              </div>
             </div>
           </div>
 
@@ -186,7 +239,7 @@
         <h2>🎧 Contact Us</h2>
         <p><strong>Email:</strong> alidreamwork@gmail.com</p>
         <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday(10:00 Am To 11:00 Pm</p>
+        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
       </div>
 
     </div>
@@ -217,22 +270,58 @@
       window.scrollTo(0, 0);
     }
 
-    var selectedCoins = 0;
-    var selectedPrice = 0;
+    // Cart Management
+    var cart = {}; // index -> { coins, price, qty }
     var isVerified = false;
 
-    function selectPlan(cardElement, coins, price) {
-      var allCards = document.querySelectorAll('.plan-card');
-      allCards.forEach(function(card) {
-        card.classList.remove('selected');
-      });
-      cardElement.classList.add('selected');
+    function updateQty(index, coinsPerItem, pricePerItem, change) {
+      if (!cart[index]) {
+        cart[index] = { coins: coinsPerItem, price: pricePerItem, qty: 0, name: "Plan " + (index+1) };
+      }
       
-      selectedCoins = coins;
-      selectedPrice = price;
+      cart[index].qty += change;
+      
+      if (cart[index].qty < 0) {
+        cart[index].qty = 0;
+      }
 
-      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
+      // Update UI for quantity number
+      document.getElementById('qty-' + index).innerText = cart[index].qty;
+
+      // Highlight card if qty > 0
+      var cardElem = document.getElementById('card-' + index);
+      if (cart[index].qty > 0) {
+        cardElem.classList.add('selected');
+      } else {
+        cardElem.classList.remove('selected');
+      }
+
+      if (cart[index].qty === 0) {
+        delete cart[index];
+      }
+
+      updateSummary();
+    }
+
+    function updateSummary() {
+      var totalCoins = 0;
+      var totalPrice = 0;
+      var summaryParts = [];
+
+      for (var key in cart) {
+        var item = cart[key];
+        totalCoins += item.coins * item.qty;
+        totalPrice += item.price * item.qty;
+        summaryParts.push(item.qty + "x (" + (item.coins * item.qty).toLocaleString() + " Coins)");
+      }
+
+      if (summaryParts.length === 0) {
+        document.getElementById('sumPlan').innerText = "None";
+        document.getElementById('sumPrice').innerText = "₹0";
+      } else {
+        document.getElementById('sumPlan').innerText = totalCoins.toLocaleString() + " Coins";
+        document.getElementById('sumPrice').innerText = "₹" + totalPrice;
+      }
     }
 
     function verifyUser() {
@@ -275,8 +364,14 @@
       var uid = document.getElementById('userId').value.trim();
       var phone = document.getElementById('userPhone').value.trim();
 
-      if (!uid || selectedPrice === 0 || !phone) {
-        alert('Please fill ID, select a plan and enter WhatsApp number.');
+      // Calculate total amount from cart
+      var totalPrice = 0;
+      for (var key in cart) {
+        totalPrice += cart[key].price * cart[key].qty;
+      }
+
+      if (!uid || totalPrice === 0 || !phone) {
+        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
         return;
       }
       if (!isVerified) {
@@ -287,7 +382,7 @@
       fetch('/api/create-cashfree-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: selectedPrice, whatsapp: phone })
+        body: JSON.stringify({ uid: uid, amount: totalPrice, whatsapp: phone, cart: cart })
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
