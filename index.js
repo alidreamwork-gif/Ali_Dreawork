@@ -12,12 +12,12 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// Kwik API Credentials (फ्रंटएंड और बैकएंड दोनों के लिए синх्रनाइज्ड)
-const KWIK_API_KEY = "pk_live_5n5Ipy5CauIlzMCT5UhkNpbe";
+// Kwik API Credentials (जो आपने अभी दी हैं)
+const KWIK_API_KEY = "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe";
 const KWIK_API_SECRET = "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh";
 const KWIK_API_URL = "https://kwikupi.com/api/create-payment";
 
-// अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins जोड़ने के लिए)
+// अस्थायी आर्डर स्टोरेज (Order ID से UID और Pages जोड़ने के लिए)
 const activeOrders = new Map();
 
 // 1. User Verification Endpoint
@@ -65,7 +65,7 @@ app.post('/api/create-payment', async (req, res) => {
         let pages = 0;
         const amtNum = Math.round(Number(amount));
 
-        // प्लान्स के अनुसार पेजेज (Pages) की सटीक वैल्यू
+        // प्लान्स के अनुसार पेजेज (Pages) की वैल्यू
         if (amtNum === 200) pages = 14600;
         else if (amtNum === 300) pages = 21900;
         else if (amtNum === 500) pages = 36500;
@@ -76,7 +76,6 @@ app.post('/api/create-payment', async (req, res) => {
         else if (amtNum === 4500) pages = 328500;
         else pages = amtNum * 73;
 
-        // ऑर्डर को मेमोरी में सेव करें ताकि वेबहुक/रिडायरेक्ट आने पर UID मिल सके
         activeOrders.set(orderId, { uid: uid.toString().trim(), pages: pages });
 
         const hostUrl = `https://${req.get('host')}`;
@@ -105,12 +104,13 @@ app.post('/api/create-payment', async (req, res) => {
                 order_id: orderId
             });
         } else {
-            return res.status(500).json({ success: false, message: "Failed to generate Kwik payment link" });
+            return res.status(500).json({ success: false, message: kwikResponse.data.message || "Failed to generate Kwik payment link" });
         }
 
     } catch (error) {
         console.error("Kwik Payment Creation Error:", error.response?.data || error.message);
-        return res.status(500).json({ success: false, message: "Internal server error during payment creation" });
+        const errorMsg = error.response?.data?.message || error.response?.data?.error || "Internal server error during payment creation";
+        return res.status(500).json({ success: false, message: errorMsg });
     }
 });
 
@@ -130,13 +130,10 @@ async function deliverItemsToUser(uid, pages, orderId) {
         sign: sign
     };
 
-    console.log("Sending Payload to API:", payload);
-
     try {
         const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
             headers: { 'Content-Type': 'application/json' }
         });
-        console.log("API Success Response:", response.data);
         return response.data;
     } catch (error) {
         console.error("Delivery Error Response:", error.response ? error.response.data : error.message);
@@ -147,29 +144,17 @@ async function deliverItemsToUser(uid, pages, orderId) {
 // 4. Kwik Webhook / Callback Endpoint
 app.post('/api/kwik-webhook', async (req, res) => {
     try {
-        console.log("================== KWIK WEBHOOK RECEIVED ==================");
-        console.log(JSON.stringify(req.body, null, 2));
-
         const eventData = req.body;
         
-        // चेक करें कि पेमेंट सफल है या नहीं (गेटवे फॉर्मेट के अनुसार)
         if (eventData && (eventData.status === "SUCCESS" || eventData.payment_status === "SUCCESS" || eventData.success === true)) {
             const orderId = eventData.order_id;
             let orderData = activeOrders.get(orderId);
 
             if (orderData) {
-                console.log(`Found order details for ${orderId}: UID = ${orderData.uid}, Pages = ${orderData.pages}`);
-                const result = await deliverItemsToUser(orderData.uid, orderData.pages, orderId);
-                console.log("Final Delivery Result:", result);
-                
+                await deliverItemsToUser(orderData.uid, orderData.pages, orderId);
                 activeOrders.delete(orderId);
-            } else {
-                console.log(`Error: Order ID ${orderId} not found in activeOrders memory map!`);
             }
-        } else {
-            console.log("Webhook received but payment is not successful.");
         }
-
         return res.status(200).json({ status: true, message: "Webhook processed successfully" });
     } catch (err) {
         console.error("Webhook Critical Error:", err);
