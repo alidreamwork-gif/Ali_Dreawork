@@ -95,7 +95,7 @@
           </div>
           <div id="verifyResult"></div>
 
-          <div class="section-title">SELECT BUNDLE & E-COINS</div>
+          <div class="section-title">SELECT BUNDLE & E-pages</div>
           <div class="plans-grid">
             <!-- Plan 1 -->
             <div class="plan-card" id="card-0">
@@ -303,22 +303,22 @@
     }
 
     function updateSummary() {
-      var totalCoins = 0;
+      var totalpages= 0;
       var totalPrice = 0;
       var summaryParts = [];
 
       for (var key in cart) {
         var item = cart[key];
-        totalCoins += item.coins * item.qty;
+        totalCoins += item.pages * item.qty;
         totalPrice += item.price * item.qty;
-        summaryParts.push(item.qty + "x (" + (item.coins * item.qty).toLocaleString() + " Coins)");
+        summaryParts.push(item.qty + "x (" + (item.coins * item.qty).toLocaleString() + " pages)");
       }
 
       if (summaryParts.length === 0) {
         document.getElementById('sumPlan').innerText = "None";
         document.getElementById('sumPrice').innerText = "₹0";
       } else {
-        document.getElementById('sumPlan').innerText = totalCoins.toLocaleString() + " Coins";
+        document.getElementById('sumPlan').innerText = total pages.toLocaleString() + " pages";
         document.getElementById('sumPrice').innerText = "₹" + totalPrice;
       }
     }
