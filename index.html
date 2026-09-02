@@ -19,7 +19,7 @@
     /* Content Area */
     .container { padding: 15px; flex: 1; }
     .page-section { display: none; }
-    .page-section.active-page { display: block; }
+    .page-section.active-page { display: block !important; }
 
     /* UI Elements */
     .header { text-align: center; margin-bottom: 15px; }
@@ -61,7 +61,6 @@
 <body>
 
   <div class="app-wrapper">
-    <!-- Navbar -->
     <div class="top-navbar">
       <div class="nav-brand">✨ Ali DreamWork Digital E-Store</div>
       <div class="nav-buttons">
@@ -76,8 +75,7 @@
 
     <div class="container">
       
-      <!-- 1. TOPUP PAGE -->
-      <div id="tab-Top" class="page-section active-page">
+      <div id="tab-topup" class="page-section active-page">
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
           <div class="brand-title">ALI DREAMWORK</div>
@@ -123,13 +121,11 @@
               <div class="plan-title">Mega E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Coins)</span></div>
             </div>
-            <!-- Premium Image for Super E-Book (₹3,000) -->
             <div class="plan-card" onclick="selectPlan(this, 219000, 3000)">
               <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
               <div class="plan-title">Super E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Coins)</span></div>
             </div>
-            <!-- Premium Image for Elite E-Book (₹4,500) -->
             <div class="plan-card" onclick="selectPlan(this, 328500, 4500)">
               <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
               <div class="plan-title">Elite E-Book</div>
@@ -145,12 +141,11 @@
             <div class="summary-row"><span>Total:</span> <span id="sumPrice">₹0</span></div>
           </div>
 
-          <button class="main-buy-btn" onclick="initiatePayment()">Buy NOW</button>
+          <button class="main-buy-btn" onclick="initiatePayment()">TOP-UP NOW</button>
         </div>
       </div>
 
-      <!-- 2. EBOOKS PAGE -->
-      <div id="tab-ebooks" class="page-section static-page">
+      <div id="tab-ebooks" class="page-section">
         <h2>📖 Digital E-Books Library</h2>
         <p>Explore our professional guides and technical handbooks designed for online growth.</p>
         <ul>
@@ -160,8 +155,7 @@
         </ul>
       </div>
 
-      <!-- 3. TERMS PAGE -->
-      <div id="tab-terms" class="page-section static-page">
+      <div id="tab-terms" class="page-section">
         <h2>📜 Terms & Conditions</h2>
         <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, you agree to comply with our service guidelines.</p>
         <ul>
@@ -170,8 +164,7 @@
         </ul>
       </div>
 
-      <!-- 4. PRIVACY PAGE -->
-      <div id="tab-privacy" class="page-section static-page">
+      <div id="tab-privacy" class="page-section">
         <h2>🔒 Privacy Policy</h2>
         <p>Your privacy is important to us at <strong>Ali Dreamwork</strong>.</p>
         <ul>
@@ -180,8 +173,7 @@
         </ul>
       </div>
 
-      <!-- 5. REFUND PAGE -->
-      <div id="tab-refund" class="page-section static-page">
+      <div id="tab-refund" class="page-section">
         <h2>🔄 Refund & Cancellation Policy</h2>
         <p>We maintain a fair framework for customer satisfaction:</p>
         <ul>
@@ -190,11 +182,10 @@
         </ul>
       </div>
 
-      <!-- 6. CONTACT PAGE -->
-      <div id="tab-contact" class="page-section static-page">
+      <div id="tab-contact" class="page-section">
         <h2>🎧 Contact Us</h2>
         <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-        <p><strong>WhatsApp:</strong> +91 7776881407</p>
+        <p><strong>WhatsApp:</strong> +91 777 688 1407</p>
       </div>
 
     </div>
@@ -202,25 +193,31 @@
 
   <script>
     function changeTab(tabId, btnElement) {
+      // Hide all sections safely
       var sections = document.querySelectorAll('.page-section');
-      for (var i = 0; i < sections.length; i++) {
-        sections[i].classList.remove('active-page');
-      }
+      sections.forEach(function(sec) {
+        sec.classList.remove('active-page');
+        sec.style.display = 'none';
+      });
 
+      // Remove active class from all buttons
       var buttons = document.querySelectorAll('.nav-btn');
-      for (var j = 0; j < buttons.length; j++) {
-        buttons[j].classList.remove('active');
-      }
+      buttons.forEach(function(btn) {
+        btn.classList.remove('active');
+      });
 
+      // Show the selected target section
       var activeTarget = document.getElementById('tab-' + tabId);
       if (activeTarget) {
+        activeTarget.style.display = 'block';
         activeTarget.classList.add('active-page');
       }
       
+      // Highlight the clicked button
       if (btnElement) {
         btnElement.classList.add('active');
       }
-      window.scrollTo(0,0);
+      window.scrollTo(0, 0);
     }
 
     var selectedCoins = 0;
@@ -229,9 +226,9 @@
 
     function selectPlan(cardElement, coins, price) {
       var allCards = document.querySelectorAll('.plan-card');
-      for (var i = 0; i < allCards.length; i++) {
-        allCards[i].classList.remove('selected');
-      }
+      allCards.forEach(function(card) {
+        card.classList.remove('selected');
+      });
       cardElement.classList.add('selected');
       
       selectedCoins = coins;
