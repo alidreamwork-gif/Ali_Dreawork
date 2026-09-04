@@ -10,8 +10,8 @@
     
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Top Bar - No blocking layers */
-    .top-navbar { background: #1e40af; padding: 10px; text-align: center; position: relative; z-index: 10; }
+    /* Top Bar */
+    .top-navbar { background: #1e40af; padding: 10px; text-align: center; position: relative; z-index: 100; }
     .nav-brand { color: #fff; font-size: 15px; font-weight: bold; margin-bottom: 6px; }
     .nav-buttons { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; }
     
@@ -58,7 +58,6 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li, .static-page h3 { font-size: 13px; color: #4b5563; line-height: 1.5; }
-    .static-page h3 { color: #1f2937; margin-top: 15px; margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -136,46 +135,6 @@
                 <button type="button" class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
               </div>
             </div>
-            <div class="plan-card" id="card-4">
-              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
-              <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Pages)</span></div>
-              <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
-                <span class="qty-num" id="qty-4">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-5">
-              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
-              <div class="plan-title">Mega E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Pages)</span></div>
-              <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
-                <span class="qty-num" id="qty-5">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-6">
-              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
-              <div class="plan-title">Super E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Pages)</span></div>
-              <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
-                <span class="qty-num" id="qty-6">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-7">
-              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
-              <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Pages)</span></div>
-              <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
-                <span class="qty-num" id="qty-7">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
-              </div>
-            </div>
           </div>
 
           <label>WhatsApp Number:</label>
@@ -194,68 +153,30 @@
       <div id="tab-ebooks" class="page-section">
         <h2>📖 Digital E-Books Library</h2>
         <p>Explore our professional guides and technical handbooks designed for online growth.</p>
-        <ul>
-          <li>Beginner's Web Guide & Technical Handbook</li>
-          <li>Advanced Digital Marketing Strategy Manual</li>
-          <li>E-Commerce Mastery Blueprint</li>
-        </ul>
       </div>
 
       <!-- Terms Tab -->
       <div id="tab-terms" class="page-section">
         <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, purchasing, or downloading our digital products, you agree to comply with and be bound by the following terms and conditions.</p>
-        
-        <h3>1. User Account & Accuracy</h3>
-        <ul>
-          <li>Users must provide a valid and correct User ID before initiating any transaction.</li>
-          <li>We are not responsible for delivery failures resulting from incorrect user identification details provided by the customer.</li>
-        </ul>
-
-        <h3>2. Digital Products & Delivery</h3>
-        <ul>
-          <li>All items sold on this platform are digital goods, including e-books, guides, articles, and reading page credits.</li>
-          <li>Upon successful payment verification, digital products and content pages are credited or delivered automatically to the verified user profile.</li>
-        </ul>
-
-        <h3>3. Pricing & Payments</h3>
-        <ul>
-          <li>All prices listed are in Indian Rupees (INR) and are inclusive of applicable processing standards.</li>
-          <li>Payments are processed securely through authorized payment gateway partners. Users must ensure authorized usage of their payment instruments.</li>
-        </ul>
-
-        <h3>4. Intellectual Property</h3>
-        <ul>
-          <li>All content, digital assets, and reading materials provided on Ali Dreamwork are protected by copyright laws. Unauthorized distribution or commercial resale is strictly prohibited.</li>
-        </ul>
+        <p>Welcome to <strong>Ali Dreamwork</strong> terms and conditions page.</p>
       </div>
 
       <!-- Privacy Tab -->
       <div id="tab-privacy" class="page-section">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy is important to us at <strong>Ali Dreamwork</strong>.</p>
-        <ul>
-          <li>We guarantee that <strong>we do not leak, sell, or share your personal details</strong> with any third parties.</li>
-          <li>Information collected is strictly used for secure order processing and delivery.</li>
-        </ul>
+        <p>Your privacy is protected with us.</p>
       </div>
 
       <!-- Refund Tab -->
       <div id="tab-refund" class="page-section">
         <h2>🔄 Refund & Cancellation Policy</h2>
-        <p>We maintain a fair framework for customer satisfaction:</p>
-        <ul>
-          <li>Due to the digital nature of our products, once items or page credits are successfully delivered to the user ID, orders generally cannot be cancelled or refunded.</li>
-          <li>If a transaction fails or an error occurs during payment, customers can reach out within <strong>15 minutes</strong> with transaction proofs, and our support team will review and resolve the case promptly.</li>
-        </ul>
+        <p>All digital sales are final.</p>
       </div>
 
       <!-- Contact Tab -->
       <div id="tab-contact" class="page-section">
         <h2>🎧 Contact Us</h2>
         <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-        <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
       </div>
 
     </div>
@@ -344,7 +265,7 @@
 
     function verifyUser() {
       var uidInput = document.getElementById('userId');
-      var resBox = Document.getElementById('verifyResult');
+      var resBox = document.getElementById('verifyResult'); // Corrected 'document' spelling
       
       if (!uidInput || !uidInput.value.trim()) {
         alert('Please enter User ID first');
@@ -393,8 +314,32 @@
       }
 
       if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
+        alert('Please fill ID, select at least one plan and enter WhatsApp number.');
         return;
       }
       if (!isVerified) {
-        alert('Please verify
+        alert('Please verify your User ID first.');
+        return;
+      }
+
+      fetch('/api/create-payment', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid, amount: totalPrice, whatsapp: phone, cart: cart })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success && data.payment_url) {
+          window.location.href = data.payment_url;
+        } else {
+          alert(data.message || 'Payment initiation failed.');
+        }
+      })
+      .catch(function(err) {
+        console.error(err);
+        alert('Connection error with payment gateway.');
+      });
+    }
+  </script>
+</body>
+</html>
