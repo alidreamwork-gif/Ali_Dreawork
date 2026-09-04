@@ -5,50 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork Store</title>
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    * { box-sizing: border-box; }
+    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 10px; display: flex; justify-content: center; }
+    .wrapper { width: 100%; max-width: 450px; background: #fff; min-height: 100vh; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; }
     
-    /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 99; }
-    .nav-brand { color: #fff; font-size: 17px; font-weight: bold; margin-bottom: 8px; }
-    .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-    .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; font-weight: bold; }
-    .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
+    .top-bar { background: #1e40af; padding: 12px; text-align: center; }
+    .brand { color: #fff; font-size: 17px; font-weight: bold; margin-bottom: 8px; }
+    .nav { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+    .nav button { background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 6px 12px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
+    .nav button.active { background: #fff; color: #1e40af; }
 
-    /* Content Area */
-    .container { padding: 15px; flex: 1; }
-    .page-section { display: none; }
-    .page-section.active-page { display: block !important; }
+    .content { padding: 15px; flex: 1; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    /* UI Header */
-    .header { text-align: center; margin-bottom: 15px; }
-    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
-    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
-    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
-    
-    label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; color: #374151; }
-    .id-group { display: flex; gap: 6px; margin-top: 5px; }
-    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
-    
-    .verify-btn { background: #059669; color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
-    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .logo-box { text-align: center; margin-bottom: 12px; }
+    .logo-box img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #d97706; }
+    .logo-box div { font-size: 18px; font-weight: bold; color: #1f2937; margin-top: 5px; }
 
-    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
-    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    
-    /* 1-Tap Modern Coin Card */
-    .coin-card { 
-      border: 2px solid #e5e7eb; 
-      border-radius: 12px; 
-      padding: 16px 10px; 
-      background: #fafafa; 
-      text-align: center; 
-      position: relative; 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      user-select: none;
-    }
-    .coin-card:hover { border-color: #93c5fd; background: #f0f9ff; }
-    .coin-card.selected { border-color: #059669;
+    .box { border: 1px solid #e5e7eb; padding: 14px; border-radius: 10px; background: #fff; }
+    label { display: block; font-size: 13px; font-weight: bold; color: #374151; margin-top: 10px; }
+    .input-row { display: flex; gap: 6px; margin-top: 5px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
+    .verify-btn { background: #059669; color: #fff; border: none; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    #verifyRes { margin-top: 8px; font-size: 12px; padding: 8px; border-radius: 6px; display: none; }
+
+    .grid-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .plan-card { border: 2px solid #e5e7eb; border-radius:
