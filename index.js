@@ -9,19 +9,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-const SELLER_ID = "";
+const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// Cashfree Test (Sandbox) API Credentials
-const CASHFREE_APP_ID = "TEST112085181a9848f239327d519a0481580211";
-const CASHFREE_SECRET_KEY = "cfsk_ma_test_1430e76879fb27fbeedb82100f7cc46b_3c769f5e";
-
-// Sandbox Test URL for Cashfree Orders
-const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
-// अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins جوड़ने के लिए)
+// सक्रिय ऑर्डर्स का मेमोरी स्टोरेज
+// संरचना: orderId -> { uid, amount, coins, status: 'PENDING' | 'PAID', createdAt }
 const activeOrders = new Map();
 
-// 1. User Verification Endpoint
+// 1. User Verification Endpoint (अपरिवर्तित)
 app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
@@ -53,20 +48,19 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Cashfree Dynamic Payment Order Creation
-app.post('/api/create-cashfree-order', async (req, res) => {
+// 2. BharatPe Order Initialization (फ्रंटएंड से ऑर्डर रजिस्टर करने के लिए)
+app.post('/api/create-order', (req, res) => {
     try {
-        const { uid, amount, whatsapp } = req.body;
+        const { uid, amount, orderId } = req.body;
         
-        if (!uid || !amount) {
-            return res.status(400).json({ success: false, message: "UID and Amount are required" });
+        if (!uid || !amount || !orderId) {
+            return res.status(400).json({ success: false, message: "UID, Amount, and OrderID are required" });
         }
 
-        const orderId = "ORD_" + Date.now();
         let coins = 0;
         const amtNum = Math.round(Number(amount));
 
-        // नए प्लान्स के अनुसार कॉइन्स की सटीक वैल्यू
+        // पैकेज प्लान्स के अनुसार कॉइन्स
         if (amtNum === 200) coins = 14600;
         else if (amtNum === 300) coins = 21900;
         else if (amtNum === 500) coins = 36500;
@@ -75,55 +69,26 @@ app.post('/api/create-cashfree-order', async (req, res) => {
         else if (amtNum === 2000) coins = 146000;
         else if (amtNum === 3000) coins = 219000;
         else if (amtNum === 4500) coins = 328500;
-        else coins = amtNum * 73; // डिफ़ॉल्ट कैलकुलेशन
+        else coins = amtNum * 73;
 
-        // ऑर्डर को मेमोरी में सेव करें ताकि वेबहुक आने पर UID मिल सके
-        activeOrders.set(orderId, { uid: uid.toString().trim(), coins: coins });
-
-        // Render लाइव सर्वर का यूआरएल ऑटोमैटिक कैच करने के लिए
-        const hostUrl = `https://${req.get('host')}`;
-
-        const cashfreePayload = {
-            order_id: orderId,
-            order_amount: Number(amount).toFixed(2),
-            order_currency: "INR",
-            customer_details: {
-                customer_id: uid.toString().trim(),
-                customer_phone: whatsapp ? whatsapp.toString() : "9999999999",
-                customer_email: `${uid}@ali-store.com`
-            },
-            order_meta: {
-                return_url: `${hostUrl}/?order_id=${orderId}`,
-                notify_url: `${hostUrl}/api/cashfree-webhook`
-            }
-        };
-
-        const cashfreeResponse = await axios.post(CASHFREE_API_URL, cashfreePayload, {
-            headers: {
-                'x-client-id': CASHFREE_APP_ID,
-                'x-client-secret': CASHFREE_SECRET_KEY,
-                'x-api-version': '2022-09-01',
-                'Content-Type': 'application/json'
-            }
+        activeOrders.set(orderId, {
+            uid: uid.toString().trim(),
+            amount: amtNum,
+            coins: coins,
+            status: 'PENDING',
+            createdAt: Date.now()
         });
 
-        if (cashfreeResponse.data && cashfreeResponse.data.payment_session_id) {
-            return res.json({
-                success: true,
-                payment_session_id: cashfreeResponse.data.payment_session_id,
-                order_id: orderId
-            });
-        } else {
-            return res.status(500).json({ success: false, message: "Failed to generate payment session" });
-        }
+        console.log(`Order Registered: ${orderId} | UID: ${uid} | Amount: ₹${amtNum} | Coins: ${coins}`);
 
+        return res.json({ success: true, orderId: orderId });
     } catch (error) {
-        console.error("Cashfree Payment Creation Error:", error.response?.data || error.message);
-        return res.status(500).json({ success: false, message: "Internal server error during payment creation" });
+        console.error("Order Creation Error:", error);
+        return res.status(500).json({ success: false, message: "Server error creating order" });
     }
 });
 
-// 3. Helper function to deliver coins
+// 3. Helper function to deliver coins (अपरिवर्तित)
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -153,36 +118,75 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Cashfree Webhook Endpoint (Automatic Coin Delivery)
-app.post('/api/cashfree-webhook', async (req, res) => {
+// 4. SMS Reader Webhook Endpoint (BharatPe / Bank SMS Forwarder)
+app.post('/api/sms-webhook', async (req, res) => {
     try {
-        console.log("================== CASHFREE WEBHOOK RECEIVED ==================");
-        console.log(JSON.stringify(req.body, null, 2));
+        console.log("================== SMS WEBHOOK RECEIVED ==================");
+        console.log("Payload:", JSON.stringify(req.body, null, 2));
 
-        const eventData = req.body;
-        
-        if (eventData && eventData.data && eventData.data.payment && eventData.data.payment.payment_status === "SUCCESS") {
-            const orderId = eventData.data.order.order_id;
-            let orderData = activeOrders.get(orderId);
+        // SMS Reader ऍप आमतौर पर 'message', 'text', या 'body' में SMS भेजते हैं
+        const smsBody = req.body.message || req.body.text || req.body.body || req.body.content || "";
+        const sender = req.body.sender || req.body.from || "";
 
-            if (orderData) {
-                console.log(`Found order details for ${orderId}: UID = ${orderData.uid}, Coins = ${orderData.coins}`);
-                const result = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
-                console.log("Final Coin Delivery Result:", result);
-                
-                activeOrders.delete(orderId);
-            } else {
-                console.log(`Error: Order ID ${orderId} not found in activeOrders memory map!`);
-            }
-        } else {
-            console.log("Webhook received but payment is not successful.");
+        console.log(`From: ${sender} | Message: ${smsBody}`);
+
+        // SMS में से क्रेडिट अमाउंट निकालना (उदा. Credited by Rs 200.00 या received Rs.200)
+        const amountMatch = smsBody.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
+        let detectedAmount = 0;
+        if (amountMatch) {
+            detectedAmount = Math.round(parseFloat(amountMatch[1].replace(/,/g, '')));
         }
 
-        return res.status(200).json({ status: true, message: "Webhook processed successfully" });
+        let matchedOrderId = null;
+
+        // पहले चेक करें कि क्या SMS में सीधे Order ID मौजूद है
+        for (let [orderId, data] of activeOrders.entries()) {
+            if (smsBody.includes(orderId)) {
+                matchedOrderId = orderId;
+                break;
+            }
+        }
+
+        // यदि SMS में Order ID नहीं है, तो पेंडिंग ऑर्डर्स में से अमाउंट मैच करें
+        if (!matchedOrderId && detectedAmount > 0) {
+            for (let [orderId, data] of activeOrders.entries()) {
+                if (data.status === 'PENDING' && data.amount === detectedAmount) {
+                    matchedOrderId = orderId;
+                    break;
+                }
+            }
+        }
+
+        if (matchedOrderId) {
+            const orderData = activeOrders.get(matchedOrderId);
+            console.log(`Payment Verified for Order: ${matchedOrderId} | Delivering ${orderData.coins} Coins to UID ${orderData.uid}`);
+            
+            const deliveryRes = await deliverCoinsToUser(orderData.uid, orderData.coins, matchedOrderId);
+            
+            orderData.status = 'PAID';
+            orderData.deliveryResult = deliveryRes;
+
+            return res.status(200).json({ status: true, message: "Payment processed & coins delivered", orderId: matchedOrderId });
+        } else {
+            console.log("No matching pending order found for this SMS.");
+            return res.status(200).json({ status: false, message: "No matching pending order" });
+        }
+
     } catch (err) {
-        console.error("Webhook Critical Error:", err);
-        return res.status(500).json({ status: false, message: "Server error" });
+        console.error("SMS Webhook Critical Error:", err);
+        return res.status(500).json({ status: false, message: "Webhook execution error" });
     }
+});
+
+// 5. Front-end Status Polling Endpoint (फ्रंटएंड हर 3 सेकंड में पेमेंट स्टेटस चेक करेगा)
+app.get('/api/check-order-status', (req, res) => {
+    const { orderId } = req.query;
+    if (!orderId || !activeOrders.has(orderId)) {
+        return res.json({ status: 'NOT_FOUND' });
+    }
+
+    const order = activeOrders.get(orderId);
+    return res.json({ status: order.status });
 });
 
 const PORT = process.env.PORT || 10000;
