@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-const SELLER_ID = "4851724";
+const SELLER_ID = "";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // Cashfree Test (Sandbox) API Credentials
