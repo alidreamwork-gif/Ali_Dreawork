@@ -373,12 +373,16 @@
       .then(function(data) {
         if (data.success && data.payment_session_id) {
           try {
-            // Correct initialization for Cashfree v3 Sandbox SDK
-            const cashfree = window.Cashfree({ mode: "sandbox" });
+            // Fix for Cashfree v3 SDK initialization
+            const cashfree = window.Cashfree({
+              mode: "sandbox"
+            });
+            
             let checkoutOptions = {
               paymentSessionId: data.payment_session_id,
               redirectTarget: "_modal"
             };
+            
             cashfree.checkout(checkoutOptions).then(function(result) {
               if (result.error) {
                 alert("Payment failed: " + result.error.message);
