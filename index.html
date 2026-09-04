@@ -10,21 +10,18 @@
     
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 10px; text-align: center; position: sticky; top: 0; z-index: 99999; }
+    /* Top Bar - No blocking layers */
+    .top-navbar { background: #1e40af; padding: 10px; text-align: center; position: relative; z-index: 10; }
     .nav-brand { color: #fff; font-size: 15px; font-weight: bold; margin-bottom: 6px; }
     .nav-buttons { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; }
     
-    /* Clickable Buttons */
     .nav-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; font-weight: bold; }
     .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
 
-    /* Container and Sections */
     .container { padding: 15px; flex: 1; }
     .page-section { display: none; }
     .page-section.active-page { display: block; }
 
-    /* UI Elements */
     .header { text-align: center; margin-bottom: 15px; }
     .logo-img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
     .brand-title { font-size: 18px; font-weight: bold; color: #1f2937; margin-top: 5px; }
@@ -67,6 +64,7 @@
 <body>
 
   <div class="app-wrapper">
+    <!-- Top Navbar -->
     <div class="top-navbar">
       <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
       <div class="nav-buttons">
@@ -81,7 +79,8 @@
 
     <div class="container">
       
-      <div id="tab-topup" class="page-section active-page">
+      <!-- Topup / Store Tab -->
+      <div id="tab-topup" class="page-section active-page" style="display: block;">
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
           <div class="brand-title">ALI DREAMWORK</div>
@@ -191,6 +190,7 @@
         </div>
       </div>
 
+      <!-- Library Tab -->
       <div id="tab-ebooks" class="page-section">
         <h2>📖 Digital E-Books Library</h2>
         <p>Explore our professional guides and technical handbooks designed for online growth.</p>
@@ -201,6 +201,7 @@
         </ul>
       </div>
 
+      <!-- Terms Tab -->
       <div id="tab-terms" class="page-section">
         <h2>📜 Terms & Conditions</h2>
         <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, purchasing, or downloading our digital products, you agree to comply with and be bound by the following terms and conditions.</p>
@@ -229,6 +230,7 @@
         </ul>
       </div>
 
+      <!-- Privacy Tab -->
       <div id="tab-privacy" class="page-section">
         <h2>🔒 Privacy Policy</h2>
         <p>Your privacy is important to us at <strong>Ali Dreamwork</strong>.</p>
@@ -238,6 +240,7 @@
         </ul>
       </div>
 
+      <!-- Refund Tab -->
       <div id="tab-refund" class="page-section">
         <h2>🔄 Refund & Cancellation Policy</h2>
         <p>We maintain a fair framework for customer satisfaction:</p>
@@ -247,6 +250,7 @@
         </ul>
       </div>
 
+      <!-- Contact Tab -->
       <div id="tab-contact" class="page-section">
         <h2>🎧 Contact Us</h2>
         <p><strong>Email:</strong> alidreamwork@gmail.com</p>
@@ -258,7 +262,6 @@
   </div>
 
   <script>
-    // Simple and robust tab switching function
     function switchTab(tabName) {
       var sections = document.querySelectorAll('.page-section');
       for (var i = 0; i < sections.length; i++) {
@@ -341,7 +344,7 @@
 
     function verifyUser() {
       var uidInput = document.getElementById('userId');
-      var resBox = document.getElementById('verifyResult');
+      var resBox = Document.getElementById('verifyResult');
       
       if (!uidInput || !uidInput.value.trim()) {
         alert('Please enter User ID first');
@@ -394,8 +397,4 @@
         return;
       }
       if (!isVerified) {
-        alert('Please verify your User ID first.');
-        return;
-      }
-
-      fetch('/api/create-payment', {
+        alert('Please verify
