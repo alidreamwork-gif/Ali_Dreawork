@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   
-  <!-- Cashfree v3 Sandbox SDK -->
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.sandbox.js"></script>
+  <!-- Cashfree v3 Official SDK Loader -->
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -224,6 +224,21 @@
   </div>
 
   <script>
+    let cashfreeInstance = null;
+    
+    // Initialize Cashfree SDK safely on load
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        if (typeof load !== 'undefined') {
+          cashfreeInstance = await load({ mode: "sandbox" });
+        } else if (window.Cashfree) {
+          cashfreeInstance = window.Cashfree({ mode: "sandbox" });
+        }
+      } catch (err) {
+        console.error("SDK Load Warning:", err);
+      }
+    });
+
     function changeTab(tabId, btnElement) {
       var sections = document.querySelectorAll('.page-section');
       sections.forEach(function(sec) {
@@ -338,7 +353,7 @@
       });
     }
 
-    function initiatePayment() {
+    async function initiatePayment() {
       var uidInput = document.getElementById('userId');
       var phoneInput = document.getElementById('userPhone');
 
@@ -359,56 +374,47 @@
         return;
       }
 
-      fetch('/api/create-cashfree-order', {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ 
-          uid: uid,
-          amount: totalPrice, 
-          whatsapp: phone 
-        })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
+      try {
+        let response = await fetch('/api/create-cashfree-order', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid: uid, amount: totalPrice, whatsapp: phone })
+        });
+        
+        let data = await response.json();
+
         if (data.success && data.payment_session_id) {
-          try {
-            let cashfree;
-            
-            // Checking all possible structures for Cashfree v3 initialization
-            if (typeof Cashfree === 'function') {
-              cashfree = Cashfree({ mode: "sandbox" });
-            } else if (window.Cashfree && typeof window.Cashfree === 'function') {
-              cashfree = window.Cashfree({ mode: "sandbox" });
-            } else if (window.Cashfree && typeof window.Cashfree.init === 'function') {
-              cashfree = window.Cashfree.init({ mode: "sandbox" });
-            } else {
-              throw new Error("Cashfree SDK failed to load properly.");
+          let cf = cashfreeInstance;
+          if (!cf) {
+            if (typeof load !== 'undefined') {
+              cf = await load({ mode: "sandbox" });
+            } else if (window.Cashfree) {
+              cf = window.Cashfree({ mode: "sandbox" });
             }
-            
-            let checkoutOptions = {
-              paymentSessionId: data.payment_session_id,
-              redirectTarget: "_self" // _self का इस्तेमाल किया गया है ताकि पॉप-अप ब्लॉक होने की समस्या पूरी तरह खत्म हो जाए
-            };
-            
-            cashfree.checkout(checkoutOptions).then(function(result) {
-              if (result.error) {
-                alert("Payment failed: " + result.error.message);
-              }
-            });
-          } catch (e) {
-            console.error(e);
-            alert("Payment gateway initialization error: " + e.message);
           }
+
+          if (!cf) {
+            alert("Payment gateway initialization error: Cashfree SDK failed to load properly.");
+            return;
+          }
+
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_self" // रीडायरेक्ट मोड इस्तेमाल किया गया है ताकि पॉप-अप ब्लॉक न हो
+          };
+          
+          cf.checkout(checkoutOptions).then(function(result) {
+            if (result.error) {
+              alert("Payment failed: " + result.error.message);
+            }
+          });
         } else {
           alert(data.message || 'Payment initiation failed.');
         }
-      })
-      .catch(function(err) {
+      } catch (err) {
         console.error(err);
         alert('Connection error with payment gateway.');
-      });
+      }
     }
   </script>
 </body>
