@@ -12,9 +12,10 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// Cashfree Production API Credentials
+// Cashfree Test (Sandbox) API Credentials
 const CASHFREE_APP_ID = "TEST112085181a9848f239327d519a0481580211";
 const CASHFREE_SECRET_KEY = "cfsk_ma_test_1430e76879fb27fbeedb82100f7cc46b_3c769f5e";
+
 // Sandbox Test URL for Cashfree Orders
 const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
 // अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins جوड़ने के लिए)
