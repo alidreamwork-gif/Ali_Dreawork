@@ -13,10 +13,14 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // सक्रिय ऑर्डर्स का मेमोरी स्टोरेज
-// संरचना: orderId -> { uid, amount, coins, status: 'PENDING' | 'PAID', createdAt }
 const activeOrders = new Map();
 
-// 1. User Verification Endpoint (अपरिवर्तित)
+// रूट पाथ
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// 1. User Verification Endpoint
 app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
@@ -48,7 +52,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. BharatPe Order Initialization (फ्रंटएंड से ऑर्डर रजिस्टर करने के लिए)
+// 2. BharatPe Order Initialization
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -80,7 +84,6 @@ app.post('/api/create-order', (req, res) => {
         });
 
         console.log(`Order Registered: ${orderId} | UID: ${uid} | Amount: ₹${amtNum} | Coins: ${coins}`);
-
         return res.json({ success: true, orderId: orderId });
     } catch (error) {
         console.error("Order Creation Error:", error);
@@ -88,7 +91,7 @@ app.post('/api/create-order', (req, res) => {
     }
 });
 
-// 3. Helper function to deliver coins (अपरिवर्तित)
+// 3. Helper function to deliver coins
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -118,19 +121,38 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. SMS Reader Webhook Endpoint (BharatPe / Bank SMS Forwarder)
+// 4. Manual UTR Verification Endpoint (वेरिफाई बटन क्लिक करने पर तुरंत डिलीवरी के लिए)
+app.post('/api/manual-verify', async (req, res) => {
+    try {
+        const { orderId, utr } = req.body;
+        if (!orderId || !activeOrders.has(orderId)) {
+            return res.status(400).json({ success: false, message: "Order not found or expired" });
+        }
+
+        const orderData = activeOrders.get(orderId);
+        console.log(`Manual UTR Verification: Order ${orderId} | UTR: ${utr} | Delivering ${orderData.coins} Coins to UID: ${orderData.uid}`);
+
+        const result = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
+
+        orderData.status = 'PAID';
+        orderData.utr = utr;
+
+        return res.json({ success: true, message: "Coins delivered successfully!", result: result });
+    } catch (error) {
+        console.error("Manual verify error:", error);
+        return res.status(500).json({ success: false, message: "Failed to process verification" });
+    }
+});
+
+// 5. SMS Reader Webhook Endpoint
 app.post('/api/sms-webhook', async (req, res) => {
     try {
         console.log("================== SMS WEBHOOK RECEIVED ==================");
-        console.log("Payload:", JSON.stringify(req.body, null, 2));
-
-        // SMS Reader ऍप आमतौर पर 'message', 'text', या 'body' में SMS भेजते हैं
         const smsBody = req.body.message || req.body.text || req.body.body || req.body.content || "";
         const sender = req.body.sender || req.body.from || "";
 
         console.log(`From: ${sender} | Message: ${smsBody}`);
 
-        // SMS में से क्रेडिट अमाउंट निकालना (उदा. Credited by Rs 200.00 या received Rs.200)
         const amountMatch = smsBody.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
         let detectedAmount = 0;
         if (amountMatch) {
@@ -138,8 +160,6 @@ app.post('/api/sms-webhook', async (req, res) => {
         }
 
         let matchedOrderId = null;
-
-        // पहले चेक करें कि क्या SMS में सीधे Order ID मौजूद है
         for (let [orderId, data] of activeOrders.entries()) {
             if (smsBody.includes(orderId)) {
                 matchedOrderId = orderId;
@@ -147,7 +167,6 @@ app.post('/api/sms-webhook', async (req, res) => {
             }
         }
 
-        // यदि SMS में Order ID नहीं है, तो पेंडिंग ऑर्डर्स में से अमाउंट मैच करें
         if (!matchedOrderId && detectedAmount > 0) {
             for (let [orderId, data] of activeOrders.entries()) {
                 if (data.status === 'PENDING' && data.amount === detectedAmount) {
@@ -159,7 +178,7 @@ app.post('/api/sms-webhook', async (req, res) => {
 
         if (matchedOrderId) {
             const orderData = activeOrders.get(matchedOrderId);
-            console.log(`Payment Verified for Order: ${matchedOrderId} | Delivering ${orderData.coins} Coins to UID ${orderData.uid}`);
+            console.log(`Payment Verified via SMS: Delivering ${orderData.coins} Coins to UID ${orderData.uid}`);
             
             const deliveryRes = await deliverCoinsToUser(orderData.uid, orderData.coins, matchedOrderId);
             
@@ -168,17 +187,15 @@ app.post('/api/sms-webhook', async (req, res) => {
 
             return res.status(200).json({ status: true, message: "Payment processed & coins delivered", orderId: matchedOrderId });
         } else {
-            console.log("No matching pending order found for this SMS.");
             return res.status(200).json({ status: false, message: "No matching pending order" });
         }
-
     } catch (err) {
         console.error("SMS Webhook Critical Error:", err);
         return res.status(500).json({ status: false, message: "Webhook execution error" });
     }
 });
 
-// 5. Front-end Status Polling Endpoint (फ्रंटएंड हर 3 सेकंड में पेमेंट स्टेटस चेक करेगा)
+// 6. Status Polling Endpoint
 app.get('/api/check-order-status', (req, res) => {
     const { orderId } = req.query;
     if (!orderId || !activeOrders.has(orderId)) {
