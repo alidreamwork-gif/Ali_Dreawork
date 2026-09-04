@@ -10,7 +10,7 @@
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
     
     /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 99; }
+    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 999; }
     .nav-brand { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
     .nav-buttons { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
     .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
@@ -61,6 +61,28 @@
     /* Static Pages Styling */
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
+
+    /* BharatPe Modal Popup */
+    #qrModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 330px;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -245,6 +267,27 @@
     </div>
   </div>
 
+  <!-- BharatPe Dynamic QR Modal (Default display:none inline ensures zero click blocking) -->
+  <div id="qrModal" style="display: none;">
+    <div class="modal-box">
+      <div style="font-weight:bold;font-size:15px;color:#1e40af;">Scan & Pay via Any UPI</div>
+      <div id="modalAmount" style="font-size:22px;font-weight:bold;color:#059669;margin:6px 0;">₹0</div>
+      
+      <img id="modalQrImg" src="" style="width:170px;height:170px;margin:5px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">
+      
+      <a id="modalUpiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:8px;">⚡ Open UPI App</a>
+
+      <!-- UTR Input & Verify Section -->
+      <div style="margin-top:12px;border-top:1px dashed #d1d5db;padding-top:10px;">
+        <div style="font-size:11px;color:#4b5563;margin-bottom:5px;font-weight:bold;">पेमेंट के बाद 12-अंकों का UPI Ref / UTR डालें:</div>
+        <input type="text" id="utrInput" placeholder="Enter 12-digit UTR" style="text-align:center;padding:8px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">
+        <button id="verifyUtrBtn" type="button" onclick="submitUtrVerify()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>
+      </div>
+
+      <button type="button" onclick="closeQrModal()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:7px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+
   <script>
     const BHARATPE_VPA = "BHARATPE.220P0L0B8I71717@unitype";
     const MERCHANT_NAME = "VASIM ALI";
@@ -284,13 +327,16 @@
       cart[index].qty += change;
       if (cart[index].qty < 0) cart[index].qty = 0;
 
-      document.getElementById('qty-' + index).innerText = cart[index].qty;
+      var qtyElem = document.getElementById('qty-' + index);
+      if (qtyElem) qtyElem.innerText = cart[index].qty;
 
       var cardElem = document.getElementById('card-' + index);
-      if (cart[index].qty > 0) {
-        cardElem.classList.add('selected');
-      } else {
-        cardElem.classList.remove('selected');
+      if (cardElem) {
+        if (cart[index].qty > 0) {
+          cardElem.classList.add('selected');
+        } else {
+          cardElem.classList.remove('selected');
+        }
       }
 
       if (cart[index].qty === 0) {
@@ -303,31 +349,37 @@
     function updateSummary() {
       var totalCoins = 0;
       var totalPrice = 0;
+      var summaryParts = [];
 
       for (var key in cart) {
         var item = cart[key];
         totalCoins += item.coins * item.qty;
         totalPrice += item.price * item.qty;
+        summaryParts.push(item.qty + "x (" + (item.coins * item.qty).toLocaleString() + " Coins)");
       }
 
-      if (Object.keys(cart).length === 0) {
-        document.getElementById('sumPlan').innerText = "None";
-        document.getElementById('sumPrice').innerText = "₹0";
+      var sumPlan = document.getElementById('sumPlan');
+      var sumPrice = document.getElementById('sumPrice');
+
+      if (summaryParts.length === 0) {
+        if (sumPlan) sumPlan.innerText = "None";
+        if (sumPrice) sumPrice.innerText = "₹0";
       } else {
-        document.getElementById('sumPlan').innerText = totalCoins.toLocaleString() + " Coins";
-        document.getElementById('sumPrice').innerText = "₹" + totalPrice;
+        if (sumPlan) sumPlan.innerText = totalCoins.toLocaleString() + " Coins";
+        if (sumPrice) sumPrice.innerText = "₹" + totalPrice;
       }
     }
 
     function verifyUser() {
-      var uid = document.getElementById('userId').value.trim();
+      var uidInput = document.getElementById('userId');
       var resBox = document.getElementById('verifyResult');
       
-      if (!uid) {
+      if (!uidInput || !uidInput.value.trim()) {
         alert('Please enter User ID first');
         return;
       }
 
+      var uid = uidInput.value.trim();
       resBox.style.display = "flex";
       resBox.innerHTML = "Verifying...";
 
@@ -350,56 +402,3 @@
         }
       })
       .catch(function() {
-        isVerified = false;
-        resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
-      });
-    }
-
-    function initiatePayment() {
-      var uid = document.getElementById('userId').value.trim();
-      var phone = document.getElementById('userPhone').value.trim();
-
-      var totalPrice = 0;
-      for (var key in cart) {
-        totalPrice += cart[key].price * cart[key].qty;
-      }
-
-      if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
-        return;
-      }
-      if (!isVerified) {
-        alert('Please verify your User ID first.');
-        return;
-      }
-
-      currentOrderId = "ORD" + Date.now();
-
-      fetch('/api/create-order', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: totalPrice, orderId: currentOrderId })
-      }).catch(function() {});
-
-      var upiUrl = "upi://pay?pa=" + encodeURIComponent(BHARATPE_VPA) +
-                    "&pn=" + encodeURIComponent(MERCHANT_NAME) +
-                    "&am=" + totalPrice +
-                    "&cu=INR&tn=EBookPurchase";
-
-      var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(upiUrl);
-
-      // Popup dynamically create hoga tabhi screen par aayega
-      var existing = document.getElementById('popupBox');
-      if (existing) existing.remove();
-
-      var pop = document.createElement('div');
-      pop.id = 'popupBox';
-      pop.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;justify-content:center;align-items:center;padding:15px;';
-      
-      pop.innerHTML = 
-        '<div style="background:#fff;width:100%;max-width:330px;border-radius:12px;padding:16px;text-align:center;">' +
-          '<div style="font-weight:bold;font-size:15px;color:#1e40af;">Scan & Pay via Any UPI</div>' +
-          '<div style="font-size:22px;font-weight:bold;color:#059669;margin:6px 0;">₹' + totalPrice + '</div>' +
-          '<img src="' + qrImgUrl + '" style="width:170px;height:170px;margin:5px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">' +
-          '<a href="' + upiUrl + '" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:8px;">⚡ Open UPI App</a>' +
-          '<div style="
