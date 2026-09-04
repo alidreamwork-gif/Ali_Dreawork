@@ -328,6 +328,14 @@
       resBox.style.display = "flex";
       resBox.innerHTML = "Verifying...";
 
+      // Test Mode bypass for Cashfree / Testing Team (e.g. ID: 12345)
+      if (uid === "12345" || uid === "test" || uid === "TEST12345") {
+        isVerified = true;
+        resBox.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Test Gateway User</b><br><small>ID: ' + uid + ' (Test Verified ✅)</small></div>';
+        return;
+      }
+
+      // Normal Server Verification for Real Users
       fetch('/api/verify-user', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -400,7 +408,7 @@
 
           let checkoutOptions = {
             paymentSessionId: data.payment_session_id,
-            redirectTarget: "_self" // रीडायरेक्ट मोड इस्तेमाल किया गया है ताकि पॉप-अप ब्लॉक न हो
+            redirectTarget: "_self"
           };
           
           cf.checkout(checkoutOptions).then(function(result) {
