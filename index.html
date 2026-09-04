@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   
-  <!-- QRCode.js Library -->
+  <!-- Dynamic QR Code Generator Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; z-index: 1; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
     
     /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 100; }
+    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 999; }
     .nav-brand { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
     .nav-buttons { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
     .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
@@ -37,10 +37,12 @@
     
     .verify-btn { background: #059669; color: white; border: none; padding: 0 14px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; }
     #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
     .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; background: #fff; text-align: left; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
     .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
     .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
     
@@ -61,16 +63,16 @@
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
 
-    /* UPI QR Payment Modal */
-    .qr-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.65); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
-    .qr-box { background: #fff; width: 100%; max-width: 360px; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    .qr-header { font-size: 16px; font-weight: bold; color: #1e40af; margin-bottom: 5px; }
-    .qr-amount { font-size: 24px; font-weight: 800; color: #059669; margin-bottom: 12px; }
-    .qr-canvas-wrapper { display: flex; justify-content: center; align-items: center; background: #fff; padding: 10px; border: 2px dashed #d1d5db; border-radius: 12px; margin: 0 auto; width: 190px; height: 190px; }
-    .qr-timer { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 10px; }
-    .pay-via-upi-btn { display: block; width: 100%; background: #059669; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 12px; text-align: center; }
-    .cancel-qr-btn { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; }
-    .status-text { font-size: 11px; color: #6b7280; margin-top: 8px; }
+    /* BharatPe UPI QR Popup Modal (डिफ़ॉल्ट बंद रहेगा ताकि कोई बटन ब्लॉक न हो) */
+    #bpModalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
+    .bp-modal-content { background: #fff; width: 100%; max-width: 360px; border-radius: 14px; padding: 18px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .bp-modal-title { font-size: 15px; font-weight: bold; color: #1e40af; margin-bottom: 4px; }
+    .bp-modal-amount { font-size: 22px; font-weight: bold; color: #059669; margin-bottom: 12px; }
+    .bp-qr-frame { display: flex; justify-content: center; align-items: center; width: 180px; height: 180px; margin: 0 auto; background: #fff; padding: 8px; border: 2px dashed #cbd5e1; border-radius: 10px; }
+    .bp-timer { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 10px; }
+    .bp-pay-btn { display: block; width: 100%; background: #059669; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 12px; text-align: center; }
+    .bp-cancel-btn { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; }
+    .bp-status-text { font-size: 11px; color: #6b7280; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -79,12 +81,12 @@
     <div class="top-navbar">
       <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
       <div class="nav-buttons">
-        <button type="button" class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Books</button>
-        <button type="button" class="nav-btn" onclick="changeTab('ebooks', this)">E-Books</button>
-        <button type="button" class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
-        <button type="button" class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
-        <button type="button" class="nav-btn" onclick="changeTab('refund', this)">Refund</button>
-        <button type="button" class="nav-btn" onclick="changeTab('contact', this)">Contact</button>
+        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Books</button>
+        <button class="nav-btn" onclick="changeTab('ebooks', this)">E-Books</button>
+        <button class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
+        <button class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
+        <button class="nav-btn" onclick="changeTab('refund', this)">Refund</button>
+        <button class="nav-btn" onclick="changeTab('contact', this)">Contact</button>
       </div>
     </div>
 
@@ -101,7 +103,7 @@
           <label>Customer ID:</label>
           <div class="id-group">
             <input type="text" id="userId" placeholder="Enter Customer ID">
-            <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
+            <button class="verify-btn" onclick="verifyUser()">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
@@ -112,9 +114,9 @@
               <div class="plan-title">Basic E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
                 <span class="qty-num" id="qty-0">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-1">
@@ -122,9 +124,9 @@
               <div class="plan-title">Standard E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
                 <span class="qty-num" id="qty-1">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-2">
@@ -132,9 +134,9 @@
               <div class="plan-title">Pro E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
                 <span class="qty-num" id="qty-2">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-3">
@@ -142,9 +144,9 @@
               <div class="plan-title">Advanced E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
                 <span class="qty-num" id="qty-3">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-4">
@@ -152,9 +154,9 @@
               <div class="plan-title">Ultimate E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
                 <span class="qty-num" id="qty-4">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-5">
@@ -162,9 +164,9 @@
               <div class="plan-title">Mega E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
                 <span class="qty-num" id="qty-5">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-6">
@@ -172,9 +174,9 @@
               <div class="plan-title">Super E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
                 <span class="qty-num" id="qty-6">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
               </div>
             </div>
             <div class="plan-card" id="card-7">
@@ -182,9 +184,9 @@
               <div class="plan-title">Elite E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Pages)</span></div>
               <div class="qty-control">
-                <button type="button" class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
+                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
                 <span class="qty-num" id="qty-7">0</span>
-                <button type="button" class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
+                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
               </div>
             </div>
           </div>
@@ -197,177 +199,195 @@
             <div class="summary-row"><span>Total:</span> <span id="sumPrice">₹0</span></div>
           </div>
 
-          <button type="button" class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
+          <button class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
         </div>
       </div>
 
       <!-- Static Pages -->
       <div id="tab-ebooks" class="page-section static-page">
         <h2>📖 Digital E-Books & Resource Library</h2>
-        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides and strategic blueprints.</p>
-        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-        <h3>🌟 Featured Professional Guides</h3>
-        <ul>
-          <li><strong>1. Beginner's Web Guide:</strong> Architectural step-by-step introduction.</li>
-          <li><strong>2. Digital Marketing Strategy Manual:</strong> Tactical frameworks and funnel design.</li>
-          <li><strong>3. E-Commerce Mastery Blueprint:</strong> Automated inventory & gateway workflows.</li>
-          <li><strong>4. Scaling Handbook:</strong> High-performance growth blueprints.</li>
-        </ul>
+        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints.</p>
       </div>
 
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform or purchasing any digital products, you agree to comply with our terms.</p>
+        <p>By accessing our platform, you agree to comply with our terms and conditions regarding digital goods and services.</p>
       </div>
 
       <div id="tab-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. All digital transactions are securely handled.</p>
+        <p>Your privacy and data security are protected. We do not share your personal information with external parties.</p>
       </div>
 
       <div id="tab-refund" class="page-section static-page">
-        <h2>🔄 Refund Policy</h2>
-        <p>Digital products and credits are delivered instantly upon payment verification. Requests are handled as per standard terms.</p>
+        <h2>🔄 Refund & Cancellation Policy</h2>
+        <p>All digital product sales and page credit transactions are final once successfully delivered.</p>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
-        <h2>📞 Contact Support</h2>
-        <p>Need help with your order or verification? Contact us directly via WhatsApp support.</p>
+        <h2>🎧 Contact Us</h2>
+        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
+        <p><strong>WhatsApp:</strong> +917776881407</p>
+        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM IST)</p>
       </div>
 
     </div>
   </div>
 
-  <!-- Dynamic BharatPe QR Modal -->
-  <div id="qrModal" class="qr-modal">
-    <div class="qr-box">
-      <div class="qr-header">Scan to Pay with Any UPI App</div>
-      <div class="qr-amount" id="qrModalAmount">₹0</div>
+  <!-- BharatPe Dynamic QR Modal Box -->
+  <div id="bpModalOverlay">
+    <div class="bp-modal-content">
+      <div class="bp-modal-title">Scan & Pay with Any UPI App</div>
+      <div class="bp-modal-amount" id="bpModalAmount">₹0</div>
       
-      <div class="qr-canvas-wrapper" id="qrCanvas"></div>
+      <div class="bp-qr-frame" id="bpQrCanvas"></div>
       
-      <div class="qr-timer" id="qrTimer">Valid for 05:00 min</div>
+      <div class="bp-timer" id="bpTimer">Valid for 05:00 min</div>
       
-      <a id="directUpiLink" href="#" class="pay-via-upi-btn">⚡ Click to Pay via UPI App</a>
+      <a id="bpDirectUpiLink" href="#" class="bp-pay-btn">⚡ Click to Pay via UPI App</a>
       
-      <p class="status-text">Auto-verifying payment via SMS Reader...</p>
-      <button type="button" class="cancel-qr-btn" onclick="closeQrModal()">Cancel</button>
+      <p class="bp-status-text">Payment will auto-verify after transfer...</p>
+      <button class="bp-cancel-btn" onclick="closeBharatPeModal()">Cancel</button>
     </div>
   </div>
 
   <script>
-    // Configuration
+    // ========== 1. CONFIGURATION ==========
     // अपनी असली BharatPe UPI ID यहाँ डालें
     const BHARATPE_VPA = "your_bharatpe_vpa@bharatpe"; 
     const MERCHANT_NAME = "Ali Dreamwork";
 
-    let totalAmount = 0;
-    let totalPages = 0;
-    let selectedQuantities = {};
-    let qrTimerInterval = null;
-    let paymentPollInterval = null;
-    let currentOrderId = null;
+    var cart = {}; 
+    var isVerified = false;
+    var bpTimerInterval = null;
+    var bpPollInterval = null;
 
-    // 1. Tab Switching Function
-    function changeTab(tabName, btnElement) {
-      const pages = document.querySelectorAll('.page-section');
-      pages.forEach(p => p.classList.remove('active-page'));
+    // ========== 2. TAB SWITCHING (ORIGINAL) ==========
+    function changeTab(tabId, btnElement) {
+      var sections = document.querySelectorAll('.page-section');
+      sections.forEach(function(sec) {
+        sec.classList.remove('active-page');
+        sec.style.display = 'none';
+      });
 
-      const buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(b => b.classList.remove('active'));
+      var buttons = document.querySelectorAll('.nav-btn');
+      buttons.forEach(function(btn) {
+        btn.classList.remove('active');
+      });
 
-      const target = document.getElementById('tab-' + tabName);
-      if (target) {
-        target.classList.add('active-page');
+      var activeTarget = document.getElementById('tab-' + tabId);
+      if (activeTarget) {
+        activeTarget.style.display = 'block';
+        activeTarget.classList.add('active-page');
       }
+      
       if (btnElement) {
         btnElement.classList.add('active');
       }
+      window.scrollTo(0, 0);
     }
 
-    // 2. Customer ID Verification
-    async function verifyUser() {
-      const uidInput = document.getElementById('userId');
-      const resBox = document.getElementById('verifyResult');
-      const uid = uidInput.value.trim();
-
-      if (!uid) {
-        alert('Please enter a Customer ID first.');
-        return;
+    // ========== 3. CART & QUANTITY (ORIGINAL) ==========
+    function updateQty(index, pagesPerItem, pricePerItem, change) {
+      if (!cart[index]) {
+        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0 };
       }
-
-      resBox.style.display = 'flex';
-      resBox.innerHTML = '<span>Verifying ID...</span>';
-
-      try {
-        const response = await fetch('/api/verify-user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ uid: uid })
-        });
-        const data = await response.json();
-
-        if (data && (data.status === 200 || data.code === 200 || data.data)) {
-          const nickName = data.data ? (data.data.nickName || data.data.name || uid) : uid;
-          resBox.style.background = '#ecfdf5';
-          resBox.style.borderColor = '#10b981';
-          resBox.innerHTML = `<strong>Verified:</strong> ${nickName} (ID: ${uid})`;
-        } else {
-          resBox.style.background = '#fef2f2';
-          resBox.style.borderColor = '#ef4444';
-          resBox.innerHTML = `<span style="color:#b91c1c;">ID Not Found or Invalid</span>`;
-        }
-      } catch (err) {
-        // Fallback for direct local testing
-        resBox.style.background = '#ecfdf5';
-        resBox.style.borderColor = '#10b981';
-        resBox.innerHTML = `<strong>Verified:</strong> User #${uid}`;
-      }
-    }
-
-    // 3. Package Quantity Update
-    function updateQty(index, pages, price, change) {
-      const current = selectedQuantities[index] || 0;
-      const next = Math.max(0, current + change);
-      selectedQuantities[index] = next;
       
-      const qtyElem = document.getElementById('qty-' + index);
-      if (qtyElem) qtyElem.innerText = next;
+      cart[index].qty += change;
+      if (cart[index].qty < 0) cart[index].qty = 0;
 
-      // Calculate Totals
-      const plans = [
-        { pages: 14600, price: 200 },
-        { pages: 21900, price: 300 },
-        { pages: 36500, price: 500 },
-        { pages: 73000, price: 1000 },
-        { pages: 109500, price: 1500 },
-        { pages: 146000, price: 2000 },
-        { pages: 219000, price: 3000 },
-        { pages: 328500, price: 4500 }
-      ];
+      var qtyElem = document.getElementById('qty-' + index);
+      if (qtyElem) qtyElem.innerText = cart[index].qty;
 
-      totalAmount = 0;
-      totalPages = 0;
-      for (let i in selectedQuantities) {
-        const q = selectedQuantities[i];
-        if (q > 0) {
-          totalAmount += q * plans[i].price;
-          totalPages += q * plans[i].pages;
+      var cardElem = document.getElementById('card-' + index);
+      if (cardElem) {
+        if (cart[index].qty > 0) {
+          cardElem.classList.add('selected');
+        } else {
+          cardElem.classList.remove('selected');
         }
       }
 
-      document.getElementById('sumPrice').innerText = '₹' + totalAmount;
-      document.getElementById('sumPlan').innerText = totalPages > 0 ? `${totalPages.toLocaleString()} Pages` : 'None';
+      if (cart[index].qty === 0) {
+        delete cart[index];
+      }
+
+      updateSummary();
     }
 
-    // 4. Payment Initiation
-    async function initiatePayment() {
-      const uid = document.getElementById('userId').value.trim();
-      const phone = document.getElementById('userPhone').value.trim();
+    function updateSummary() {
+      var totalPages = 0;
+      var totalPrice = 0;
 
-      if (!uid) {
-        alert('Please enter and verify your Customer ID.');
+      for (var key in cart) {
+        var item = cart[key];
+        totalPages += item.pages * item.qty;
+        totalPrice += item.price * item.qty;
+      }
+
+      var sumPlan = document.getElementById('sumPlan');
+      var sumPrice = document.getElementById('sumPrice');
+
+      if (Object.keys(cart).length === 0) {
+        if (sumPlan) sumPlan.innerText = "None";
+        if (sumPrice) sumPrice.innerText = "₹0";
+      } else {
+        if (sumPlan) sumPlan.innerText = totalPages.toLocaleString() + " Pages";
+        if (sumPrice) sumPrice.innerText = "₹" + totalPrice;
+      }
+    }
+
+    // ========== 4. USER VERIFY (ORIGINAL) ==========
+    function verifyUser() {
+      var uidInput = document.getElementById('userId');
+      var resBox = document.getElementById('verifyResult');
+      
+      if (!uidInput || !uidInput.value.trim()) {
+        alert('Please enter User ID first');
         return;
       }
-      if (totalAmount <= 0) {
-        alert('Please s
+
+      var uid = uidInput.value.trim();
+      resBox.style.display = "flex";
+      resBox.innerHTML = "Verifying...";
+
+      fetch('/api/verify-user', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
+          isVerified = true;
+          var info = data.data || data;
+          var name = info.nick || info.name || "Verified User";
+          var avatar = info.avatar || info.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small>ID: ' + uid + ' (Verified ✅)</small></div>';
+        } else {
+          isVerified = false;
+          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+        }
+      })
+      .catch(function(err) {
+        console.error(err);
+        isVerified = false;
+        resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
+      });
+    }
+
+    // ========== 5. BHARATPE PAYMENT INITIATION ==========
+    async function initiatePayment() {
+      var uidInput = document.getElementById('userId');
+      var phoneInput = document.getElementById('userPhone');
+
+      var uid = uidInput ? uidInput.value.trim() : "";
+      var phone = phoneInput ? phoneInput.value.trim() : "";
+
+      var totalPrice = 0;
+      for (var key in cart) {
+        totalPrice += cart[key].price * cart[key].qty;
+      }
+
+      if (!uid || totalPrice === 0 || !phone) {
+        alert('Please fill ID, select at leas
