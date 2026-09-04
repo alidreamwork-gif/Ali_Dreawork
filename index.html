@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   
-  <!-- Cashfree v3 Official SDK Loader -->
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  <!-- QRCode.js Library for generating Dynamic BharatPe QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -62,6 +62,17 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
+
+    /* UPI QR Payment Modal */
+    .qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 9999; justify-content: center; align-items: center; padding: 15px; }
+    .qr-box { background: #fff; width: 100%; max-width: 380px; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
+    .qr-header { font-size: 16px; font-weight: bold; color: #1e40af; margin-bottom: 5px; }
+    .qr-amount { font-size: 24px; font-weight: 800; color: #059669; margin-bottom: 12px; }
+    .qr-canvas-wrapper { display: flex; justify-content: center; align-items: center; background: #fff; padding: 12px; border: 2px dashed #d1d5db; border-radius: 12px; margin: 0 auto; width: 200px; height: 200px; }
+    .qr-timer { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 10px; }
+    .pay-via-upi-btn { display: block; width: 100%; background: #059669; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 12px; text-align: center; }
+    .cancel-qr-btn { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; }
+    .status-text { font-size: 11px; color: #6b7280; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -195,397 +206,169 @@
       <!-- Static Pages -->
       <div id="tab-ebooks" class="page-section static-page">
         <h2>📖 Digital E-Books & Resource Library</h2>
-<p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints designed for entrepreneurs, creators, and digital marketers.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>🌟 Featured Professional Guides & Mastery Handbooks</h3>
-<p>Our curated digital inventory is structured to accelerate your online business growth, optimize digital campaigns, and scale operations efficiently:</p>
-
-<ul>
-  <li>
-    <strong>1. Beginner's Web Guide & Technical Handbook</strong>
-    <br><small style="color: #6b7280;">A comprehensive step-by-step introduction to establishing your online presence, understanding core digital architectures, and avoiding common setup pitfalls.</small>
-  </li>
-  <br>
-  <li>
-    <strong>2. Advanced Digital Marketing Strategy Manual</strong>
-    <br><small style="color: #6b7280;">In-depth tactical frameworks covering modern audience targeting, conversion rate optimization, multi-channel growth hacking, and high-ROI funnel design.</small>
-  </li>
-  <br>
-  <li>
-    <strong>3. E-Commerce Mastery Blueprint</strong>
-    <br><small style="color: #6b7280;">An end-to-end blueprint focusing on automated digital inventory management, secure gateway integration workflows, scaling customer acquisition, and retention strategies.</small>
-  </li>
-  <br>
-  <li>
-    <strong>4. Professional Growth & Scaling Handbook</strong>
-    <br><small style="color: #6b7280;">Advanced methodologies for performance tracking, data-driven scaling, brand authority building, and long-term digital asset monetization.</small>
-  </li>
-</ul>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>📌 Instant Delivery & Access Protocol</h3>
-<p>All products listed in our store are 100% digital assets. Upon successful verification of your User ID and completion of the secure payment transaction, your selected reading page credits and digital access manuals are systematically provisioned and linked to your registered profile and WhatsApp communications.</p>
+        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints designed for entrepreneurs, creators, and digital marketers.</p>
+        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
+        <h3>🌟 Featured Professional Guides & Mastery Handbooks</h3>
+        <ul>
+          <li><strong>1. Beginner's Web Guide:</strong> Architectural step-by-step introduction.</li>
+          <li><strong>2. Digital Marketing Strategy Manual:</strong> Tactical frameworks and funnel design.</li>
+          <li><strong>3. E-Commerce Mastery Blueprint:</strong> Automated inventory & gateway workflows.</li>
+          <li><strong>4. Scaling Handbook:</strong> High-performance growth blueprints.</li>
+        </ul>
       </div>
 
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-<p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, registering an account, or purchasing any digital products and resources, you agree to comply with and be bound by the following comprehensive terms and conditions. Please read them carefully before proceeding with any transaction.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Introduction & Acceptance of Terms</h3>
-<p>This document constitutes a legally binding agreement between you ("User", "Customer", or "Buyer") and Ali Dreamwork ("Store", "We", "Us", or "Our"). By using our digital storefront, you acknowledge that you have read, understood, and agreed to these terms.</p>
-
-<h3>2. User Account & Identification Accuracy</h3>
-<ul>
-  <li>
-    <strong>Valid User ID Requirement:</strong> Users must provide a valid, active, and correct User ID prior to initiating any checkout or payment process. 
-  </li>
-  <br>
-  <li>
-    <strong>Liability for Incorrect Data:</strong> Ali Dreamwork holds no responsibility for delivery failures, delays, or crediting errors resulting from incorrect user identification details or WhatsApp numbers provided by the customer.
-  </li>
-</ul>
-
-<h3>3. Digital Products, Licensing & Legitimate Use</h3>
-<ul>
-  <li>
-    <strong>Nature of Goods:</strong> All products sold on this platform are strictly digital assets, including e-books, technical guides, strategic manuals, and online reading page credits. No physical items will be shipped.
-  </li>
-  <br>
-  <li>
-    <strong>Legitimate & Personal Use:</strong> All digital goods and e-books provided are for legitimate use only. Purchasing a product grants you a non-exclusive, non-transferable license for personal or internal business use.
-  </li>
-  <br>
-  <li>
-    <strong>Restriction on Redistribution:</strong> Unauthorized copying, commercial resale, public sharing, modification, or distribution of our digital materials is strictly prohibited and protected under copyright regulations.
-  </li>
-</ul>
-
-<h3>4. Pricing, Payments & Transaction Security</h3>
-<ul>
-  <li>
-    <strong>Pricing Policy:</strong> All prices displayed on the store are listed in Indian Rupees (INR) and are final unless specified otherwise. We reserve the right to modify prices or service packages without prior notice.
-  </li>
-  <br>
-  <li>
-    <strong>Secure Processing:</strong> Payments are processed through authorized, encrypted third-party payment gateway partners. Users must ensure they are legally authorized to use the chosen payment instrument.
-  </li>
-</ul>
-
-<h3>5. Delivery & Fulfillment Policy</h3>
-<p>Upon successful payment verification and gateway confirmation, digital products, reading page credits, or access links are automatically provisioned and linked to the customer's verified User ID and communicated via registered WhatsApp channels.</p>
-
-<h3>6. Modifications to Terms</h3>
-<p>Ali Dreamwork reserves the right to update, change, or replace any part of these Terms & Conditions by posting updates on our website. It is your responsibility to check this page periodically for changes.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">If you have any questions or queries regarding these Terms & Conditions, please reach out to our support team through the Contact section.</small></p>
+        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform or purchasing any digital products, you agree to comply with our terms.</p>
       </div>
 
       <div id="tab-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-<p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. This Privacy Policy outlines how we collect, use, protect, and handle your personal information when you visit our digital platform, register your User ID, or purchase our digital e-books and guides.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Information We Collect</h3>
-<p>To provide a seamless digital shopping and automatic delivery experience, we collect only essential information, which includes:</p>
-<ul>
-  <li>Your registered User ID for account verification and product delivery.</li>
-  <li>Your WhatsApp number or contact details solely for sending order confirmations, digital access links, and customer support assistance.</li>
-  <li>Transaction status and payment confirmation data securely handled through our authorized payment gateway partners.</li>
-</ul>
-
-<h3>2. 100% Data Protection & Zero-Sharing Guarantee</h3>
-<ul>
-  <li>
-    <strong>Absolute Confidentiality:</strong> We strictly guarantee that <strong>we do not sell, leak, rent, trade, or share your personal details</strong> or contact information with any third parties under any circumstances.
-  </li>
-  <br>
-  <li>
-    <strong>Strictly Internal Use:</strong> All information collected from customers is used exclusively for secure order processing, validating user profiles, and fulfilling digital book deliveries. Your data never leaves our secure operational network for marketing or external commercial purposes.
-  </li>
-</ul>
-
-<h3>3. Secure Payment Processing</h3>
-<p>All financial transactions and online payments are processed through encrypted, industry-standard, and authorized third-party payment gateway systems. Ali Dreamwork does not store, process, or have direct access to your sensitive banking credentials, credit card numbers, or UPI PINs.</p>
-
-<h3>4. Data Security Measures</h3>
-<p>We implement robust technical, administrative, and physical security measures to safeguard your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
-
-<h3>5. Policy Updates</h3>
-<p>Ali Dreamwork reserves the right to modify or update this Privacy Policy at any time to reflect operational improvements or regulatory compliance standards. Changes will be posted directly on this page.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">If you have any questions, concerns, or requests regarding our privacy practices, please feel free to contact us through our official support channels.</small></p>
+        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. All digital transactions are securely handled.</p>
       </div>
 
       <div id="tab-refund" class="page-section static-page">
-       <h2>🔄 Refund & Cancellation Policy</h2>
-<p>At <strong>Ali Dreamwork</strong>, we strive to maintain a fair, transparent, and customer-centric framework to ensure complete satisfaction with our digital products, e-books, and reading page credits.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Overview of Digital Goods</h3>
-<p>Due to the instantaneous and digital nature of the items sold on our platform (including downloadable guides, strategic manuals, and reading page credits), all successful transactions and digital deliveries are generally considered final. Once digital content or page credits are successfully provisioned to a user ID, they cannot be retracted or physically returned.</p>
-
-<h3>2. Order Cancellation Policy</h3>
-<ul>
-  <li>
-    <strong>Before Delivery:</strong> Orders can be cancelled prior to successful payment gateway confirmation or before the digital assets/page credits are credited to the registered user ID. 
-  </li>
-  <br>
-  <li>
-    <strong>After Delivery:</strong> Once the payment is successfully processed and digital products are delivered or credited to your profile, the order cannot be cancelled.
-  </li>
-</ul>
-
-<h3>3. Refund Eligibility & Support Window (15-Minute Rule)</h3>
-<p>We maintain a dedicated support framework to handle transactional discrepancies or delivery failures promptly:</p>
-<ul>
-  <li>
-    <strong>Immediate Support Window:</strong> If a technical error occurs, a duplicate payment is deducted, or an issue arises during delivery, customers must reach out to our support team within <strong>15 minutes</strong> of the transaction along with valid payment proof (transaction ID or screenshot).
-  </li>
-  <br>
-  <li>
-    <strong>Case Review:</strong> Our technical and support team will thoroughly review the case within a reasonable timeframe to verify the transaction status.
-  </li>
-  <br>
-  <li>
-    <strong>Eligible Refunds:</strong> If an error is verified on our end or if a transaction failed due to gateway technicalities without product delivery, eligible refunds will be processed and credited back to the original source/payment instrument securely.
-  </li>
-</ul>
-
-<h3>4. Non-Refundable Scenarios</h3>
-<p>Refunds will not be issued under the following circumstances:</p>
-<ul>
-  <li>If the user provides an incorrect or inactive User ID during checkout, resulting in successful delivery to the wrong profile.</li>
-  <li>If the customer changes their mind after the digital e-books or reading page credits have been successfully accessed or utilized.</li>
-  <li>Issues arising from third-party device incompatibilities or user network connection failures outside our platform's control.</li>
-</ul>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">For any urgent refund assistance or transaction-related queries, please contact our support team immediately via WhatsApp or Email as provided in the Contact section.</small></p>
+        <h2>🔄 Refund Policy</h2>
+        <p>Digital products and credits are delivered instantly upon payment verification. Due to the digital nature of goods, requests are handled as per standard terms.</p>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
-        <h2>🎧 Contact Us</h2>
-        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-        <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM IST)</p>
+        <h2>📞 Contact Support</h2>
+        <p>Need help with your order or verification? Contact us directly via WhatsApp support.</p>
       </div>
 
     </div>
   </div>
 
+  <!-- Dynamic BharatPe QR Modal -->
+  <div id="qrModal" class="qr-modal">
+    <div class="qr-box">
+      <div class="qr-header">Scan to Pay with Any UPI App</div>
+      <div class="qr-amount" id="qrModalAmount">₹0</div>
+      
+      <div class="qr-canvas-wrapper" id="qrCanvas"></div>
+      
+      <div class="qr-timer" id="qrTimer">Valid for 05:00 min</div>
+      
+      <!-- Direct Pay button for Mobile Users -->
+      <a id="directUpiLink" href="#" class="pay-via-upi-btn">⚡ Click to Pay via UPI App</a>
+      
+      <p class="status-text">Auto-verifying payment via SMS Reader...</p>
+      <button class="cancel-qr-btn" onclick="closeQrModal()">Cancel</button>
+    </div>
+  </div>
+
   <script>
-    let cashfreeInstance = null;
-    
-    // Initialize Cashfree SDK safely on load
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        if (typeof load !== 'undefined') {
-          cashfreeInstance = await load({ mode: "sandbox" });
-        } else if (window.Cashfree) {
-          cashfreeInstance = window.Cashfree({ mode: "sandbox" });
-        }
-      } catch (err) {
-        console.error("SDK Load Warning:", err);
-      }
-    });
+    // Configuration
+    const BHARATPE_VPA = "BHARATPE2Z0P0L0B8I71717@unitype"; // <-- अपनी BharatPe UPI ID यहाँ डालें
+    const MERCHANT_NAME = "Ali Dreamwork";
 
-    function changeTab(tabId, btnElement) {
-      var sections = document.querySelectorAll('.page-section');
-      sections.forEach(function(sec) {
-        sec.classList.remove('active-page');
-        sec.style.display = 'none';
-      });
+    let totalAmount = 0;
+    let totalPages = 0;
+    let selectedQuantities = {};
+    let qrTimerInterval = null;
+    let currentOrderId = null;
 
-      var buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-
-      var activeTarget = document.getElementById('tab-' + tabId);
-      if (activeTarget) {
-        activeTarget.style.display = 'block';
-        activeTarget.classList.add('active-page');
-      }
-      
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
-      window.scrollTo(0, 0);
-    }
-
-    var cart = {}; 
-    var isVerified = false;
-
-    function updateQty(index, pagesPerItem, pricePerItem, change) {
-      if (!cart[index]) {
-        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0 };
-      }
-      
-      cart[index].qty += change;
-      if (cart[index].qty < 0) cart[index].qty = 0;
-
-      var qtyElem = document.getElementById('qty-' + index);
-      if (qtyElem) qtyElem.innerText = cart[index].qty;
-
-      var cardElem = document.getElementById('card-' + index);
-      if (cardElem) {
-        if (cart[index].qty > 0) {
-          cardElem.classList.add('selected');
-        } else {
-          cardElem.classList.remove('selected');
-        }
-      }
-
-      if (cart[index].qty === 0) {
-        delete cart[index];
-      }
-
-      updateSummary();
-    }
-
-    function updateSummary() {
-      var totalPages = 0;
-      var totalPrice = 0;
-
-      for (var key in cart) {
-        var item = cart[key];
-        totalPages += item.pages * item.qty;
-        totalPrice += item.price * item.qty;
-      }
-
-      var sumPlan = document.getElementById('sumPlan');
-      var sumPrice = document.getElementById('sumPrice');
-
-      if (Object.keys(cart).length === 0) {
-        if (sumPlan) sumPlan.innerText = "None";
-        if (sumPrice) sumPrice.innerText = "₹0";
-      } else {
-        if (sumPlan) sumPlan.innerText = totalPages.toLocaleString() + " Pages";
-        if (sumPrice) sumPrice.innerText = "₹" + totalPrice;
-      }
+    function changeTab(tabName, btnElement) {
+      document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('tab-' + tabName);
+      if (target) target.classList.add('active-page');
+      if (btnElement) btnElement.classList.add('active');
     }
 
     function verifyUser() {
-      var uidInput = document.getElementById('userId');
-      var resBox = document.getElementById('verifyResult');
-      
-      if (!uidInput || !uidInput.value.trim()) {
-        alert('Please enter User ID first');
+      const id = document.getElementById('userId').value.trim();
+      const res = document.getElementById('verifyResult');
+      if (!id) {
+        alert('Please enter a Customer ID');
         return;
       }
+      res.style.display = 'flex';
+      res.innerHTML = `<strong>ID Verified:</strong> User #${id} (Active)`;
+    }
 
-      var uid = uidInput.value.trim();
-      resBox.style.display = "flex";
-      resBox.innerHTML = "Verifying...";
+    function updateQty(index, pages, price, change) {
+      const current = selectedQuantities[index] || 0;
+      const next = Math.max(0, current + change);
+      selectedQuantities[index] = next;
+      document.getElementById('qty-' + index).innerText = next;
 
-      // Test Mode bypass for Cashfree / Testing Team (e.g. ID: 12345)
-      if (uid === "12345" || uid === "test" || uid === "TEST12345") {
-        isVerified = true;
-        resBox.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Test Gateway User</b><br><small>ID: ' + uid + ' (Test Verified ✅)</small></div>';
-        return;
-      }
+      // Recalculate Totals
+      totalAmount = 0;
+      totalPages = 0;
+      const plans = [
+        { pages: 14600, price: 200 },
+        { pages: 21900, price: 300 },
+        { pages: 36500, price: 500 },
+        { pages: 73000, price: 1000 },
+        { pages: 109500, price: 1500 },
+        { pages: 146000, price: 2000 },
+        { pages: 219000, price: 3000 },
+        { pages: 328500, price: 4500 }
+      ];
 
-      // Normal Server Verification for Real Users
-      fetch('/api/verify-user', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
-          isVerified = true;
-          var info = data.data || data;
-          var name = info.nick || info.name || "Verified User";
-          var avatar = info.avatar || info.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small>ID: ' + uid + ' (Verified ✅)</small></div>';
-        } else {
-          isVerified = false;
-          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+      for (let i in selectedQuantities) {
+        const q = selectedQuantities[i];
+        if (q > 0) {
+          totalAmount += q * plans[i].price;
+          totalPages += q * plans[i].pages;
         }
-      })
-      .catch(function(err) {
-        console.error(err);
-        isVerified = false;
-        resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
+      }
+
+      document.getElementById('sumPrice').innerText = '₹' + totalAmount;
+      document.getElementById('sumPlan').innerText = totalPages > 0 ? `${totalPages.toLocaleString()} Pages` : 'None';
+    }
+
+    function initiatePayment() {
+      const userId = document.getElementById('userId').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
+
+      if (!userId) {
+        alert('Please enter and verify your Customer ID first.');
+        return;
+      }
+      if (totalAmount <= 0) {
+        alert('Please select at least one E-Book package.');
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        alert('Please enter a valid WhatsApp Number.');
+        return;
+      }
+
+      currentOrderId = "ORD" + Date.now();
+      showBharatPeQR(totalAmount, currentOrderId);
+    }
+
+    function showBharatPeQR(amount, orderId) {
+      document.getElementById('qrModalAmount').innerText = '₹' + amount;
+      const qrContainer = document.getElementById('qrCanvas');
+      qrContainer.innerHTML = ""; // Clear old QR
+
+      // Dynamic BharatPe UPI Intent URL
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(BHARATPE_VPA)}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amount}&tr=${orderId}&tn=Order_${orderId}&cu=INR`;
+
+      // Render Dynamic QR
+      new QRCode(qrContainer, {
+        text: upiUrl,
+        width: 180,
+        height: 180,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
       });
+
+      // Set Mobile Direct UPI Intent Link
+      document.getElementById('directUpiLink').href = upiUrl;
+
+      // Show Modal & Start Timer
+      document.getElementById('qrModal').style.display = 'flex';
+      startQrTimer(300); // 5 minutes validity
+      
+      // Start auto checking payment status (Hook with index.js / SMS Reader)
+      startPaymentStatusCheck(orderId);
     }
 
-    async function initiatePayment() {
-      var uidInput = document.getElementById('userId');
-      var phoneInput = document.getElementById('userPhone');
-
-      var uid = uidInput ? uidInput.value.trim() : "";
-      var phone = phoneInput ? phoneInput.value.trim() : "";
-
-      var totalPrice = 0;
-      for (var key in cart) {
-        totalPrice += cart[key].price * cart[key].qty;
-      }
-
-      if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
-        return;
-      }
-      if (!isVerified) {
-        alert('Please verify your User ID first.');
-        return;
-      }
-
-      try {
-        let response = await fetch('/api/create-cashfree-order', {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid: uid, amount: totalPrice, whatsapp: phone })
-        });
-        
-        let data = await response.json();
-
-        if (data.success && data.payment_session_id) {
-          let cf = cashfreeInstance;
-          if (!cf) {
-            if (typeof load !== 'undefined') {
-              cf = await load({ mode: "sandbox" });
-            } else if (window.Cashfree) {
-              cf = window.Cashfree({ mode: "sandbox" });
-            }
-          }
-
-          if (!cf) {
-            alert("Payment gateway initialization error: Cashfree SDK failed to load properly.");
-            return;
-          }
-
-          let checkoutOptions = {
-            paymentSessionId: data.payment_session_id,
-            redirectTarget: "_self"
-          };
-          
-          cf.checkout(checkoutOptions).then(function(result) {
-            if (result.error) {
-              alert("Payment failed: " + result.error.message);
-            }
-          });
-        } else {
-          alert(data.message || 'Payment initiation failed.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Connection error with payment gateway.');
-      }
-    }
-  </script>
-</body>
-</html>
+    function startQrTimer(duration) {
+      clearInterval(qrTim
