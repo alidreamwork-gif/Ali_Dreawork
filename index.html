@@ -189,33 +189,32 @@
 
       <div id="tab-ebooks" class="page-section static-page">
         <h2>📖 Digital E-Books & Resource Library</h2>
-        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints designed for entrepreneurs, creators, and digital marketers.</p>
+        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>.</p>
       </div>
 
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, registering an account, or purchasing any digital products and resources, you agree to comply with and be bound by these terms.</p>
+        <p>Welcome to <strong>Ali Dreamwork</strong>.</p>
       </div>
 
       <div id="tab-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>.</p>
+        <p>Your privacy and data security are protected.</p>
       </div>
 
       <div id="tab-refund" class="page-section static-page">
         <h2>🔄 Refund Policy</h2>
-        <p>Due to the digital nature of our e-books and resources, all sales are final.</p>
+        <p>All sales are final due to digital nature.</p>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
         <h2>📞 Contact Us</h2>
-        <p>If you have any questions or queries, please reach out to our support team.</p>
+        <p>Reach out to our support team.</p>
       </div>
 
     </div>
   </div>
 
-  <!-- Cashfree SDK & Frontend Script -->
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   <script>
     let selectedCart = {};
@@ -246,8 +245,13 @@
           body: JSON.stringify({ uid })
         });
         const data = await response.json();
+        
         if (data.status === 200 || data.success) {
-          resultDiv.innerHTML = `<img src="${data.avatar || 'https://i.ibb.co/21P3nGZR/logo.jpg'}" class="user-avatar"> <div><b>${data.nickname || 'User Found'}</b><br><span style="color:#059669; font-size:11px;">Verified Successfully</span></div>`;
+          // यहां यूजर का असली नाम (name, username या nickname) ऑटोमेटिक डिटेक्ट होकर आ जाएगा
+          const userName = data.name || data.username || data.nickname || data.user_name || 'User Found';
+          const userAvatar = data.avatar || data.profile_pic || 'https://i.ibb.co/21P3nGZR/logo.jpg';
+
+          resultDiv.innerHTML = `<img src="${userAvatar}" class="user-avatar"> <div><b>${userName}</b><br><span style="color:#059669; font-size:11px;">Verified Successfully</span></div>`;
         } else {
           resultDiv.innerHTML = `<span style="color:red;">${data.message || 'User not found!'}</span>`;
         }
