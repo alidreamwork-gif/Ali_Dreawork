@@ -1,195 +1,89 @@
-const express = require('express');
-const axios = require('axios');
-const path = require('path');
-const crypto = require('crypto');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ali Dreamwork - Digital Store</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    
+    /* Top Bar */
+    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 50; }
+    .nav-brand { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+    .nav-buttons { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+    .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
+    .nav-btn.active { background: #fff; color: #1e40af; }
 
-const app = express();
+    /* Content Area */
+    .container { padding: 15px; flex: 1; }
+    .content-tab { display: none; }
+    .content-tab.active { display: block !important; }
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
+    /* Header */
+    .header { text-align: center; margin-bottom: 15px; }
+    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
+    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
+    
+    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+    
+    label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
+    .id-group { display: flex; gap: 6px; margin-top: 5px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
+    
+    .verify-btn { background: #059669; color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
+    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 
-const SELLER_ID = "4851724";
-const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
+    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
+    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    
+    /* Plan Card */
+    .plan-card { border: 2px solid #e5e7eb; border-radius: 10px; padding: 10px; background: #fff; text-align: left; position: relative; cursor: pointer; user-select: none; }
+    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
+    .plan-card.selected::after { content: "✓ Selected"; position: absolute; top: 6px; right: 6px; background: #059669; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+    
+    .plan-img { width: 100%; height: 85px; object-fit: cover; border-radius: 6px; pointer-events: none; }
+    .plan-title { font-size: 13px; font-weight: bold; margin-top: 6px; color: #1f2937; pointer-events: none; }
+    
+    .plan-price-box { font-size: 12px; margin-top: 4px; pointer-events: none; }
+    .price-highlight { font-weight: bold; color: #059669; font-size: 15px; }
+    .coins-dim { font-size: 11px; color: #6b7280; }
 
-// सक्रिय ऑर्डर्स का मेमोरी स्टोरेज
-// संरचना: orderId -> { uid, amount, coins, status: 'PENDING' | 'PAID', createdAt }
-const activeOrders = new Map();
+    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 13px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
+    
+    .main-buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; }
 
-// 1. User Verification Endpoint (अपरिवर्तित)
-app.post('/api/verify-user', async (req, res) => {
-    try {
-        const { uid } = req.body;
-        if (!uid) {
-            return res.status(400).json({ status: 400, message: "UID is missing!" });
-        }
-        const cleanUid = uid.toString().trim();
-        
-        const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-        const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
+    /* Static Pages */
+    .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
+    .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
+  </style>
+</head>
+<body>
 
-        const payload = {
-            sellerId: Number(SELLER_ID),
-            uid: Number(cleanUid),
-            sign: sign
-        };
+  <div class="app-wrapper">
+    <div class="top-navbar">
+      <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
+      <div class="nav-buttons">
+        <button type="button" class="nav-btn active" onclick="showTab('topup', this)">Digital E-Coins</button>
+        <button type="button" class="nav-btn" onclick="showTab('ebooks', this)">E-Books</button>
+        <button type="button" class="nav-btn" onclick="showTab('terms', this)">Terms</button>
+        <button type="button" class="nav-btn" onclick="showTab('privacy', this)">Privacy</button>
+        <button type="button" class="nav-btn" onclick="showTab('refund', this)">Refund</button>
+        <button type="button" class="nav-btn" onclick="showTab('contact', this)">Contact</button>
+      </div>
+    </div>
 
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+    <div class="container">
+      
+      <div id="tab-topup" class="content-tab active">
+        <div class="header">
+          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
+          <div class="brand-title">ALI DREAMWORK</div>
+        </div>
 
-        return res.json(response.data);
-    } catch (error) {
-        console.error("API Error Response:", error.response ? error.response.data : error.message);
-        if (error.response && error.response.data) {
-            return res.status(200).json(error.response.data);
-        }
-        return res.status(500).json({ status: 400, message: "User not found or invalid ID!" });
-    }
-});
-
-// 2. BharatPe Order Initialization (फ्रंटएंड से ऑर्डर रजिस्टर करने के लिए)
-app.post('/api/create-order', (req, res) => {
-    try {
-        const { uid, amount, orderId } = req.body;
-        
-        if (!uid || !amount || !orderId) {
-            return res.status(400).json({ success: false, message: "UID, Amount, and OrderID are required" });
-        }
-
-        let coins = 0;
-        const amtNum = Math.round(Number(amount));
-
-        // पैकेज प्लान्स के अनुसार कॉइन्स
-        if (amtNum === 200) coins = 14600;
-        else if (amtNum === 300) coins = 21900;
-        else if (amtNum === 500) coins = 36500;
-        else if (amtNum === 1000) coins = 73000;
-        else if (amtNum === 1500) coins = 109500;
-        else if (amtNum === 2000) coins = 146000;
-        else if (amtNum === 3000) coins = 219000;
-        else if (amtNum === 4500) coins = 328500;
-        else coins = amtNum * 73;
-
-        activeOrders.set(orderId, {
-            uid: uid.toString().trim(),
-            amount: amtNum,
-            coins: coins,
-            status: 'PENDING',
-            createdAt: Date.now()
-        });
-
-        console.log(`Order Registered: ${orderId} | UID: ${uid} | Amount: ₹${amtNum} | Coins: ${coins}`);
-
-        return res.json({ success: true, orderId: orderId });
-    } catch (error) {
-        console.error("Order Creation Error:", error);
-        return res.status(500).json({ success: false, message: "Server error creating order" });
-    }
-});
-
-// 3. Helper function to deliver coins (अपरिवर्तित)
-async function deliverCoinsToUser(uid, coins, orderId) {
-    const cleanUid = Number(uid);
-    const numCoins = Number(coins);
-
-    const signString = `coins=${numCoins}&orderId=${orderId}&sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-    const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
-
-    const payload = {
-        sellerId: Number(SELLER_ID),
-        uid: cleanUid,
-        coins: numCoins,
-        orderId: orderId,
-        sign: sign
-    };
-
-    console.log("Sending Payload to CoinSale API:", payload);
-
-    try {
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        console.log("API Success Response:", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Coin Sale Error Response:", error.response ? error.response.data : error.message);
-        return error.response ? error.response.data : { status: 400, message: "Failed to deliver coins" };
-    }
-}
-
-// 4. SMS Reader Webhook Endpoint (BharatPe / Bank SMS Forwarder)
-app.post('/api/sms-webhook', async (req, res) => {
-    try {
-        console.log("================== SMS WEBHOOK RECEIVED ==================");
-        console.log("Payload:", JSON.stringify(req.body, null, 2));
-
-        // SMS Reader ऍप आमतौर पर 'message', 'text', या 'body' में SMS भेजते हैं
-        const smsBody = req.body.message || req.body.text || req.body.body || req.body.content || "";
-        const sender = req.body.sender || req.body.from || "";
-
-        console.log(`From: ${sender} | Message: ${smsBody}`);
-
-        // SMS में से क्रेडिट अमाउंट निकालना (उदा. Credited by Rs 200.00 या received Rs.200)
-        const amountMatch = smsBody.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
-        let detectedAmount = 0;
-        if (amountMatch) {
-            detectedAmount = Math.round(parseFloat(amountMatch[1].replace(/,/g, '')));
-        }
-
-        let matchedOrderId = null;
-
-        // पहले चेक करें कि क्या SMS में सीधे Order ID मौजूद है
-        for (let [orderId, data] of activeOrders.entries()) {
-            if (smsBody.includes(orderId)) {
-                matchedOrderId = orderId;
-                break;
-            }
-        }
-
-        // यदि SMS में Order ID नहीं है, तो पेंडिंग ऑर्डर्स में से अमाउंट मैच करें
-        if (!matchedOrderId && detectedAmount > 0) {
-            for (let [orderId, data] of activeOrders.entries()) {
-                if (data.status === 'PENDING' && data.amount === detectedAmount) {
-                    matchedOrderId = orderId;
-                    break;
-                }
-            }
-        }
-
-        if (matchedOrderId) {
-            const orderData = activeOrders.get(matchedOrderId);
-            console.log(`Payment Verified for Order: ${matchedOrderId} | Delivering ${orderData.coins} Coins to UID ${orderData.uid}`);
-            
-            const deliveryRes = await deliverCoinsToUser(orderData.uid, orderData.coins, matchedOrderId);
-            
-            orderData.status = 'PAID';
-            orderData.deliveryResult = deliveryRes;
-
-            return res.status(200).json({ status: true, message: "Payment processed & coins delivered", orderId: matchedOrderId });
-        } else {
-            console.log("No matching pending order found for this SMS.");
-            return res.status(200).json({ status: false, message: "No matching pending order" });
-        }
-
-    } catch (err) {
-        console.error("SMS Webhook Critical Error:", err);
-        return res.status(500).json({ status: false, message: "Webhook execution error" });
-    }
-});
-
-// 5. Front-end Status Polling Endpoint (फ्रंटएंड हर 3 सेकंड में पेमेंट स्टेटस चेक करेगा)
-app.get('/api/check-order-status', (req, res) => {
-    const { orderId } = req.query;
-    if (!orderId || !activeOrders.has(orderId)) {
-        return res.json({ status: 'NOT_FOUND' });
-    }
-
-    const order = activeOrders.get(orderId);
-    return res.json({ status: order.status });
-});
-
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+        <div class="card">
+          <label>Enter your User ID:</label>
+          <div class="id-
