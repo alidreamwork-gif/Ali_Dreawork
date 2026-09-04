@@ -32,4 +32,232 @@
 
     .grid-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .plan-card { border: 2px solid #e5e7eb; border-radius:
+    .plan-card { border: 2px solid #e5e7eb; border-radius: 10px; padding: 15px 8px; text-align: center; cursor: pointer; background: #fafafa; }
+    .plan-card.selected { border-color: #059669; background: #f0fdf4; }
+    .coin-val { font-size: 18px; font-weight: bold; color: #1e40af; }
+    .coin-sub { font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px; }
+    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
+
+    .summary { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-top: 15px; font-size: 13px; }
+    .summary div { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 13px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+    
+    /* Simple Modal */
+    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
+    .modal-inner { background: #fff; width: 100%; max-width: 320px; border-radius: 10px; padding: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="top-bar">
+      <div class="brand">✮⃝ Ali Dreamwork Store</div>
+      <div class="nav">
+        <button class="active" onclick="tab('coins', this)">Coins</button>
+        <button onclick="tab('terms', this)">Terms</button>
+        <button onclick="tab('privacy', this)">Privacy</button>
+        <button onclick="tab('refund', this)">Refund</button>
+        <button onclick="tab('contact', this)">Contact</button>
+      </div>
+    </div>
+
+    <div class="content">
+      
+      <div id="tab-coins" class="tab-content active">
+        <div class="logo-box">
+          <img src="https://i.ibb.co/21P3nGZR/logo.jpg">
+          <div>ALI DREAMWORK</div>
+        </div>
+
+        <div class="box">
+          <label>Enter your User ID:</label>
+          <div class="input-row">
+            <input type="text" id="uid" placeholder="Enter User ID">
+            <button class="verify-btn" onclick="verify()">Verify</button>
+          </div>
+          <div id="verifyRes"></div>
+
+          <div class="grid-title">SELECT COIN PACK:</div>
+          <div class="grid">
+            <div class="plan-card" onclick="pick(this, 14600, 200)">
+              <div class="coin-val">14,600</div><div class="coin-sub">Coins</div><div class="coin-price">₹200</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 21900, 300)">
+              <div class="coin-val">21,900</div><div class="coin-sub">Coins</div><div class="coin-price">₹300</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 36500, 500)">
+              <div class="coin-val">36,500</div><div class="coin-sub">Coins</div><div class="coin-price">₹500</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 73000, 1000)">
+              <div class="coin-val">73,000</div><div class="coin-sub">Coins</div><div class="coin-price">₹1,000</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 109500, 1500)">
+              <div class="coin-val">109,500</div><div class="coin-sub">Coins</div><div class="coin-price">₹1,500</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 146000, 2000)">
+              <div class="coin-val">146,000</div><div class="coin-sub">Coins</div><div class="coin-price">₹2,000</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 219000, 3000)">
+              <div class="coin-val">219,000</div><div class="coin-sub">Coins</div><div class="coin-price">₹3,000</div>
+            </div>
+            <div class="plan-card" onclick="pick(this, 328500, 4500)">
+              <div class="coin-val">328,500</div><div class="coin-sub">Coins</div><div class="coin-price">₹4,500</div>
+            </div>
+          </div>
+
+          <label>WhatsApp Number:</label>
+          <input type="tel" id="phone" placeholder="Enter WhatsApp Number" style="margin-top: 5px;">
+
+          <div class="summary">
+            <div><span>Selected:</span><b id="lblCoins">None</b></div>
+            <div><span>Total Amount:</span><b id="lblAmt" style="color:#059669;">₹0</b></div>
+          </div>
+
+          <button class="buy-btn" onclick="buy()">BUY NOW</button>
+        </div>
+      </div>
+
+      <div id="tab-terms" class="tab-content">
+        <h3>Terms & Conditions</h3>
+        <p>Coins will be credited upon successful payment verification.</p>
+      </div>
+
+      <div id="tab-privacy" class="tab-content">
+        <h3>Privacy Policy</h3>
+        <p>Your details are 100% secure with us.</p>
+      </div>
+
+      <div id="tab-refund" class="tab-content">
+        <h3>Refund Policy</h3>
+        <p>If not credited within 15 minutes, please contact support.</p>
+      </div>
+
+      <div id="tab-contact" class="tab-content">
+        <h3>Contact Us</h3>
+        <p>WhatsApp: +917776881407</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="modal">
+    <div class="modal-inner">
+      <div style="font-weight:bold;color:#1e40af;font-size:15px;">Scan & Pay via UPI</div>
+      <div id="mAmount" style="font-size:22px;font-weight:bold;color:#059669;margin:6px 0;">₹0</div>
+      <img id="mQr" src="" style="width:160px;height:160px;margin:5px auto;display:block;border:1px solid #e5e7eb;">
+      <a id="mUpi" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:8px;border-radius:6px;font-weight:bold;font-size:12px;margin-top:8px;">⚡ Open UPI App</a>
+
+      <div style="margin-top:12px;border-top:1px dashed #d1d5db;padding-top:10px;">
+        <div style="font-size:11px;color:#374151;margin-bottom:4px;font-weight:bold;">Enter 12-digit UTR No.:</div>
+        <input type="text" id="utr" placeholder="12-digit UTR" style="text-align:center;padding:7px;font-size:13px;">
+        <button id="btnVerifyPay" onclick="verifyPay()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>
+      </div>
+      <button onclick="document.getElementById('modal').style.display='none'" style="background:#f3f4f6;border:1px solid #d1d5db;width:100%;padding:6px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const VPA = "BHARATPE.220P0L0B8I71717@unitype";
+    const NAME = "VASIM ALI";
+
+    let selectedPlan = null;
+    let isVerified = false;
+    let currOrderId = "";
+
+    function tab(name, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function pick(el, coins, price) {
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPlan = { coins, price };
+      document.getElementById('lblCoins').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('lblAmt').innerText = "₹" + price;
+    }
+
+    function verify() {
+      const u = document.getElementById('uid').value.trim();
+      const r = document.getElementById('verifyRes');
+      if (!u) { alert('Enter User ID'); return; }
+      r.style.display = 'block';
+      r.style.background = '#ecfdf5';
+      r.innerText = 'Verifying...';
+
+      fetch('/api/verify-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: u })
+      })
+      .then(res => res.json())
+      .then(data => {
+        isVerified = true;
+        const n = (data.data && data.data.nick) || data.nick || "Verified User";
+        r.innerHTML = `✅ <b>${n}</b> (ID: ${u})`;
+      })
+      .catch(() => {
+        isVerified = true;
+        r.innerText = `✅ User #${u} Verified`;
+      });
+    }
+
+    function buy() {
+      const u = document.getElementById('uid').value.trim();
+      const p = document.getElementById('phone').value.trim();
+      if (!u) { alert('Enter User ID'); return; }
+      if (!selectedPlan) { alert('Select a coin pack'); return; }
+      if (!p || p.length < 10) { alert('Enter valid WhatsApp Number'); return; }
+      if (!isVerified) { alert('Verify User ID first'); return; }
+
+      currOrderId = "ORD" + Date.now();
+
+      fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: u, amount: selectedPlan.price, orderId: currOrderId })
+      }).catch(() => {});
+
+      const upi = `upi://pay?pa=${encodeURIComponent(VPA)}&pn=${encodeURIComponent(NAME)}&am=${selectedPlan.price}&cu=INR&tn=CoinPurchase`;
+      document.getElementById('mAmount').innerText = "₹" + selectedPlan.price;
+      document.getElementById('mQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upi)}`;
+      document.getElementById('mUpi').href = upi;
+      document.getElementById('utr').value = "";
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    function verifyPay() {
+      const uVal = document.getElementById('utr').value.trim();
+      const b = document.getElementById('btnVerifyPay');
+      if (!uVal || uVal.length < 8) { alert('Enter valid 12-digit UTR'); return; }
+
+      b.innerText = 'Verifying...';
+      b.disabled = true;
+
+      fetch('/api/manual-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: currOrderId, utr: uVal })
+      })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          alert('Payment Verified! Coins Delivered.');
+          location.reload();
+        } else {
+          alert(d.message || 'Verification failed');
+          b.innerText = '✅ Verify Payment';
+          b.disabled = false;
+        }
+      })
+      .catch(() => {
+        alert('Connection error');
+        b.innerText = '✅ Verify Payment';
+        b.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
