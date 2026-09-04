@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
-  
-  <!-- Dynamic QR Code Generator Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -63,16 +60,15 @@
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
 
-    /* BharatPe UPI QR Popup Modal (डिफ़ॉल्ट बंद रहेगा ताकि कोई बटन ब्लॉक न हो) */
-    #bpModalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
-    .bp-modal-content { background: #fff; width: 100%; max-width: 360px; border-radius: 14px; padding: 18px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    .bp-modal-title { font-size: 15px; font-weight: bold; color: #1e40af; margin-bottom: 4px; }
-    .bp-modal-amount { font-size: 22px; font-weight: bold; color: #059669; margin-bottom: 12px; }
-    .bp-qr-frame { display: flex; justify-content: center; align-items: center; width: 180px; height: 180px; margin: 0 auto; background: #fff; padding: 8px; border: 2px dashed #cbd5e1; border-radius: 10px; }
-    .bp-timer { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 10px; }
-    .bp-pay-btn { display: block; width: 100%; background: #059669; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 12px; text-align: center; }
-    .bp-cancel-btn { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; }
-    .bp-status-text { font-size: 11px; color: #6b7280; margin-top: 8px; }
+    /* BharatPe QR Modal */
+    #bpModalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center; }
+    .bp-modal-content { background: #fff; width: 90%; max-width: 350px; border-radius: 12px; padding: 20px; text-align: center; }
+    .bp-modal-title { font-size: 16px; font-weight: bold; color: #1e40af; }
+    .bp-modal-amount { font-size: 24px; font-weight: bold; color: #059669; margin: 8px 0; }
+    .bp-qr-image { width: 180px; height: 180px; border: 1px solid #e5e7eb; border-radius: 8px; margin: 10px auto; display: block; }
+    .bp-timer { font-size: 12px; color: #ef4444; font-weight: bold; }
+    .bp-pay-btn { display: block; width: 100%; background: #059669; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 12px; }
+    .bp-cancel-btn { background: #e5e7eb; color: #374151; border: none; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -240,20 +236,17 @@
       <div class="bp-modal-title">Scan & Pay with Any UPI App</div>
       <div class="bp-modal-amount" id="bpModalAmount">₹0</div>
       
-      <div class="bp-qr-frame" id="bpQrCanvas"></div>
+      <!-- Safe Image-based QR Code -->
+      <img id="bpQrImage" class="bp-qr-image" src="" alt="BharatPe QR">
       
       <div class="bp-timer" id="bpTimer">Valid for 05:00 min</div>
-      
       <a id="bpDirectUpiLink" href="#" class="bp-pay-btn">⚡ Click to Pay via UPI App</a>
-      
-      <p class="bp-status-text">Payment will auto-verify after transfer...</p>
       <button class="bp-cancel-btn" onclick="closeBharatPeModal()">Cancel</button>
     </div>
   </div>
 
   <script>
-    // ========== 1. CONFIGURATION ==========
-    // अपनी असली BharatPe UPI ID यहाँ डालें
+    // 1. अपनी असली BharatPe UPI ID यहाँ डालें:
     const BHARATPE_VPA = "your_bharatpe_vpa@bharatpe"; 
     const MERCHANT_NAME = "Ali Dreamwork";
 
@@ -262,7 +255,6 @@
     var bpTimerInterval = null;
     var bpPollInterval = null;
 
-    // ========== 2. TAB SWITCHING (ORIGINAL) ==========
     function changeTab(tabId, btnElement) {
       var sections = document.querySelectorAll('.page-section');
       sections.forEach(function(sec) {
@@ -287,7 +279,6 @@
       window.scrollTo(0, 0);
     }
 
-    // ========== 3. CART & QUANTITY (ORIGINAL) ==========
     function updateQty(index, pagesPerItem, pricePerItem, change) {
       if (!cart[index]) {
         cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0 };
@@ -337,7 +328,6 @@
       }
     }
 
-    // ========== 4. USER VERIFY (ORIGINAL) ==========
     function verifyUser() {
       var uidInput = document.getElementById('userId');
       var resBox = document.getElementById('verifyResult');
@@ -376,8 +366,7 @@
       });
     }
 
-    // ========== 5. BHARATPE PAYMENT INITIATION ==========
-    async function initiatePayment() {
+    function initiatePayment() {
       var uidInput = document.getElementById('userId');
       var phoneInput = document.getElementById('userPhone');
 
@@ -390,4 +379,28 @@
       }
 
       if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at leas
+        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
+        return;
+      }
+      if (!isVerified) {
+        alert('Please verify your User ID first.');
+        return;
+      }
+
+      var orderId = "ORD" + Date.now();
+
+      // Send to index.js
+      fetch('/api/create-order', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid, amount: totalPrice, orderId: orderId })
+      }).catch(function(e){ console.log(e); });
+
+      openBharatPeModal(totalPrice, orderId);
+    }
+
+    function openBharatPeModal(amount, orderId) {
+      document.getElementById('bpModalAmount').innerText = "₹" + amount;
+
+      // UPI Intent URL
+      var upiUrl = "upi://pay?pa=" + encodeURICom
