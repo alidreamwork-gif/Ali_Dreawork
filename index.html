@@ -373,10 +373,15 @@
       .then(function(data) {
         if (data.success && data.payment_session_id) {
           try {
-            // Fix for Cashfree v3 SDK initialization
-            const cashfree = window.Cashfree({
-              mode: "sandbox"
-            });
+            // Safely initialize Cashfree v3 SDK
+            let cashfree;
+            if (window.Cashfree && typeof window.Cashfree === 'function') {
+              cashfree = window.Cashfree({ mode: "sandbox" });
+            } else if (window.Cashfree && window.Cashfree.init) {
+              cashfree = window.Cashfree.init({ mode: "sandbox" });
+            } else {
+              throw new Error("Cashfree SDK failed to load properly.");
+            }
             
             let checkoutOptions = {
               paymentSessionId: data.payment_session_id,
