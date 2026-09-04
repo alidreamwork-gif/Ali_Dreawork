@@ -1,553 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ali Dreamwork - Digital Store</title>
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-    
-    /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 999; }
-    .nav-brand { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
-    .nav-buttons { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
-    .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
-    .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<script>
+  let selectedCart = {};
+  let currentTotalPages = 0;
+  let currentTotalPrice = 0;
 
-    /* Content Area */
-    .container { padding: 15px; flex: 1; }
-    .page-section { display: none; }
-    .page-section.active-page { display: block !important; }
+  function changeTab(tabName, btnElement) {
+    document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active-page'));
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active-page');
+    btnElement.classList.add('active');
+  }
 
-    /* UI Elements */
-    .header { text-align: center; margin-bottom: 15px; }
-    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
-    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
-    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-    
-    label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
-    .id-group { display: flex; gap: 6px; margin-top: 5px; }
-    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
-    
-    .verify-btn { background: #059669; color: white; border: none; padding: 0 14px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; }
-    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-
-    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
-    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; background: #fff; text-align: left; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
-    .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
-    .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
-    
-    .plan-price-box { font-size: 12px; margin-top: 2px; margin-bottom: 8px; }
-    .price-highlight { font-weight: bold; color: #059669; }
-    .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
-
-    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #e0e7ff; border-radius: 8px; padding: 4px 10px; margin-top: auto; border: 1px solid #c7d2fe; }
-    .qty-btn { background: #1e40af; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .qty-btn:active { background: #1e3a8a; transform: scale(0.95); }
-    .qty-num { font-size: 13px; font-weight: bold; color: #1e40af; }
-
-    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
-    
-    .main-buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; }
-
-    .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
-    .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
-  </style>
-</head>
-<body>
-
-  <div class="app-wrapper">
-    <div class="top-navbar">
-      <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
-      <div class="nav-buttons">
-        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Books</button>
-        <button class="nav-btn" onclick="changeTab('ebooks', this)">E-Books</button>
-        <button class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
-        <button class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
-        <button class="nav-btn" onclick="changeTab('refund', this)">Refund</button>
-        <button class="nav-btn" onclick="changeTab('contact', this)">Contact</button>
-      </div>
-    </div>
-
-    <div class="container">
-      
-      <div id="tab-topup" class="page-section active-page">
-        <div class="header">
-          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-          <div class="brand-title">ALI DREAMWORK</div>
-        </div>
-
-        <div class="card">
-          <label>Customer ID:</label>
-          <div class="id-group">
-            <input type="text" id="userId" placeholder="Customer ID">
-            <button class="verify-btn" onclick="verifyUser()">Verify</button>
-          </div>
-          <div id="verifyResult"></div>
-
-          <div class="section-title">SELECT BUNDLE & PAGES</div>
-          <div class="plans-grid">
-            <div class="plan-card" id="card-0">
-              <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
-              <div class="plan-title">Basic E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
-                <span class="qty-num" id="qty-0">0</span>
-                <button class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-1">
-              <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
-              <div class="plan-title">Standard E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
-                <span class="qty-num" id="qty-1">0</span>
-                <button class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-2">
-              <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
-              <div class="plan-title">Pro E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
-                <span class="qty-num" id="qty-2">0</span>
-                <button class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-3">
-              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
-              <div class="plan-title">Advanced E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
-                <span class="qty-num" id="qty-3">0</span>
-                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-4">
-              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
-              <div class="plan-title">Ultimate E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
-                <span class="qty-num" id="qty-4">0</span>
-                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-5">
-              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
-              <div class="plan-title">Mega E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
-                <span class="qty-num" id="qty-5">0</span>
-                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-6">
-              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
-              <div class="plan-title">Super E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
-                <span class="qty-num" id="qty-6">0</span>
-                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-7">
-              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
-              <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
-                <span class="qty-num" id="qty-7">0</span>
-                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
-              </div>
-            </div>
-          </div>
-
-          <label>WhatsApp Number:</label>
-          <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
-
-          <div class="summary-box">
-            <div class="summary-row"><span>Selected:</span> <span id="sumPlan">None</span></div>
-            <div class="summary-row"><span>Total:</span> <span id="sumPrice">₹0</span></div>
-          </div>
-
-          <button class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
-        </div>
-      </div>
-
-      <div id="tab-ebooks" class="page-section static-page">
-        <h2>📖 Digital E-Books & Resource Library</h2>
-<p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints designed for entrepreneurs, creators, and digital marketers.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>🌟 Featured Professional Guides & Mastery Handbooks</h3>
-<p>Our curated digital inventory is structured to accelerate your online business growth, optimize digital campaigns, and scale operations efficiently:</p>
-
-<ul>
-  <li>
-    <strong>1. Beginner's Web Guide & Technical Handbook</strong>
-    <br><small style="color: #6b7280;">A comprehensive step-by-step introduction to establishing your online presence, understanding core digital architectures, and avoiding common setup pitfalls.</small>
-  </li>
-  <br>
-  <li>
-    <strong>2. Advanced Digital Marketing Strategy Manual</strong>
-    <br><small style="color: #6b7280;">In-depth tactical frameworks covering modern audience targeting, conversion rate optimization, multi-channel growth hacking, and high-ROI funnel design.</small>
-  </li>
-  <br>
-  <li>
-    <strong>3. E-Commerce Mastery Blueprint</strong>
-    <br><small style="color: #6b7280;">An end-to-end blueprint focusing on automated digital inventory management, secure gateway integration workflows, scaling customer acquisition, and retention strategies.</small>
-  </li>
-  <br>
-  <li>
-    <strong>4. Professional Growth & Scaling Handbook</strong>
-    <br><small style="color: #6b7280;">Advanced methodologies for performance tracking, data-driven scaling, brand authority building, and long-term digital asset monetization.</small>
-  </li>
-</ul>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>📌 Instant Delivery & Access Protocol</h3>
-<p>All products listed in our store are 100% digital assets. Upon successful verification of your User ID and completion of the secure payment transaction, your selected reading page credits and digital access manuals are systematically provisioned and linked to your registered profile and WhatsApp communications.</p>
-        </ul>
-      </div>
-
-      <div id="tab-terms" class="page-section static-page">
-        <h2>📜 Terms & Conditions</h2>
-<p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, registering an account, or purchasing any digital products and resources, you agree to comply with and be bound by the following comprehensive terms and conditions. Please read them carefully before proceeding with any transaction.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Introduction & Acceptance of Terms</h3>
-<p>This document constitutes a legally binding agreement between you ("User", "Customer", or "Buyer") and Ali Dreamwork ("Store", "We", "Us", or "Our"). By using our digital storefront, you acknowledge that you have read, understood, and agreed to these terms.</p>
-
-<h3>2. User Account & Identification Accuracy</h3>
-<ul>
-  <li>
-    <strong>Valid User ID Requirement:</strong> Users must provide a valid, active, and correct User ID prior to initiating any checkout or payment process. 
-  </li>
-  <br>
-  <li>
-    <strong>Liability for Incorrect Data:</strong> Ali Dreamwork holds no responsibility for delivery failures, delays, or crediting errors resulting from incorrect user identification details or WhatsApp numbers provided by the customer.
-  </li>
-</ul>
-
-<h3>3. Digital Products, Licensing & Legitimate Use</h3>
-<ul>
-  <li>
-    <strong>Nature of Goods:</strong> All products sold on this platform are strictly digital assets, including e-books, technical guides, strategic manuals, and online reading page credits. No physical items will be shipped.
-  </li>
-  <br>
-  <li>
-    <strong>Legitimate & Personal Use:</strong> All digital goods and e-books provided are for legitimate use only. Purchasing a product grants you a non-exclusive, non-transferable license for personal or internal business use.
-  </li>
-  <br>
-  <li>
-    <strong>Restriction on Redistribution:</strong> Unauthorized copying, commercial resale, public sharing, modification, or distribution of our digital materials is strictly prohibited and protected under copyright regulations.
-  </li>
-</ul>
-
-<h3>4. Pricing, Payments & Transaction Security</h3>
-<ul>
-  <li>
-    <strong>Pricing Policy:</strong> All prices displayed on the store are listed in Indian Rupees (INR) and are final unless specified otherwise. We reserve the right to modify prices or service packages without prior notice.
-  </li>
-  <br>
-  <li>
-    <strong>Secure Processing:</strong> Payments are processed through authorized, encrypted third-party payment gateway partners. Users must ensure they are legally authorized to use the chosen payment instrument.
-  </li>
-</ul>
-
-<h3>5. Delivery & Fulfillment Policy</h3>
-<p>Upon successful payment verification and gateway confirmation, digital products, reading page credits, or access links are automatically provisioned and linked to the customer's verified User ID and communicated via registered WhatsApp channels.</p>
-
-<h3>6. Modifications to Terms</h3>
-<p>Ali Dreamwork reserves the right to update, change, or replace any part of these Terms & Conditions by posting updates on our website. It is your responsibility to check this page periodically for changes.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">If you have any questions or queries regarding these Terms & Conditions, please reach out to our support team through the Contact section.</small></p>
-        </ul>
-      </div>
-
-      <div id="tab-privacy" class="page-section static-page">
-        <h2>🔒 Privacy Policy</h2>
-<p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. This Privacy Policy outlines how we collect, use, protect, and handle your personal information when you visit our digital platform, register your User ID, or purchase our digital e-books and guides.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Information We Collect</h3>
-<p>To provide a seamless digital shopping and automatic delivery experience, we collect only essential information, which includes:</p>
-<ul>
-  <li>Your registered User ID for account verification and product delivery.</li>
-  <li>Your WhatsApp number or contact details solely for sending order confirmations, digital access links, and customer support assistance.</li>
-  <li>Transaction status and payment confirmation data securely handled through our authorized payment gateway partners.</li>
-</ul>
-
-<h3>2. 100% Data Protection & Zero-Sharing Guarantee</h3>
-<ul>
-  <li>
-    <strong>Absolute Confidentiality:</strong> We strictly guarantee that <strong>we do not sell, leak, rent, trade, or share your personal details</strong> or contact information with any third parties under any circumstances.
-  </li>
-  <br>
-  <li>
-    <strong>Strictly Internal Use:</strong> All information collected from customers is used exclusively for secure order processing, validating user profiles, and fulfilling digital book deliveries. Your data never leaves our secure operational network for marketing or external commercial purposes.
-  </li>
-</ul>
-
-<h3>3. Secure Payment Processing</h3>
-<p>All financial transactions and online payments are processed through encrypted, industry-standard, and authorized third-party payment gateway systems. Ali Dreamwork does not store, process, or have direct access to your sensitive banking credentials, credit card numbers, or UPI PINs.</p>
-
-<h3>4. Data Security Measures</h3>
-<p>We implement robust technical, administrative, and physical security measures to safeguard your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
-
-<h3>5. Policy Updates</h3>
-<p>Ali Dreamwork reserves the right to modify or update this Privacy Policy at any time to reflect operational improvements or regulatory compliance standards. Changes will be posted directly on this page.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">If you have any questions, concerns, or requests regarding our privacy practices, please feel free to contact us through our official support channels.</small></p>
-        </ul>
-      </div>
-
-      <div id="tab-refund" class="page-section static-page">
-        <h2>🔄 Refund & Cancellation Policy</h2>
-<p>At <strong>Ali Dreamwork</strong>, we strive to maintain a fair, transparent, and customer-centric framework to ensure complete satisfaction with our digital products, e-books, and reading page credits.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Overview of Digital Goods</h3>
-<p>Due to the instantaneous and digital nature of the items sold on our platform (including downloadable guides, strategic manuals, and reading page credits), all successful transactions and digital deliveries are generally considered final. Once digital content or page credits are successfully provisioned to a user ID, they cannot be retracted or physically returned.</p>
-
-<h3>2. Order Cancellation Policy</h3>
-<ul>
-  <li>
-    <strong>Before Delivery:</strong> Orders can be cancelled prior to successful payment gateway confirmation or before the digital assets/page credits are credited to the registered user ID. 
-  </li>
-  <br>
-  <li>
-    <strong>After Delivery:</strong> Once the payment is successfully processed and digital products are delivered or credited to your profile, the order cannot be cancelled.
-  </li>
-</ul>
-
-<h3>3. Refund Eligibility & Support Window (15-Minute Rule)</h3>
-<p>We maintain a dedicated support framework to handle transactional discrepancies or delivery failures promptly:</p>
-<ul>
-  <li>
-    <strong>Immediate Support Window:</strong> If a technical error occurs, a duplicate payment is deducted, or an issue arises during delivery, customers must reach out to our support team within <strong>15 minutes</strong> of the transaction along with valid payment proof (transaction ID or screenshot).
-  </li>
-  <br>
-  <li>
-    <strong>Case Review:</strong> Our technical and support team will thoroughly review the case within a reasonable timeframe to verify the transaction status.
-  </li>
-  <br>
-  <li>
-    <strong>Eligible Refunds:</strong> If an error is verified on our end or if a transaction failed due to gateway technicalities without product delivery, eligible refunds will be processed and credited back to the original source/payment instrument securely.
-  </li>
-</ul>
-
-<h3>4. Non-Refundable Scenarios</h3>
-<p>Refunds will not be issued under the following circumstances:</p>
-<ul>
-  <li>If the user provides an incorrect or inactive User ID during checkout, resulting in successful delivery to the wrong profile.</li>
-  <li>If the customer changes their mind after the digital e-books or reading page credits have been successfully accessed or utilized.</li>
-  <li>Issues arising from third-party device incompatibilities or user network connection failures outside our platform's control.</li>
-</ul>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">For any urgent refund assistance or transaction-related queries, please contact our support team immediately via WhatsApp or Email as provided in the Contact section.</small></p>
-        </ul>
-      </div>
-
-      <div id="tab-contact" class="page-section static-page">
-        <h2>🎧 Contact Us</h2>
-        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-        <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    function changeTab(tabId, btnElement) {
-      var sections = document.querySelectorAll('.page-section');
-      sections.forEach(function(sec) {
-        sec.classList.remove('active-page');
-        sec.style.display = 'none';
-      });
-
-      var buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-
-      var activeTarget = document.getElementById('tab-' + tabId);
-      if (activeTarget) {
-        activeTarget.style.display = 'block';
-        activeTarget.classList.add('active-page');
-      }
-      
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
-      window.scrollTo(0, 0);
+  async function verifyUser() {
+    const uid = document.getElementById('userId').value.trim();
+    const resultDiv = document.getElementById('verifyResult');
+    if (!uid) {
+      alert("Please enter Customer ID");
+      return;
     }
-
-    var cart = {}; 
-    var isVerified = false;
-
-    function updateQty(index, pagesPerItem, pricePerItem, change) {
-      if (!cart[index]) {
-        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0, name: "Plan " + (index+1) };
-      }
-      
-      cart[index].qty += change;
-      
-      if (cart[index].qty < 0) {
-        cart[index].qty = 0;
-      }
-
-      var qtyElem = document.getElementById('qty-' + index);
-      if (qtyElem) qtyElem.innerText = cart[index].qty;
-
-      var cardElem = document.getElementById('card-' + index);
-      if (cardElem) {
-        if (cart[index].qty > 0) {
-          cardElem.classList.add('selected');
-        } else {
-          cardElem.classList.remove('selected');
-        }
-      }
-
-      if (cart[index].qty === 0) {
-        delete cart[index];
-      }
-
-      updateSummary();
-    }
-
-    function updateSummary() {
-      var totalPages = 0;
-      var totalPrice = 0;
-      var summaryParts = [];
-
-      for (var key in cart) {
-        var item = cart[key];
-        totalPages += item.pages * item.qty;
-        totalPrice += item.price * item.qty;
-      }
-
-      var sumPlan = document.getElementById('sumPlan');
-      var sumPrice = document.getElementById('sumPrice');
-
-      if (Object.keys(cart).length === 0) {
-        if (sumPlan) sumPlan.innerText = "None";
-        if (sumPrice) sumPrice.innerText = "₹0";
+    resultDiv.style.display = "flex";
+    resultDiv.innerHTML = "Verifying...";
+    
+    try {
+      const response = await fetch('/api/verify-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid })
+      });
+      const data = await response.json();
+      if (data.status === 200 || data.success) {
+        resultDiv.innerHTML = `<img src="${data.avatar || 'https://i.ibb.co/21P3nGZR/logo.jpg'}" class="user-avatar"> <div><b>${data.nickname || 'User Found'}</b><br><span style="color:#059669; font-size:11px;">Verified Successfully</span></div>`;
       } else {
-        if (sumPlan) sumPlan.innerText = totalPages.toLocaleString() + " Pages";
-        if (sumPrice) sumPrice.innerText = "₹" + totalPrice;
+        resultDiv.innerHTML = `<span style="color:red;">${data.message || 'User not found!'}</span>`;
       }
+    } catch (err) {
+      resultDiv.innerHTML = `<span style="color:red;">Verification failed due to network error.</span>`;
+    }
+  }
+
+  function updateQty(index, pagesPerItem, pricePerItem, change) {
+    if (!selectedCart[index]) {
+      selectedCart[index] = { qty: 0, pages: pagesPerItem, price: pricePerItem, name: document.querySelector(`#card-${index} .plan-title`).innerText };
+    }
+    
+    selectedCart[index].qty += change;
+    if (selectedCart[index].qty < 0) selectedCart[index].qty = 0;
+    
+    document.getElementById(`qty-${index}`).innerText = selectedCart[index].qty;
+    
+    if (selectedCart[index].qty === 0) {
+      delete selectedCart[index];
+      document.getElementById(`card-${index}`).classList.remove('selected');
+    } else {
+      document.getElementById(`card-${index}`).classList.add('selected');
+    }
+    
+    calculateSummary();
+  }
+
+  function calculateSummary() {
+    currentTotalPages = 0;
+    currentTotalPrice = 0;
+    let summaryNames = [];
+
+    for (let key in selectedCart) {
+      let item = selectedCart[key];
+      currentTotalPages += item.pages * item.qty;
+      currentTotalPrice += item.price * item.qty;
+      summaryNames.push(`${item.name} (x${item.qty})`);
     }
 
-    function verifyUser() {
-      var uidInput = document.getElementById('userId');
-      var resBox = document.getElementById('verifyResult');
-      
-      if (!uidInput || !uidInput.value.trim()) {
-        alert('Please enter User ID first');
-        return;
-      }
+    document.getElementById('sumPlan').innerText = summaryNames.length > 0 ? summaryNames.join(', ') : 'None';
+    document.getElementById('sumPrice').innerText = '₹' + currentTotalPrice;
+  }
 
-      var uid = uidInput.value.trim();
-      resBox.style.display = "flex";
-      resBox.innerHTML = "Verifying...";
+  async function initiatePayment() {
+    const uid = document.getElementById('userId').value.trim();
+    const whatsapp = document.getElementById('userPhone').value.trim();
 
-      fetch('/api/verify-user', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
-          isVerified = true;
-          var info = data.data || data;
-          var name = info.nick || info.name || "Verified User";
-          var avatar = info.avatar || info.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small>ID: ' + uid + ' (Verified ✅)</small></div>';
-        } else {
-          isVerified = false;
-          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
-        }
-      })
-      .catch(function(err) {
-        console.error(err);
-        isVerified = false;
-        resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
-      });
+    if (!uid) {
+      alert("Please enter and verify your Customer ID first!");
+      return;
+    }
+    if (currentTotalPrice <= 0) {
+      alert("Please select at least one E-Book bundle!");
+      return;
     }
 
-    function initiatePayment() {
-      var uidInput = document.getElementById('userId');
-      var phoneInput = document.getElementById('userPhone');
+    const buyBtn = document.querySelector('.main-buy-btn');
+    buyBtn.innerText = "Processing...";
+    buyBtn.disabled = true;
 
-      var uid = uidInput ? uidInput.value.trim() : "";
-      var phone = phoneInput ? phoneInput.value.trim() : "";
-
-      var totalPrice = 0;
-      for (var key in cart) {
-        totalPrice += cart[key].price * cart[key].qty;
-      }
-
-      if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
-        return;
-      }
-      if (!isVerified) {
-        alert('Please verify your User ID first.');
-        return;
-      }
-
-      fetch('/api/create-payment', {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ 
+    try {
+      const response = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           uid: uid,
-          amount: totalPrice, 
-          whatsapp: phone, 
-          cart: cart 
+          amount: currentTotalPrice,
+          whatsapp: whatsapp,
+          cart: selectedCart
         })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.success && data.payment_url) {
-          window.location.href = data.payment_url;
-        } else {
-          alert(data.message || 'Payment initiation failed.');
-        }
-      })
-      .catch(function(err) {
-        console.error(err);
-        alert('Connection error with payment gateway.');
       });
+
+      const data = await response.json();
+
+      if (data.success && data.payment_session_id) {
+        // Cashfree SDK Initialization (Sandbox/Test Mode)
+        const cashfree = Cashfree({
+          mode: "sandbox" 
+        });
+
+        let checkoutOptions = {
+          paymentSessionId: data.payment_session_id,
+          redirectTarget: "_self"
+        };
+        
+        cashfree.checkout(checkoutOptions);
+      } else {
+        alert(data.message || "Payment initiation failed.");
+        buyBtn.innerText = "BUY NOW";
+        buyBtn.disabled = false;
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred during payment initiation.");
+      buyBtn.innerText = "BUY NOW";
+      buyBtn.disabled = false;
     }
-  </script>
-</body>
-</html>
+  }
+</script>
