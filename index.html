@@ -4,11 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
-
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
     
     /* Top Bar */
     .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 999; }
@@ -38,37 +37,40 @@
 
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
     .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; background: #fff; text-align: left; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
-    .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
-    .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
     
-    .plan-price-box { font-size: 12px; margin-top: 2px; margin-bottom: 8px; }
-    .price-highlight { font-weight: bold; color: #059669; }
-    .coins-dim { font-size: 10px; color: #6b7280; font-weight: normal; }
-
-    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #e0e7ff; border-radius: 8px; padding: 4px 10px; margin-top: auto; border: 1px solid #c7d2fe; }
-    .qty-btn { background: #1e40af; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .qty-btn:active { background: #1e3a8a; transform: scale(0.95); }
-    .qty-num { font-size: 13px; font-weight: bold; color: #1e40af; }
+    /* 1-Tap Selectable Card */
+    .plan-card { border: 2px solid #e5e7eb; border-radius: 10px; padding: 10px; background: #fff; text-align: left; position: relative; cursor: pointer; transition: all 0.2s ease-in-out; }
+    .plan-card:hover { border-color: #93c5fd; }
+    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2); }
+    .plan-card.selected::after { content: "✓ Selected"; position: absolute; top: 6px; right: 6px; background: #059669; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+    
+    .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; pointer-events: none; }
+    .plan-title { font-size: 13px; font-weight: bold; margin-top: 6px; color: #1f2937; pointer-events: none; }
+    
+    /* Price & Coins Styling */
+    .plan-price-box { font-size: 12px; margin-top: 4px; pointer-events: none; }
+    .price-highlight { font-weight: bold; color: #059669; font-size: 14px; }
+    .coins-dim { font-size: 11px; color: #6b7280; font-weight: normal; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
     
     .main-buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; }
 
+    /* Static Pages Styling */
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
 
-    /* BharatPe QR Modal */
-    #bpModalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center; }
-    .bp-modal-content { background: #fff; width: 90%; max-width: 350px; border-radius: 12px; padding: 20px; text-align: center; }
-    .bp-modal-title { font-size: 16px; font-weight: bold; color: #1e40af; }
-    .bp-modal-amount { font-size: 24px; font-weight: bold; color: #059669; margin: 8px 0; }
+    /* BharatPe Dynamic QR Modal */
+    #bpModalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
+    .bp-modal-content { background: #fff; width: 100%; max-width: 350px; border-radius: 14px; padding: 18px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .bp-modal-title { font-size: 15px; font-weight: bold; color: #1e40af; }
+    .bp-modal-amount { font-size: 24px; font-weight: 800; color: #059669; margin: 8px 0; }
     .bp-qr-image { width: 180px; height: 180px; border: 1px solid #e5e7eb; border-radius: 8px; margin: 10px auto; display: block; }
-    .bp-timer { font-size: 12px; color: #ef4444; font-weight: bold; }
+    .bp-timer { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 6px; }
     .bp-pay-btn { display: block; width: 100%; background: #059669; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 12px; }
-    .bp-cancel-btn { background: #e5e7eb; color: #374151; border: none; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; font-weight: bold; }
+    .bp-cancel-btn { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; width: 100%; padding: 8px; border-radius: 8px; font-size: 12px; margin-top: 8px; cursor: pointer; }
+    .bp-status-text { font-size: 11px; color: #6b7280; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -77,7 +79,7 @@
     <div class="top-navbar">
       <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
       <div class="nav-buttons">
-        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Books</button>
+        <button class="nav-btn active" onclick="changeTab('topup', this)">Digital E-Coins</button>
         <button class="nav-btn" onclick="changeTab('ebooks', this)">E-Books</button>
         <button class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
         <button class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
@@ -88,7 +90,6 @@
 
     <div class="container">
       
-      <!-- Topup / E-Books Selection Page -->
       <div id="tab-topup" class="page-section active-page">
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
@@ -96,94 +97,69 @@
         </div>
 
         <div class="card">
-          <label>Customer ID:</label>
+          <label>Enter your User ID:</label>
           <div class="id-group">
-            <input type="text" id="userId" placeholder="Enter Customer ID">
+            <input type="text" id="userId" placeholder="Enter User ID">
             <button class="verify-btn" onclick="verifyUser()">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
-          <div class="section-title">SELECT BUNDLE & PAGES</div>
+          <div class="section-title">SELECT BUNDLE & E-COINS (1-TAP SELECT)</div>
           <div class="plans-grid">
-            <div class="plan-card" id="card-0">
+            <!-- Plan 1: 200 -->
+            <div class="plan-card" onclick="selectPlan(this, 14600, 200)">
               <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
               <div class="plan-title">Basic E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
-                <span class="qty-num" id="qty-0">0</span>
-                <button class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
-              </div>
             </div>
-            <div class="plan-card" id="card-1">
+            
+            <!-- Plan 2: 300 -->
+            <div class="plan-card" onclick="selectPlan(this, 21900, 300)">
               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
               <div class="plan-title">Standard E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
-                <span class="qty-num" id="qty-1">0</span>
-                <button class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
-              </div>
             </div>
-            <div class="plan-card" id="card-2">
+            
+            <!-- Plan 3: 400 (New) -->
+            <div class="plan-card" onclick="selectPlan(this, 29200, 400)">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
+              <div class="plan-title">Smart E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹400</span> <span class="coins-dim">(29,200 Pages)</span></div>
+            </div>
+
+            <!-- Plan 4: 500 -->
+            <div class="plan-card" onclick="selectPlan(this, 36500, 500)">
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
               <div class="plan-title">Pro E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
-                <span class="qty-num" id="qty-2">0</span>
-                <button class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
-              </div>
             </div>
-            <div class="plan-card" id="card-3">
+
+            <!-- Plan 5: 800 (New) -->
+            <div class="plan-card" onclick="selectPlan(this, 58400, 800)">
+              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
+              <div class="plan-title">Premium E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹800</span> <span class="coins-dim">(58,400 Pages)</span></div>
+            </div>
+
+            <!-- Plan 6: 1000 -->
+            <div class="plan-card" onclick="selectPlan(this, 73000, 1000)">
               <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
               <div class="plan-title">Advanced E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
-                <span class="qty-num" id="qty-3">0</span>
-                <button class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
-              </div>
             </div>
-            <div class="plan-card" id="card-4">
-              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
+
+            <!-- Plan 7: 1500 -->
+            <div class="plan-card" onclick="selectPlan(this, 109500, 1500)">
+              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
               <div class="plan-title">Ultimate E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
-                <span class="qty-num" id="qty-4">0</span>
-                <button class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
-              </div>
             </div>
-            <div class="plan-card" id="card-5">
-              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
+
+            <!-- Plan 8: 2000 -->
+            <div class="plan-card" onclick="selectPlan(this, 146000, 2000)">
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
               <div class="plan-title">Mega E-Book</div>
               <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
-                <span class="qty-num" id="qty-5">0</span>
-                <button class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-6">
-              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
-              <div class="plan-title">Super E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
-                <span class="qty-num" id="qty-6">0</span>
-                <button class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
-              </div>
-            </div>
-            <div class="plan-card" id="card-7">
-              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
-              <div class="plan-title">Elite E-Book</div>
-              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Pages)</span></div>
-              <div class="qty-control">
-                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
-                <span class="qty-num" id="qty-7">0</span>
-                <button class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
-              </div>
             </div>
           </div>
 
@@ -199,62 +175,80 @@
         </div>
       </div>
 
-      <!-- Static Pages -->
       <div id="tab-ebooks" class="page-section static-page">
-        <h2>📖 Digital E-Books & Resource Library</h2>
-        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints.</p>
+        <h2>📖 Digital E-Books Library</h2>
+        <p>Explore our professional guides and technical handbooks designed for online growth.</p>
+        <ul>
+          <li>Beginner's Web Guide & Technical Handbook</li>
+          <li>Advanced Digital Marketing Strategy Manual</li>
+          <li>E-Commerce Mastery Blueprint</li>
+        </ul>
       </div>
 
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-        <p>By accessing our platform, you agree to comply with our terms and conditions regarding digital goods and services.</p>
+        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, you agree to comply with our service guidelines.</p>
+        <ul>
+          <li>Users must provide a valid and correct User ID before transactions.</li>
+          <li>All digital goods and e-books provided are for legitimate use.</li>
+        </ul>
       </div>
 
       <div id="tab-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy and data security are protected. We do not share your personal information with external parties.</p>
+        <p>Your privacy is important to us at <strong>Ali Dreamwork</strong>.</p>
+        <ul>
+          <li>We guarantee that <strong>we do not leak, sell, or share your personal details</strong> with any third parties.</li>
+          <li>Information collected is strictly used for secure order delivery.</li>
+        </ul>
       </div>
 
       <div id="tab-refund" class="page-section static-page">
         <h2>🔄 Refund & Cancellation Policy</h2>
-        <p>All digital product sales and page credit transactions are final once successfully delivered.</p>
+        <p>We maintain a fair framework for customer satisfaction:</p>
+        <ul>
+          <li>If an issue occurs within <strong>15 minutes</strong>, our support team reviews the case promptly.</li>
+          <li>Eligible refunds can be processed back to the original source if coins/books are unused.</li>
+        </ul>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
         <h2>🎧 Contact Us</h2>
         <p><strong>Email:</strong> alidreamwork@gmail.com</p>
         <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM IST)</p>
+        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
       </div>
 
     </div>
   </div>
 
-  <!-- BharatPe Dynamic QR Modal Box -->
+  <!-- BharatPe Dynamic QR Modal -->
   <div id="bpModalOverlay">
     <div class="bp-modal-content">
       <div class="bp-modal-title">Scan & Pay with Any UPI App</div>
       <div class="bp-modal-amount" id="bpModalAmount">₹0</div>
       
-      <!-- Safe Image-based QR Code -->
       <img id="bpQrImage" class="bp-qr-image" src="" alt="BharatPe QR">
       
       <div class="bp-timer" id="bpTimer">Valid for 05:00 min</div>
       <a id="bpDirectUpiLink" href="#" class="bp-pay-btn">⚡ Click to Pay via UPI App</a>
+      <p class="bp-status-text">Payment will auto-verify after transfer...</p>
       <button class="bp-cancel-btn" onclick="closeBharatPeModal()">Cancel</button>
     </div>
   </div>
 
   <script>
-    // 1. अपनी असली BharatPe UPI ID यहाँ डालें:
+    // ========== 1. CONFIGURATION ==========
+    // अपनी असली BharatPe UPI ID यहाँ डालें
     const BHARATPE_VPA = "your_bharatpe_vpa@bharatpe"; 
     const MERCHANT_NAME = "Ali Dreamwork";
 
-    var cart = {}; 
+    var selectedPlan = null; 
     var isVerified = false;
     var bpTimerInterval = null;
     var bpPollInterval = null;
 
+    // ========== 2. TAB SWITCHING ==========
     function changeTab(tabId, btnElement) {
       var sections = document.querySelectorAll('.page-section');
       sections.forEach(function(sec) {
@@ -279,65 +273,32 @@
       window.scrollTo(0, 0);
     }
 
-    function updateQty(index, pagesPerItem, pricePerItem, change) {
-      if (!cart[index]) {
-        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0 };
-      }
-      
-      cart[index].qty += change;
-      if (cart[index].qty < 0) cart[index].qty = 0;
+    // ========== 3. 1-TAP PLAN SELECTION ==========
+    function selectPlan(cardElem, pages, price) {
+      // Remove selection from all cards
+      document.querySelectorAll('.plan-card').forEach(function(el) {
+        el.classList.remove('selected');
+      });
 
-      var qtyElem = document.getElementById('qty-' + index);
-      if (qtyElem) qtyElem.innerText = cart[index].qty;
+      // Select this card
+      cardElem.classList.add('selected');
+      selectedPlan = { pages: pages, price: price };
 
-      var cardElem = document.getElementById('card-' + index);
-      if (cardElem) {
-        if (cart[index].qty > 0) {
-          cardElem.classList.add('selected');
-        } else {
-          cardElem.classList.remove('selected');
-        }
-      }
-
-      if (cart[index].qty === 0) {
-        delete cart[index];
-      }
-
-      updateSummary();
+      // Update summary box
+      document.getElementById('sumPlan').innerText = pages.toLocaleString() + " Pages";
+      document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
-    function updateSummary() {
-      var totalPages = 0;
-      var totalPrice = 0;
-
-      for (var key in cart) {
-        var item = cart[key];
-        totalPages += item.pages * item.qty;
-        totalPrice += item.price * item.qty;
-      }
-
-      var sumPlan = document.getElementById('sumPlan');
-      var sumPrice = document.getElementById('sumPrice');
-
-      if (Object.keys(cart).length === 0) {
-        if (sumPlan) sumPlan.innerText = "None";
-        if (sumPrice) sumPrice.innerText = "₹0";
-      } else {
-        if (sumPlan) sumPlan.innerText = totalPages.toLocaleString() + " Pages";
-        if (sumPrice) sumPrice.innerText = "₹" + totalPrice;
-      }
-    }
-
+    // ========== 4. USER VERIFICATION ==========
     function verifyUser() {
-      var uidInput = document.getElementById('userId');
+      var uid = document.getElementById('userId').value.trim();
       var resBox = document.getElementById('verifyResult');
       
-      if (!uidInput || !uidInput.value.trim()) {
+      if (!uid) {
         alert('Please enter User ID first');
         return;
       }
 
-      var uid = uidInput.value.trim();
       resBox.style.display = "flex";
       resBox.innerHTML = "Verifying...";
 
@@ -359,27 +320,27 @@
           resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
         }
       })
-      .catch(function(err) {
-        console.error(err);
+      .catch(function() {
         isVerified = false;
         resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
       });
     }
 
+    // ========== 5. BHARATPE INITIATE PAYMENT ==========
     function initiatePayment() {
-      var uidInput = document.getElementById('userId');
-      var phoneInput = document.getElementById('userPhone');
+      var uid = document.getElementById('userId').value.trim();
+      var phone = document.getElementById('userPhone').value.trim();
 
-      var uid = uidInput ? uidInput.value.trim() : "";
-      var phone = phoneInput ? phoneInput.value.trim() : "";
-
-      var totalPrice = 0;
-      for (var key in cart) {
-        totalPrice += cart[key].price * cart[key].qty;
+      if (!uid) {
+        alert('Please enter your Customer/User ID.');
+        return;
       }
-
-      if (!uid || totalPrice === 0 || !phone) {
-        alert('Please fill ID, select at least one plan (+ quantity) and enter WhatsApp number.');
+      if (!selectedPlan) {
+        alert('Please tap and select an E-Book plan.');
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        alert('Please enter a valid WhatsApp number.');
         return;
       }
       if (!isVerified) {
@@ -389,18 +350,70 @@
 
       var orderId = "ORD" + Date.now();
 
-      // Send to index.js
+      // Register order with backend index.js
       fetch('/api/create-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: totalPrice, orderId: orderId })
-      }).catch(function(e){ console.log(e); });
+        body: JSON.stringify({ uid: uid, amount: selectedPlan.price, orderId: orderId })
+      }).catch(function(e) { console.warn(e); });
 
-      openBharatPeModal(totalPrice, orderId);
+      openBharatPeModal(selectedPlan.price, orderId);
     }
 
+    // ========== 6. MODAL & DYNAMIC QR LOGIC ==========
     function openBharatPeModal(amount, orderId) {
       document.getElementById('bpModalAmount').innerText = "₹" + amount;
 
-      // UPI Intent URL
-      var upiUrl = "upi://pay?pa=" + encodeURICom
+      // UPI Intent Link
+      var upiUrl = "upi://pay?pa=" + encodeURIComponent(BHARATPE_VPA) +
+                    "&pn=" + encodeURIComponent(MERCHANT_NAME) +
+                    "&am=" + amount +
+                    "&tr=" + orderId +
+                    "&tn=Order_" + orderId +
+                    "&cu=INR";
+
+      // Direct Image-based QR generation (No external JS crashes)
+      var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(upiUrl);
+      document.getElementById('bpQrImage').src = qrUrl;
+
+      document.getElementById('bpDirectUpiLink').href = upiUrl;
+      document.getElementById('bpModalOverlay').style.display = "flex";
+
+      startBpTimer(300);
+      startPaymentStatusCheck(orderId);
+    }
+
+    function startBpTimer(seconds) {
+      clearInterval(bpTimerInterval);
+      var timeLeft = seconds;
+      var timerElem = document.getElementById('bpTimer');
+
+      bpTimerInterval = setInterval(function() {
+        var m = Math.floor(timeLeft / 60);
+        var s = timeLeft % 60;
+        timerElem.innerText = "Valid for " + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s) + " min";
+
+        if (--timeLeft < 0) {
+          clearInterval(bpTimerInterval);
+          closeBharatPeModal();
+          alert("Payment session expired. Please try again.");
+        }
+      }, 1000);
+    }
+
+    function closeBharatPeModal() {
+      clearInterval(bpTimerInterval);
+      clearInterval(bpPollInterval);
+      document.getElementById('bpModalOverlay').style.display = "none";
+    }
+
+    function startPaymentStatusCheck(orderId) {
+      clearInterval(bpPollInterval);
+      bpPollInterval = setInterval(function() {
+        fetch('/api/check-order-status?orderId=' + orderId)
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            if (data && data.status === 'PAID') {
+              clearInterval(bpPollInterval);
+              clearInterval(bpTimerInterval);
+              c
