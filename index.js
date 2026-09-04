@@ -12,10 +12,11 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// Kwik API Credentials
-const KWIK_API_KEY = "";
-const KWIK_API_SECRET = "";
-const KWIK_API_URL = "";
+// Cashfree Test Environment Credentials (सैंडबॉक्स / टेस्ट मोड की डिटेल्स यहाँ डालें)
+const CASHFREE_APP_ID = "TEST112085189848f239327d519a0481580211"; // आपकी टेस्ट App ID
+const CASHFREE_SECRET_KEY = "cfsk_ma_test_15ea0d32ldb59035bc010a90d1621a9f_lbfca853"; // आपकी टेस्ट Secret Key
+// Cashfree Sandbox API URL for creating orders
+const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
 
 const activeOrders = new Map();
 
@@ -51,7 +52,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Kwik Payment Order Creation Endpoint
+// 2. Cashfree Payment Order Creation Endpoint (Test Mode)
 app.post('/api/create-payment', async (req, res) => {
     try {
         const { uid, amount, whatsapp, cart } = req.body;
@@ -76,35 +77,43 @@ app.post('/api/create-payment', async (req, res) => {
 
         const hostUrl = `https://${req.get('host')}`;
 
-        const kwikPayload = {
-            amount: Number(amount).toFixed(2),
+        // Cashfree Order Payload Structure
+        const cashfreePayload = {
             order_id: orderId,
-            customer_name: "User " + uid,
-            customer_email: `${uid}@ali-store.com`,
-            customer_phone: whatsapp ? whatsapp.toString() : "9999999999",
-            redirect_url: `${hostUrl}/?order_id=${orderId}`
+            order_amount: Number(amount).toFixed(2),
+            order_currency: "INR",
+            customer_details: {
+                customer_id: uid.toString().trim(),
+                customer_name: "Customer " + uid,
+                customer_email: `${uid}@ali-store.com`,
+                customer_phone: whatsapp ? whatsapp.toString() : "9999999999"
+            },
+            order_meta: {
+                return_url: `${hostUrl}/?order_id=${orderId}`
+            }
         };
 
-        const kwikResponse = await axios.post(KWIK_API_URL, kwikPayload, {
+        const cashfreeResponse = await axios.post(CASHFREE_API_URL, cashfreePayload, {
             headers: {
-                'X-API-KEY': KWIK_API_KEY,
-                'X-API-SECRET': KWIK_API_SECRET,
+                'x-client-id': CASHFREE_APP_ID,
+                'x-client-secret': CASHFREE_SECRET_KEY,
+                'x-api-version': '2023-08-01',
                 'Content-Type': 'application/json'
             }
         });
 
-        if (kwikResponse.data && (kwikResponse.data.payment_url || kwikResponse.data.payment_link || kwikResponse.data.url)) {
+        if (cashfreeResponse.data && cashfreeResponse.data.payment_session_id) {
             return res.json({
                 success: true,
-                payment_url: kwikResponse.data.payment_url || kwikResponse.data.payment_link || kwikResponse.data.url,
+                payment_session_id: cashfreeResponse.data.payment_session_id,
                 order_id: orderId
             });
         } else {
-            return res.status(500).json({ success: false, message: kwikResponse.data.message || "Failed to generate Kwik payment link" });
+            return res.status(500).json({ success: false, message: "Failed to generate Cashfree payment session" });
         }
 
     } catch (error) {
-        console.error("Kwik Payment Creation Error:", error.response?.data || error.message);
+        console.error("Cashfree Payment Creation Error:", error.response?.data || error.message);
         const errorMsg = error.response?.data?.message || error.response?.data?.error || "Internal server error during payment creation";
         return res.status(500).json({ success: false, message: errorMsg });
     }
@@ -137,13 +146,17 @@ async function deliverItemsToUser(uid, pages, orderId) {
     }
 }
 
-// 4. Kwik Webhook Endpoint
+// 4. Cashfree Webhook Endpoint
 app.post('/api/kwik-webhook', async (req, res) => {
     try {
         const eventData = req.body;
         
-        if (eventData && (eventData.status === "SUCCESS" || eventData.payment_status === "SUCCESS" || eventData.success === true)) {
-            const orderId = eventData.order_id;
+        // Cashfree webhook structure handling
+        const eventType = eventData.type;
+        const orderDataPayload = eventData.data?.order;
+
+        if (eventType === "PAYMENT_SUCCESS_WEBHOOK" || (orderDataPayload && orderDataPayload.order_status === "PAID")) {
+            const orderId = orderDataPayload.order_id;
             let orderData = activeOrders.get(orderId);
 
             if (orderData) {
