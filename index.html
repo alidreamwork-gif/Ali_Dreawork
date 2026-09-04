@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
+  
+  <!-- Cashfree Sandbox SDK Added -->
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.sandbox.js"></script>
+
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
@@ -86,7 +90,7 @@
         <div class="card">
           <label>Customer ID:</label>
           <div class="id-group">
-            <input type="text" id="userId" placeholder="Enter Customner ID">
+            <input type="text" id="userId" placeholder="Enter Customer ID">
             <button class="verify-btn" onclick="verifyUser()">Verify</button>
           </div>
           <div id="verifyResult"></div>
@@ -187,190 +191,25 @@
         </div>
       </div>
 
+      <!-- Static Pages -->
       <div id="tab-ebooks" class="page-section static-page">
         <h2>📖 Digital E-Books & Resource Library</h2>
-<p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints designed for entrepreneurs, creators, and digital marketers.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>🌟 Featured Professional Guides & Mastery Handbooks</h3>
-<p>Our curated digital inventory is structured to accelerate your online business growth, optimize digital campaigns, and scale operations efficiently:</p>
-
-<ul>
-  <li>
-    <strong>1. Beginner's Web Guide & Technical Handbook</strong>
-    <br><small style="color: #6b7280;">A comprehensive step-by-step introduction to establishing your online presence, understanding core digital architectures, and avoiding common setup pitfalls.</small>
-  </li>
-  <br>
-  <li>
-    <strong>2. Advanced Digital Marketing Strategy Manual</strong>
-    <br><small style="color: #6b7280;">In-depth tactical frameworks covering modern audience targeting, conversion rate optimization, multi-channel growth hacking, and high-ROI funnel design.</small>
-  </li>
-  <br>
-  <li>
-    <strong>3. E-Commerce Mastery Blueprint</strong>
-    <br><small style="color: #6b7280;">An end-to-end blueprint focusing on automated digital inventory management, secure gateway integration workflows, scaling customer acquisition, and retention strategies.</small>
-  </li>
-  <br>
-  <li>
-    <strong>4. Professional Growth & Scaling Handbook</strong>
-    <br><small style="color: #6b7280;">Advanced methodologies for performance tracking, data-driven scaling, brand authority building, and long-term digital asset monetization.</small>
-  </li>
-</ul>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>📌 Instant Delivery & Access Protocol</h3>
-<p>All products listed in our store are 100% digital assets. Upon successful verification of your User ID and completion of the secure payment transaction, your selected reading page credits and digital access manuals are systematically provisioned and linked to your registered profile and WhatsApp communications.</p>
-        </ul>
+        <p>Welcome to the official digital repository of <strong>Ali Dreamwork</strong>. We provide high-value, professionally crafted technical guides, strategic handbooks, and business growth blueprints.</p>
       </div>
 
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-<p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, registering an account, or purchasing any digital products and resources, you agree to comply with and be bound by the following comprehensive terms and conditions. Please read them carefully before proceeding with any transaction.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Introduction & Acceptance of Terms</h3>
-<p>This document constitutes a legally binding agreement between you ("User", "Customer", or "Buyer") and Ali Dreamwork ("Store", "We", "Us", or "Our"). By using our digital storefront, you acknowledge that you have read, understood, and agreed to these terms.</p>
-
-<h3>2. User Account & Identification Accuracy</h3>
-<ul>
-  <li>
-    <strong>Valid User ID Requirement:</strong> Users must provide a valid, active, and correct User ID prior to initiating any checkout or payment process. 
-  </li>
-  <br>
-  <li>
-    <strong>Liability for Incorrect Data:</strong> Ali Dreamwork holds no responsibility for delivery failures, delays, or crediting errors resulting from incorrect user identification details or WhatsApp numbers provided by the customer.
-  </li>
-</ul>
-
-<h3>3. Digital Products, Licensing & Legitimate Use</h3>
-<ul>
-  <li>
-    <strong>Nature of Goods:</strong> All products sold on this platform are strictly digital assets, including e-books, technical guides, strategic manuals, and online reading page credits. No physical items will be shipped.
-  </li>
-  <br>
-  <li>
-    <strong>Legitimate & Personal Use:</strong> All digital goods and e-books provided are for legitimate use only. Purchasing a product grants you a non-exclusive, non-transferable license for personal or internal business use.
-  </li>
-  <br>
-  <li>
-    <strong>Restriction on Redistribution:</strong> Unauthorized copying, commercial resale, public sharing, modification, or distribution of our digital materials is strictly prohibited and protected under copyright regulations.
-  </li>
-</ul>
-
-<h3>4. Pricing, Payments & Transaction Security</h3>
-<ul>
-  <li>
-    <strong>Pricing Policy:</strong> All prices displayed on the store are listed in Indian Rupees (INR) and are final unless specified otherwise. We reserve the right to modify prices or service packages without prior notice.
-  </li>
-  <br>
-  <li>
-    <strong>Secure Processing:</strong> Payments are processed through authorized, encrypted third-party payment gateway partners. Users must ensure they are legally authorized to use the chosen payment instrument.
-  </li>
-</ul>
-
-<h3>5. Delivery & Fulfillment Policy</h3>
-<p>Upon successful payment verification and gateway confirmation, digital products, reading page credits, or access links are automatically provisioned and linked to the customer's verified User ID and communicated via registered WhatsApp channels.</p>
-
-<h3>6. Modifications to Terms</h3>
-<p>Ali Dreamwork reserves the right to update, change, or replace any part of these Terms & Conditions by posting updates on our website. It is your responsibility to check this page periodically for changes.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">If you have any questions or queries regarding these Terms & Conditions, please reach out to our support team through the Contact section.</small></p>
-        </ul>
+        <p>By accessing our platform, you agree to comply with our terms and conditions regarding digital goods and services.</p>
       </div>
 
       <div id="tab-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-<p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. This Privacy Policy outlines how we collect, use, protect, and handle your personal information when you visit our digital platform, register your User ID, or purchase our digital e-books and guides.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Information We Collect</h3>
-<p>To provide a seamless digital shopping and automatic delivery experience, we collect only essential information, which includes:</p>
-<ul>
-  <li>Your registered User ID for account verification and product delivery.</li>
-  <li>Your WhatsApp number or contact details solely for sending order confirmations, digital access links, and customer support assistance.</li>
-  <li>Transaction status and payment confirmation data securely handled through our authorized payment gateway partners.</li>
-</ul>
-
-<h3>2. 100% Data Protection & Zero-Sharing Guarantee</h3>
-<ul>
-  <li>
-    <strong>Absolute Confidentiality:</strong> We strictly guarantee that <strong>we do not sell, leak, rent, trade, or share your personal details</strong> or contact information with any third parties under any circumstances.
-  </li>
-  <br>
-  <li>
-    <strong>Strictly Internal Use:</strong> All information collected from customers is used exclusively for secure order processing, validating user profiles, and fulfilling digital book deliveries. Your data never leaves our secure operational network for marketing or external commercial purposes.
-  </li>
-</ul>
-
-<h3>3. Secure Payment Processing</h3>
-<p>All financial transactions and online payments are processed through encrypted, industry-standard, and authorized third-party payment gateway systems. Ali Dreamwork does not store, process, or have direct access to your sensitive banking credentials, credit card numbers, or UPI PINs.</p>
-
-<h3>4. Data Security Measures</h3>
-<p>We implement robust technical, administrative, and physical security measures to safeguard your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
-
-<h3>5. Policy Updates</h3>
-<p>Ali Dreamwork reserves the right to modify or update this Privacy Policy at any time to reflect operational improvements or regulatory compliance standards. Changes will be posted directly on this page.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">If you have any questions, concerns, or requests regarding our privacy practices, please feel free to contact us through our official support channels.</small></p>
-        </ul>
+        <p>Your privacy and data security are protected. We do not share your personal information with external parties.</p>
       </div>
 
       <div id="tab-refund" class="page-section static-page">
         <h2>🔄 Refund & Cancellation Policy</h2>
-<p>At <strong>Ali Dreamwork</strong>, we strive to maintain a fair, transparent, and customer-centric framework to ensure complete satisfaction with our digital products, e-books, and reading page credits.</p>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<h3>1. Overview of Digital Goods</h3>
-<p>Due to the instantaneous and digital nature of the items sold on our platform (including downloadable guides, strategic manuals, and reading page credits), all successful transactions and digital deliveries are generally considered final. Once digital content or page credits are successfully provisioned to a user ID, they cannot be retracted or physically returned.</p>
-
-<h3>2. Order Cancellation Policy</h3>
-<ul>
-  <li>
-    <strong>Before Delivery:</strong> Orders can be cancelled prior to successful payment gateway confirmation or before the digital assets/page credits are credited to the registered user ID. 
-  </li>
-  <br>
-  <li>
-    <strong>After Delivery:</strong> Once the payment is successfully processed and digital products are delivered or credited to your profile, the order cannot be cancelled.
-  </li>
-</ul>
-
-<h3>3. Refund Eligibility & Support Window (15-Minute Rule)</h3>
-<p>We maintain a dedicated support framework to handle transactional discrepancies or delivery failures promptly:</p>
-<ul>
-  <li>
-    <strong>Immediate Support Window:</strong> If a technical error occurs, a duplicate payment is deducted, or an issue arises during delivery, customers must reach out to our support team within <strong>15 minutes</strong> of the transaction along with valid payment proof (transaction ID or screenshot).
-  </li>
-  <br>
-  <li>
-    <strong>Case Review:</strong> Our technical and support team will thoroughly review the case within a reasonable timeframe to verify the transaction status.
-  </li>
-  <br>
-  <li>
-    <strong>Eligible Refunds:</strong> If an error is verified on our end or if a transaction failed due to gateway technicalities without product delivery, eligible refunds will be processed and credited back to the original source/payment instrument securely.
-  </li>
-</ul>
-
-<h3>4. Non-Refundable Scenarios</h3>
-<p>Refunds will not be issued under the following circumstances:</p>
-<ul>
-  <li>If the user provides an incorrect or inactive User ID during checkout, resulting in successful delivery to the wrong profile.</li>
-  <li>If the customer changes their mind after the digital e-books or reading page credits have been successfully accessed or utilized.</li>
-  <li>Issues arising from third-party device incompatibilities or user network connection failures outside our platform's control.</li>
-</ul>
-
-<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-
-<p><small style="color: #6b7280;">For any urgent refund assistance or transaction-related queries, please contact our support team immediately via WhatsApp or Email as provided in the Contact section.</small></p>
-        </ul>
+        <p>All digital product sales and page credit transactions are final once successfully delivered.</p>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
@@ -413,14 +252,11 @@
 
     function updateQty(index, pagesPerItem, pricePerItem, change) {
       if (!cart[index]) {
-        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0, name: "Plan " + (index+1) };
+        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0 };
       }
       
       cart[index].qty += change;
-      
-      if (cart[index].qty < 0) {
-        cart[index].qty = 0;
-      }
+      if (cart[index].qty < 0) cart[index].qty = 0;
 
       var qtyElem = document.getElementById('qty-' + index);
       if (qtyElem) qtyElem.innerText = cart[index].qty;
@@ -444,7 +280,6 @@
     function updateSummary() {
       var totalPages = 0;
       var totalPrice = 0;
-      var summaryParts = [];
 
       for (var key in cart) {
         var item = cart[key];
@@ -523,7 +358,8 @@
         return;
       }
 
-      fetch('/api/create-payment', {
+      // Updated to match backend endpoint /api/create-cashfree-order
+      fetch('/api/create-cashfree-order', {
         method: "POST",
         headers: { 
           "Content-Type": "application/json"
@@ -531,14 +367,23 @@
         body: JSON.stringify({ 
           uid: uid,
           amount: totalPrice, 
-          whatsapp: phone, 
-          cart: cart 
+          whatsapp: phone 
         })
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (data.success && data.payment_url) {
-          window.location.href = data.payment_url;
+        if (data.success && data.payment_session_id) {
+          // Initialize Cashfree Modal Checkout
+          const cashfree = Cashfree({ mode: "sandbox" });
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_modal"
+          };
+          cashfree.checkout(checkoutOptions).then(function(result) {
+            if (result.error) {
+              alert("Payment failed: " + result.error.message);
+            }
+          });
         } else {
           alert(data.message || 'Payment initiation failed.');
         }
