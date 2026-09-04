@@ -246,10 +246,11 @@
         });
         const data = await response.json();
         
-        if (data.status === 200 || data.success) {
-          // यहां यूजर का असली नाम (name, username या nickname) ऑटोमेटिक डिटेक्ट होकर आ जाएगा
-          const userName = data.name || data.username || data.nickname || data.user_name || 'User Found';
-          const userAvatar = data.avatar || data.profile_pic || 'https://i.ibb.co/21P3nGZR/logo.jpg';
+        // चेक करें कि रिस्पॉन्स सफल है या नहीं
+        if (data.status === 200 || data.success || data.name || data.nickname || data.username) {
+          // सभी संभावित नाम और अवतार (DP) की कीज़ को यहाँ चेक किया जा रहा है
+          const userName = data.name || data.username || data.nickname || data.user_name || data.fullName || 'User Found';
+          const userAvatar = data.avatar || data.profile_pic || data.image || 'https://i.ibb.co/21P3nGZR/logo.jpg';
 
           resultDiv.innerHTML = `<img src="${userAvatar}" class="user-avatar"> <div><b>${userName}</b><br><span style="color:#059669; font-size:11px;">Verified Successfully</span></div>`;
         } else {
