@@ -11,11 +11,11 @@
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; }
     
     /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: relative; z-index: 999; }
-    .nav-brand { color: #fff; font-size: 15px; font-weight: bold; margin-bottom: 8px; }
-    .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    .top-navbar { background: #1e40af; padding: 10px; text-align: center; position: relative; z-index: 100; }
+    .nav-brand { color: #fff; font-size: 15px; font-weight: bold; margin-bottom: 6px; }
+    .nav-buttons { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; }
     
-    .nav-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 12px; font-size: 12px; cursor: pointer; font-weight: bold; }
+    .nav-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; font-weight: bold; }
     .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
 
     .container { padding: 15px; flex: 1; }
@@ -28,10 +28,37 @@
     .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
     
     label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
-    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; margin-top: 5px; }
+    .id-group { display: flex; gap: 6px; margin-top: 5px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
     
+    .verify-btn { background: #059669; color: white; border: none; padding: 0 14px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
+    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .plan-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px; background: #fff; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
+    .plan-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
+    .plan-title { font-size: 12px; font-weight: bold; margin-top: 5px; color: #1f2937; }
+    
+    .plan-price-box { font-size: 12px; margin-top: 2px; margin-bottom: 8px; }
+    .price-highlight { font-weight: bold; color: #059669; }
+    .coins-dim { font-size: 10px; color: #6b7280; }
+
+    .qty-control { display: flex; align-items: center; justify-content: space-between; background: #e0e7ff; border-radius: 8px; padding: 4px 10px; margin-top: auto; border: 1px solid #c7d2fe; }
+    .qty-btn { background: #1e40af; color: white; border: none; width: 30px; height: 30px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; }
+    .qty-btn:active { background: #1e3a8a; }
+    .qty-num { font-size: 13px; font-weight: bold; color: #1e40af; }
+
+    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 12px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
+    
+    .main-buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; }
+
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
-    .static-page p { font-size: 13px; color: #4b5563; line-height: 1.5; }
+    .static-page p, .static-page li, .static-page h3 { font-size: 13px; color: #4b5563; line-height: 1.5; }
+    .static-page h3 { color: #1f2937; margin-top: 15px; margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -41,8 +68,8 @@
     <div class="top-navbar">
       <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
       <div class="nav-buttons">
-        <button type="button" class="nav-btn active" id="btn-home" onclick="switchTab('home')">Home</button>
-        <button type="button" class="nav-btn" id="btn-library" onclick="switchTab('library')">Library</button>
+        <button type="button" class="nav-btn active" id="btn-topup" onclick="switchTab('topup')">E-Books</button>
+        <button type="button" class="nav-btn" id="btn-ebooks" onclick="switchTab('ebooks')">Library</button>
         <button type="button" class="nav-btn" id="btn-terms" onclick="switchTab('terms')">Terms</button>
         <button type="button" class="nav-btn" id="btn-privacy" onclick="switchTab('privacy')">Privacy</button>
         <button type="button" class="nav-btn" id="btn-refund" onclick="switchTab('refund')">Refund</button>
@@ -52,47 +79,183 @@
 
     <div class="container">
       
-      <!-- Home Tab -->
-      <div id="tab-home" class="page-section active-page">
+      <!-- Topup / Store Tab -->
+      <div id="tab-topup" class="page-section active-page" style="display: block;">
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
           <div class="brand-title">ALI DREAMWORK</div>
         </div>
+
         <div class="card">
           <label>Enter your User ID:</label>
-          <input type="text" placeholder="Enter User ID here">
-          <p style="font-size: 12px; color: green; margin-top: 10px;">✅ All buttons and clicks are fully working now!</p>
+          <div class="id-group">
+            <input type="text" id="userId" placeholder="Enter User ID">
+            <button type="button" class="verify-btn" onclick="verifyUser()">Verify</button>
+          </div>
+          <div id="verifyResult"></div>
+
+          <div class="section-title">SELECT BUNDLE & PAGES</div>
+          <div class="plans-grid">
+            <div class="plan-card" id="card-0">
+              <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300" class="plan-img">
+              <div class="plan-title">Basic E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹200</span> <span class="coins-dim">(14,600 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(0, 14600, 200, -1)">-</button>
+                <span class="qty-num" id="qty-0">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(0, 14600, 200, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-1">
+              <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300" class="plan-img">
+              <div class="plan-title">Standard E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹300</span> <span class="coins-dim">(21,900 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(1, 21900, 300, -1)">-</button>
+                <span class="qty-num" id="qty-1">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(1, 21900, 300, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-2">
+              <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300" class="plan-img">
+              <div class="plan-title">Pro E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹500</span> <span class="coins-dim">(36,500 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(2, 36500, 500, -1)">-</button>
+                <span class="qty-num" id="qty-2">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(2, 36500, 500, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-3">
+              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" class="plan-img">
+              <div class="plan-title">Advanced E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,000</span> <span class="coins-dim">(73,000 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(3, 73000, 1000, -1)">-</button>
+                <span class="qty-num" id="qty-3">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(3, 73000, 1000, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-4">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300" class="plan-img">
+              <div class="plan-title">Ultimate E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹1,500</span> <span class="coins-dim">(109,500 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(4, 109500, 1500, -1)">-</button>
+                <span class="qty-num" id="qty-4">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(4, 109500, 1500, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-5">
+              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300" class="plan-img">
+              <div class="plan-title">Mega E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹2,000</span> <span class="coins-dim">(146,000 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(5, 146000, 2000, -1)">-</button>
+                <span class="qty-num" id="qty-5">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(5, 146000, 2000, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-6">
+              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" class="plan-img">
+              <div class="plan-title">Super E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹3,000</span> <span class="coins-dim">(219,000 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(6, 219000, 3000, -1)">-</button>
+                <span class="qty-num" id="qty-6">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(6, 219000, 3000, 1)">+</button>
+              </div>
+            </div>
+            <div class="plan-card" id="card-7">
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300" class="plan-img">
+              <div class="plan-title">Elite E-Book</div>
+              <div class="plan-price-box"><span class="price-highlight">₹4,500</span> <span class="coins-dim">(328,500 Pages)</span></div>
+              <div class="qty-control">
+                <button type="button" class="qty-btn" onclick="updateQty(7, 328500, 4500, -1)">-</button>
+                <span class="qty-num" id="qty-7">0</span>
+                <button type="button" class="qty-btn" onclick="updateQty(7, 328500, 4500, 1)">+</button>
+              </div>
+            </div>
+          </div>
+
+          <label>WhatsApp Number:</label>
+          <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+
+          <div class="summary-box">
+            <div class="summary-row"><span>Selected:</span> <span id="sumPlan">None</span></div>
+            <div class="summary-row"><span>Total:</span> <span id="sumPrice">₹0</span></div>
+          </div>
+
+          <button type="button" class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
         </div>
       </div>
 
       <!-- Library Tab -->
-      <div id="tab-library" class="page-section static-page">
+      <div id="tab-ebooks" class="page-section static-page">
         <h2>📖 Digital E-Books Library</h2>
         <p>Explore our professional guides and technical handbooks designed for online growth.</p>
+        <ul>
+          <li>Beginner's Web Guide & Technical Handbook</li>
+          <li>Advanced Digital Marketing Strategy Manual</li>
+          <li>E-Commerce Mastery Blueprint</li>
+        </ul>
       </div>
 
       <!-- Terms Tab -->
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to Ali Dreamwork. By accessing our platform, you agree to our terms.</p>
+        <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, purchasing, or downloading our digital products, you agree to comply with and be bound by the following terms and conditions.</p>
+        
+        <h3>1. User Account & Accuracy</h3>
+        <ul>
+          <li>Users must provide a valid and correct User ID before initiating any transaction.</li>
+          <li>We are not responsible for delivery failures resulting from incorrect user identification details provided by the customer.</li>
+        </ul>
+
+        <h3>2. Digital Products & Delivery</h3>
+        <ul>
+          <li>All items sold on this platform are digital goods, including e-books, guides, articles, and reading page credits.</li>
+          <li>Upon successful payment verification, digital products and content pages are credited or delivered automatically to the verified user profile.</li>
+        </ul>
+
+        <h3>3. Pricing & Payments</h3>
+        <ul>
+          <li>All prices listed are in Indian Rupees (INR) and are inclusive of applicable processing standards.</li>
+          <li>Payments are processed securely through authorized payment gateway partners. Users must ensure authorized usage of their payment instruments.</li>
+        </ul>
+
+        <h3>4. Intellectual Property</h3>
+        <ul>
+          <li>All content, digital assets, and reading materials provided on Ali Dreamwork are protected by copyright laws. Unauthorized distribution or commercial resale is strictly prohibited.</li>
+        </ul>
       </div>
 
       <!-- Privacy Tab -->
       <div id="tab-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy is 100% protected with us. We never share your data.</p>
+        <p>Your privacy is important to us at <strong>Ali Dreamwork</strong>.</p>
+        <ul>
+          <li>We guarantee that <strong>we do not leak, sell, or share your personal details</strong> with any third parties.</li>
+          <li>Information collected is strictly used for secure order processing and delivery.</li>
+        </ul>
       </div>
 
       <!-- Refund Tab -->
       <div id="tab-refund" class="page-section static-page">
         <h2>🔄 Refund & Cancellation Policy</h2>
-        <p>Due to the digital nature of our products, sales are final.</p>
+        <p>We maintain a fair framework for customer satisfaction:</p>
+        <ul>
+          <li>Due to the digital nature of our products, once items or page credits are successfully delivered to the user ID, orders generally cannot be cancelled or refunded.</li>
+          <li>If a transaction fails or an error occurs during payment, customers can reach out within <strong>15 minutes</strong> with transaction proofs, and our support team will review and resolve the case promptly.</li>
+        </ul>
       </div>
 
       <!-- Contact Tab -->
       <div id="tab-contact" class="page-section static-page">
         <h2>🎧 Contact Us</h2>
-        <p><strong>Email:</strong> alidreamwork@gmail.com<br><strong>WhatsApp:</strong> +917776881407</p>
+        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
+        <p><strong>WhatsApp:</strong> +917776881407</p>
+        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
       </div>
 
     </div>
@@ -111,12 +274,10 @@
         buttons[j].classList.remove('active');
       }
 
-      var targetSection = document.getElementById('tab- ' + tabName);
-      // Fallback fix for tab id matching
-      var targetElem = document.getElementById('tab-' + tabName);
-      if (targetElem) {
-        targetElem.style.display = 'block';
-        targetElem.classList.add('active-page');
+      var targetSection = document.getElementById('tab-' + tabName);
+      if (targetSection) {
+        targetSection.style.display = 'block';
+        targetSection.classList.add('active-page');
       }
 
       var targetBtn = document.getElementById('btn-' + tabName);
@@ -126,6 +287,113 @@
 
       window.scrollTo(0, 0);
     }
-  </script>
-</body>
-</html>
+
+    var cart = {}; 
+    var isVerified = false;
+
+    function updateQty(index, pagesPerItem, pricePerItem, change) {
+      if (!cart[index]) {
+        cart[index] = { pages: pagesPerItem, price: pricePerItem, qty: 0 };
+      }
+      
+      cart[index].qty += change;
+      if (cart[index].qty < 0) {
+        cart[index].qty = 0;
+      }
+
+      var qtyElem = document.getElementById('qty-' + index);
+      if (qtyElem) qtyElem.innerText = cart[index].qty;
+
+      var cardElem = document.getElementById('card-' + index);
+      if (cardElem) {
+        if (cart[index].qty > 0) {
+          cardElem.classList.add('selected');
+        } else {
+          cardElem.classList.remove('selected');
+        }
+      }
+
+      if (cart[index].qty === 0) {
+        delete cart[index];
+      }
+
+      updateSummary();
+    }
+
+    function updateSummary() {
+      var totalPages = 0;
+      var totalPrice = 0;
+
+      for (var key in cart) {
+        var item = cart[key];
+        totalPages += item.pages * item.qty;
+        totalPrice += item.price * item.qty;
+      }
+
+      var sumPlan = document.getElementById('sumPlan');
+      var sumPrice = document.getElementById('sumPrice');
+
+      if (Object.keys(cart).length === 0) {
+        if (sumPlan) sumPlan.innerText = "None";
+        if (sumPrice) sumPrice.innerText = "₹0";
+      } else {
+        if (sumPlan) sumPlan.innerText = totalPages.toLocaleString() + " Pages";
+        if (sumPrice) sumPrice.innerText = "₹" + totalPrice;
+      }
+    }
+
+    function verifyUser() {
+      var uidInput = document.getElementById('userId');
+      var resBox = document.getElementById('verifyResult');
+      
+      if (!uidInput || !uidInput.value.trim()) {
+        alert('Please enter User ID first');
+        return;
+      }
+
+      var uid = uidInput.value.trim();
+      resBox.style.display = "flex";
+      resBox.innerHTML = "Verifying...";
+
+      fetch('/api/verify-user', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
+          isVerified = true;
+          var info = data.data || data;
+          var name = info.nick || info.name || "Verified User";
+          var avatar = info.avatar || info.img || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small>ID: ' + uid + ' (Verified ✅)</small></div>';
+        } else {
+          isVerified = false;
+          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+        }
+      })
+      .catch(function(err) {
+        console.error(err);
+        isVerified = false;
+        resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
+      });
+    }
+
+    function initiatePayment() {
+      var uidInput = document.getElementById('userId');
+      var phoneInput = document.getElementById('userPhone');
+
+      var uid = uidInput ? uidInput.value.trim() : "";
+      var phone = phoneInput ? phoneInput.value.trim() : "";
+
+      var totalPrice = 0;
+      for (var key in cart) {
+        totalPrice += cart[key].price * cart[key].qty;
+      }
+
+      if (!uid || totalPrice === 0 || !phone) {
+        alert('Please fill ID, select at least one plan and enter WhatsApp number.');
+        return;
+      }
+      if (!isVerified) {
