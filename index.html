@@ -2,88 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ali Dreamwork - Digital Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ali Dreamwork</title>
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    * { box-sizing: border-box; }
+    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 10px; display: flex; justify-content: center; }
+    .wrapper { width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     
-    /* Top Bar */
-    .top-navbar { background: #1e40af; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 50; }
-    .nav-brand { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
-    .nav-buttons { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
-    .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
-    .nav-btn.active { background: #fff; color: #1e40af; }
-
-    /* Content Area */
-    .container { padding: 15px; flex: 1; }
-    .content-tab { display: none; }
-    .content-tab.active { display: block !important; }
-
-    /* Header */
     .header { text-align: center; margin-bottom: 15px; }
-    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
-    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
-    
-    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-    
-    label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
-    .id-group { display: flex; gap: 6px; margin-top: 5px; }
-    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
-    
-    .verify-btn { background: #059669; color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
-    #verifyResult { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .logo { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #d97706; }
+    .title { font-size: 18px; font-weight: bold; margin-top: 5px; color: #111827; }
 
-    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
-    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    label { display: block; margin-top: 10px; font-size: 13px; font-weight: bold; color: #374151; }
+    .row-input { display: flex; gap: 8px; margin-top: 5px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
     
-    /* Plan Card */
-    .plan-card { border: 2px solid #e5e7eb; border-radius: 10px; padding: 10px; background: #fff; text-align: left; position: relative; cursor: pointer; user-select: none; }
-    .plan-card.selected { border: 2px solid #059669; background: #f0fdf4; }
-    .plan-card.selected::after { content: "✓ Selected"; position: absolute; top: 6px; right: 6px; background: #059669; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
-    
-    .plan-img { width: 100%; height: 85px; object-fit: cover; border-radius: 6px; pointer-events: none; }
-    .plan-title { font-size: 13px; font-weight: bold; margin-top: 6px; color: #1f2937; pointer-events: none; }
-    
-    .plan-price-box { font-size: 12px; margin-top: 4px; pointer-events: none; }
-    .price-highlight { font-weight: bold; color: #059669; font-size: 15px; }
-    .coins-dim { font-size: 11px; color: #6b7280; }
+    .btn-verify { background: #059669; color: white; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    #verifyResult { margin-top: 8px; font-size: 13px; display: none; padding: 8px; border-radius: 6px; }
 
-    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 13px; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: #4b5563; }
+    .sub-head { font-size: 12px; font-weight: bold; color: #d97706; margin: 15px 0 8px 0; }
     
-    .main-buy-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; }
+    /* 8 Plans Grid */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .card-item { border: 2px solid #e5e7eb; border-radius: 8px; padding: 8px; text-align: left; cursor: pointer; background: #fff; }
+    .card-item.selected { border-color: #059669; background: #f0fdf4; }
+    .card-item img { width: 100%; height: 75px; object-fit: cover; border-radius: 4px; pointer-events: none; }
+    .plan-name { font-size: 12px; font-weight: bold; margin-top: 5px; pointer-events: none; }
+    .plan-cost { font-size: 13px; color: #059669; font-weight: bold; pointer-events: none; }
+    .plan-pages { font-size: 10px; color: #6b7280; font-weight: normal; }
 
-    /* Static Pages */
-    .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
-    .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
+    .summary { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; margin-top: 12px; font-size: 13px; }
+    .summary div { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    
+    .btn-buy { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px; margin-top: 15px; cursor: pointer; }
+
+    /* Modal Popup */
+    #qrModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; padding: 15px; }
+    .modal-body { background: #fff; width: 100%; max-width: 330px; border-radius: 12px; padding: 16px; text-align: center; }
   </style>
 </head>
 <body>
 
-  <div class="app-wrapper">
-    <div class="top-navbar">
-      <div class="nav-brand">✮⃝ Ali DreamWork Digital E-Store</div>
-      <div class="nav-buttons">
-        <button type="button" class="nav-btn active" onclick="showTab('topup', this)">Digital E-Coins</button>
-        <button type="button" class="nav-btn" onclick="showTab('ebooks', this)">E-Books</button>
-        <button type="button" class="nav-btn" onclick="showTab('terms', this)">Terms</button>
-        <button type="button" class="nav-btn" onclick="showTab('privacy', this)">Privacy</button>
-        <button type="button" class="nav-btn" onclick="showTab('refund', this)">Refund</button>
-        <button type="button" class="nav-btn" onclick="showTab('contact', this)">Contact</button>
-      </div>
+  <div class="wrapper">
+    <div class="header">
+      <img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="logo" alt="Logo">
+      <div class="title">ALI DREAMWORK</div>
     </div>
 
-    <div class="container">
-      
-      <div id="tab-topup" class="content-tab active">
-        <div class="header">
-          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-          <div class="brand-title">ALI DREAMWORK</div>
-        </div>
+    <label>User ID:</label>
+    <div class="row-input">
+      <input type="text" id="uid" placeholder="Enter User ID">
+      <button type="button" class="btn-verify" onclick="checkUser()">Verify</button>
+    </div>
+    <div id="verifyResult"></div>
 
-        <div class="card">
-          <label>Enter your User ID:</label>
-          <div class="id-
+    <div class="sub-head">SELECT BUNDLE & E-COINS:</div>
+    <div class="grid">
+      <div class="card-item" onclick="pickPlan(this, 14600, 200)">
+        <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=300">
+        <div class="plan-name">Basic E-Book</div>
+        <div class="plan-cost">₹200 <span class="plan-pages">(14,600)</span></div>
+      </div>
+      <div class="card-item" onclick="pickPlan(this, 21900, 300)">
+        <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=300">
+        <div class="plan-name">Standard E-Book</div>
+        <div class="plan-cost">₹300 <span class="plan-pages">(21,900)</span></div>
+      </div>
+      <div class="card-item" onclick="pickPlan(this, 29200, 400)">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300">
+        <div class="plan-name">Smart E-Book</div>
+        <div class="plan-cost">₹400 <span class="plan-pages">(29,200)</span></div>
+      </div>
+      <div class="card-item" onclick="pickPlan(this, 36500, 500)">
+        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300">
+        <div class="plan-name">Pro E-Book</div>
+        <div class="plan-cost">₹500 <span class="plan-pages">(36,500)</span></div>
+      </div>
+      <div class="card-item" onclick="pickPlan(this, 58400, 800)">
+        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300">
+        <div class="plan-name">Premium E-Book</div>
+        <div class="plan-cost">₹800 <span class="plan-pages">(58,400)</span></div>
+      </div>
+      <div class="card-item" onclick="pickPlan(this, 73000, 1000)">
+        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300">
+        <div class="plan-name">Advanced E-Book</div>
+        <div class="plan-cost">₹1,000 <span class="plan-pages">(73,000)</span></div>
+      </div>
+      <div class="card-item" onclick="pickPlan(this, 109500, 1500)">
+        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300">
+        <div class="plan-name">Ultimate E-Book</div>
+        <div class="plan-cost">₹1,500 <span class
