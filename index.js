@@ -13,11 +13,10 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // Cashfree Production API Credentials
-const CASHFREE_APP_ID = "1394018fe8fa80bd19b2dd9dfab8104931";
-const CASHFREE_SECRET_KEY = "cfsk_ma_prod_a8e5b898b6d34c6505ce3c5b2efe41ff_3fbb9757";
-// Production Live URL for Cashfree Orders
-const CASHFREE_API_URL = "https://api.cashfree.com/pg/orders";
-
+const CASHFREE_APP_ID = "TEST112085181a9848f239327d519a0481580211";
+const CASHFREE_SECRET_KEY = "cfsk_ma_test_1430e76879fb27fbeedb82100f7cc46b_3c769f5e";
+// Sandbox Test URL for Cashfree Orders
+const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
 // अस्थायी आर्डर स्टोरेज (Order ID से UID और Coins جوड़ने के लिए)
 const activeOrders = new Map();
 
