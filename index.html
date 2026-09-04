@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork - Digital Store</title>
   
-  <!-- Cashfree Sandbox SDK (Loaded globally) -->
+  <!-- Cashfree v3 Sandbox SDK -->
   <script src="https://sdk.cashfree.com/js/v3/cashfree.sandbox.js"></script>
 
   <style>
@@ -336,7 +336,8 @@
         resBox.innerHTML = "<span style='color:red;'>❌ Server Error</span>";
       });
     }
-function initiatePayment() {
+
+    function initiatePayment() {
       var uidInput = document.getElementById('userId');
       var phoneInput = document.getElementById('userPhone');
 
@@ -357,7 +358,6 @@ function initiatePayment() {
         return;
       }
 
-      // Backend API call
       fetch('/api/create-cashfree-order', {
         method: "POST",
         headers: { 
@@ -371,40 +371,30 @@ function initiatePayment() {
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        console.log("Backend Response:", data); // इसे Console में चेक करें
-        
         if (data.success && data.payment_session_id) {
           try {
-            // Check if Cashfree SDK is available globally
-            if (typeof Cashfree === 'undefined') {
-              alert("Cashfree SDK failed to load. Check your ad-blocker or internet.");
-              return;
-            }
-
-            const cashfree = Cashfree({ mode: "sandbox" });
+            // Correct initialization for Cashfree v3 Sandbox SDK
+            const cashfree = window.Cashfree({ mode: "sandbox" });
             let checkoutOptions = {
               paymentSessionId: data.payment_session_id,
               redirectTarget: "_modal"
             };
-            
             cashfree.checkout(checkoutOptions).then(function(result) {
               if (result.error) {
                 alert("Payment failed: " + result.error.message);
               }
             });
           } catch (e) {
-            console.error("Cashfree Checkout Exception:", e);
-            alert("Payment initialization error: " + e.message);
+            console.error(e);
+            alert("Payment gateway initialization error: " + e.message);
           }
         } else {
-          alert(data.message || 'Payment initiation failed from server.');
+          alert(data.message || 'Payment initiation failed.');
         }
       })
       .catch(function(err) {
-        console.error("Network/Server Error:", err);
-        alert('Connection error with server. Check backend logs.');
-      });
-    }
+        console.error(err);
+        alert('Connection error with payment gateway.');
       });
     }
   </script>
