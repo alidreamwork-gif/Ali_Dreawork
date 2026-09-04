@@ -14,7 +14,7 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // Cashfree Test Environment Credentials (सैंडबॉक्स / टेस्ट मोड की डिटेल्स यहाँ डालें)
 const CASHFREE_APP_ID = "TEST112085181a9848f239327d519a0481580211"; // आपकी टेस्ट App ID
-const CASHFREE_SECRET_KEY = "cfsk_ma_test_15ea0d321db59035bc010a90d1621a9f_1bfcaa53"; // आपकी टेस्ट Secret Key
+const CASHFREE_SECRET_KEY = "cfsk_ma_test_1430e76879fb27fbeedb82100f7cc46b_3c769f5e"; // आपकी टेस्ट Secret Key
 // Cashfree Sandbox API URL for creating orders
 const CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders";
 
