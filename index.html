@@ -81,6 +81,7 @@
 
     <div class="container">
       
+      <!-- Topup / E-Books Selection Page -->
       <div id="tab-topup" class="page-section active-page">
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
@@ -374,8 +375,9 @@
         if (data.success && data.payment_session_id) {
           try {
             let cashfree;
-            // Robust check for Cashfree object availability
-            if (typeof Cashfree !== 'undefined') {
+            
+            // Checking all possible structures for Cashfree v3 initialization
+            if (typeof Cashfree === 'function') {
               cashfree = Cashfree({ mode: "sandbox" });
             } else if (window.Cashfree && typeof window.Cashfree === 'function') {
               cashfree = window.Cashfree({ mode: "sandbox" });
@@ -387,7 +389,7 @@
             
             let checkoutOptions = {
               paymentSessionId: data.payment_session_id,
-              redirectTarget: "_modal"
+              redirectTarget: "_self" // _self का इस्तेमाल किया गया है ताकि पॉप-अप ब्लॉक होने की समस्या पूरी तरह खत्म हो जाए
             };
             
             cashfree.checkout(checkoutOptions).then(function(result) {
