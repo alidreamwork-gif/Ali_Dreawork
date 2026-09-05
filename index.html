@@ -322,7 +322,7 @@
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
 
-        var upi = "upi://pay?pa=BHARATPE.220P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
         document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
         document.getElementById('upiLink').href = upi;
