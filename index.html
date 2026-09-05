@@ -319,7 +319,7 @@
         body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
       }).catch(function(){});
 
-      var upi = "upi://pay?pa=BHARATPE.220P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + selectedPack.price + "&cu=INR&tn=CoinPurchase";
+      var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + selectedPack.price + "&cu=INR&tn=CoinPurchase";
       document.getElementById('payAmt').innerText = '₹' + selectedPack.price;
       document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
       document.getElementById('upiLink').href = upi;
