@@ -186,24 +186,24 @@
     </div>
   </div>
 
-  <!-- 1. द्विभाषी नोटिस पॉपअप -->
+  <!-- 1. निर्देश पॉपअप (Notice Modal) -->
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:350px;border-radius:14px;padding:18px;text-align:center;">
-      <div style="font-size:28px;margin-bottom:4px;">⚠️</div>
-      <b style="color:#1e40af;font-size:16px;">जरूरी सूचना / Notice</b>
+      <div style="font-size:28px;margin-bottom:4px;">⚡</div>
+      <b style="color:#1e40af;font-size:16px;">Fast Auto-Payment / जरूरी सूचना</b>
       
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;color:#1e3a8a;">
         <b>English:</b>
         <ul style="margin:3px 0 8px 16px;padding:0;">
-          <li>A QR Code scanner will open next with a <b>2-minute timer</b>.</li>
-          <li>Pay & verify your <b>Real Banking Name</b> within 2 mins.</li>
-          <li>If time expires after payment, contact WhatsApp support.</li>
+          <li>A QR Code scanner will open with the exact payable amount.</li>
+          <li><b>Important:</b> Pay the exact amount shown (e.g. ₹200.01). Do not change paise.</li>
+          <li>Coins will be credited <b>automatically within 5 seconds</b> of payment!</li>
         </ul>
         <b>हिंदी:</b>
         <ul style="margin:3px 0 0 16px;padding:0;">
-          <li>आगे स्कैनर खुलेगा और <b>2 मिनट का टाइमर</b> शुरू होगा।</li>
-          <li>पेमेंट करके 2 मिनट के अंदर अपना <b>असली बैंकिंग नाम</b> डालकर वेरीफाई करें।</li>
-          <li>समय समाप्त होने पर सहायता के लिए WhatsApp पर संपर्क करें।</li>
+          <li>आगे स्कैनर खुलेगा जिसमें सटीक रकम दिखाई जाएगी।</li>
+          <li><b>ज़रूरी:</b> जितना अमाउंट (पैसे सहित) दिखेगा उतना ही पे करें।</li>
+          <li>पेमेंट होते ही <b>5 सेकंड के अंदर ऑटोमैटिक</b> कॉइन मिल जाएंगे!</li>
         </ul>
       </div>
 
@@ -212,32 +212,30 @@
     </div>
   </div>
 
-  <!-- 2. स्कैनर और टाइमर पॉपअप (बड़ा QR साइज़) -->
+  <!-- 2. ऑटोमैटिक स्कैनर और टाइमर पॉपअप -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
-      <div id="payAmt" style="font-size:24px;font-weight:bold;color:#059669;margin:2px 0;">₹0</div>
+      
+      <!-- सटीक डायनामिक रकम (जैसे ₹200.01) -->
+      <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
+      <div style="font-size:11px;color:#dc2626;font-weight:bold;margin-bottom:6px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
       
       <!-- बड़ा 220px QR कोड -->
-      <img id="qrImg" src="" style="width:220px;height:220px;margin:8px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      <img id="qrImg" src="" style="width:220px;height:220px;margin:4px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
       
-      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:5px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
         <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
       </div>
 
-      <a id="upiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:8px;">⚡ Open UPI App</a>
+      <a id="upiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:10px;">⚡ Open UPI App</a>
       
-      <div style="border-top:1px dashed #d1d5db;padding-top:8px;">
-        <div style="font-size:11.5px;color:#374151;margin-bottom:4px;font-weight:bold;">
-          Enter Your Real Banking Name:<br>
-          <span style="font-size:11px;color:#4b5563;font-weight:normal;">(अपना असली बैंक/UPI वाला नाम डालें)</span>
-        </div>
-        <input type="text" id="bankName" placeholder="Enter Your Real Banking Name" style="text-align:center;padding:9px;font-size:13px;width:100%;border:1px solid #ccc;border-radius:6px;outline:none;">
-        <button id="vBtn" type="button" onclick="verifyPay()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;margin-top:6px;cursor:pointer;font-size:13px;">✅ Verify Payment</button>
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:8px;font-size:11.5px;color:#065f46;line-height:1.4;">
+        🔄 <b>ऑटो-डिटेक्शन चालू है:</b> जैसे ही आप UPI ऐप से पे करेंगे, कॉइन अपने-आप डिलीवर हो जाएंगे। आपको कोई नाम दर्ज करने की आवश्यकता नहीं है।
       </div>
 
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:6px;border-radius:6px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:7px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
@@ -245,6 +243,7 @@
     var selectedPack = null;
     var isUidValid = false;
     var orderId = "";
+    var exactPayableAmount = 0;
     var timerObj = null;
     var pollObj = null;
     var leftTime = 120;
@@ -313,45 +312,50 @@
       orderId = "ORD" + Date.now();
       leftTime = 120;
 
+      // बैकएंड से यूनिक पैसे वाला अमाउंट मंगाना
       fetch('/api/create-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
-      }).catch(function(){});
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        exactPayableAmount = data.exactAmount || selectedPack.price;
 
-      var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + selectedPack.price + "&cu=INR&tn=CoinPurchase";
-      document.getElementById('payAmt').innerText = '₹' + selectedPack.price;
-      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-      document.getElementById('upiLink').href = upi;
-      document.getElementById('bankName').value = '';
-      document.getElementById('timerText').innerText = "02:00";
-      document.getElementById('modalQR').style.display = 'flex';
+        var upi = "upi://pay?pa=BHARATPE.220P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
+        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
+        document.getElementById('upiLink').href = upi;
+        document.getElementById('timerText').innerText = "02:00";
+        document.getElementById('modalQR').style.display = 'flex';
 
-      clearInterval(timerObj);
-      timerObj = setInterval(function(){
-        leftTime--;
-        var m = Math.floor(leftTime / 60);
-        var s = leftTime % 60;
-        document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-        if (leftTime <= 0) {
-          hideAllModals();
-          alert(
-            "⏳ Session Expired! The 2-minute time limit has ended. If you have paid, please contact support on WhatsApp (+917776881407).\n\n" +
-            "⏳ समय समाप्त! 2 मिनट की समय सीमा पूरी हो चुकी है। यदि आपने पेमेंट कर दिया है, तो सहायता के लिए WhatsApp (+917776881407) पर संपर्क करें।"
-          );
-        }
-      }, 1000);
-
-      clearInterval(pollObj);
-      pollObj = setInterval(function(){
-        fetch('/api/check-order-status?orderId=' + orderId).then(function(r){ return r.json(); }).then(function(d){
-          if (d && d.status === 'PAID') {
+        // टाइमर शुरू
+        clearInterval(timerObj);
+        timerObj = setInterval(function(){
+          leftTime--;
+          var m = Math.floor(leftTime / 60);
+          var s = leftTime % 60;
+          document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+          if (leftTime <= 0) {
             hideAllModals();
-            alert("Payment Verified! Coins successfully delivered.\n\nपेमेंट वेरीफाई हो गया! कॉइन सफलतापूर्वक क्रेडिट कर दिए गए हैं।");
-            location.reload();
+            alert("⏳ समय समाप्त! 2 मिनट की समय सीमा समाप्त हो गई है।");
           }
-        }).catch(function(){});
-      }, 3000);
+        }, 1000);
+
+        // ऑटो-पोलिंग (हर 2.5 सेकंड में सर्वर चेक करेगा)
+        clearInterval(pollObj);
+        pollObj = setInterval(function(){
+          fetch('/api/check-order-status?orderId=' + orderId)
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if (d && d.status === 'PAID') {
+                hideAllModals();
+                alert("🎉 Payment Verified! Coins successfully delivered to your ID.\n\nपेमेंट वेरीफाई हो गया! कॉइन सफलतापूर्वक आपके खाते में डाल दिए गए हैं।");
+                location.reload();
+              }
+            }).catch(function(){});
+        }, 2500);
+      });
     }
 
     function hideAllModals() {
@@ -359,38 +363,6 @@
       clearInterval(pollObj);
       document.getElementById('modalNotice').style.display = 'none';
       document.getElementById('modalQR').style.display = 'none';
-    }
-
-    function verifyPay() {
-      var name = document.getElementById('bankName').value.trim();
-      var btn = document.getElementById('vBtn');
-      if (!name || name.length < 2) { 
-        alert('Please enter your Real Banking Name / कृपया अपना असली बैंकिंग नाम दर्ज करें।'); 
-        return; 
-      }
-
-      btn.innerText = "Verifying...";
-      btn.disabled = true;
-
-      fetch('/api/manual-verify', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: orderId, senderName: name })
-      }).then(function(r){ return r.json(); }).then(function(d){
-        if (d.success) {
-          hideAllModals();
-          alert("Payment Verified! Coins delivered.\n\nपेमेंट वेरीफाई हो गया! कॉइन डिलीवर हो चुके हैं।");
-          location.reload();
-        } else {
-          alert(d.message || "Payment not found / पेमेंट नहीं मिला।");
-          btn.innerText = "✅ Verify Payment";
-          btn.disabled = false;
-        }
-      }).catch(function(){
-        alert("Server error / सर्वर एरर");
-        btn.innerText = "✅ Verify Payment";
-        btn.disabled = false;
-      });
     }
   </script>
 </body>
