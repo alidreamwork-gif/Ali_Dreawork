@@ -2,25 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork Store</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; }
     
     .top-navbar { background: #1e40af; padding: 10px; text-align: center; }
     .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
     .nav-btn { background: rgba(255,255,255,0.25); border: none; color: white; padding: 7px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
     .nav-btn.active { background: #fff; color: #1e40af; }
 
-    .container { padding: 15px; flex: 1; }
+    .container { padding: 15px; }
     .page-section { display: none; }
 
     .header { text-align: center; margin: 10px 0 15px 0; }
     .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
     .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
-    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; }
     
     label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; color: #374151; }
     .id-group { display: flex; gap: 6px; margin-top: 5px; }
@@ -39,24 +39,10 @@
       padding: 16px 10px; 
       background: #fafafa; 
       text-align: center; 
-      position: relative; 
       cursor: pointer;
     }
     .coin-card.selected { border-color: #059669; background: #f0fdf4; }
-    .coin-card.selected::after { 
-      content: "✓ Selected"; 
-      position: absolute; 
-      top: 6px; 
-      right: 6px; 
-      background: #059669; 
-      color: #fff; 
-      font-size: 9px; 
-      font-weight: bold; 
-      padding: 2px 6px; 
-      border-radius: 10px; 
-    }
-    
-    .coin-number { font-size: 18px; font-weight: 800; color: #1e40af; margin-bottom: 4px; }
+    .coin-number { font-size: 18px; font-weight: 800; color: #1e40af; }
     .coin-label { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
     .coin-divider { width: 40px; height: 2px; background: #e5e7eb; margin: 8px auto; }
     .coin-price { font-size: 16px; font-weight: bold; color: #059669; }
@@ -76,25 +62,9 @@
       cursor: pointer; 
       margin-top: 18px; 
     }
-    .main-buy-btn:active { background: #1d4ed8; }
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
-
-    /* मॉडल्स को डिफ़ॉल्ट रूप से पूरी तरह बंद रखना */
-    .custom-modal {
-      display: none !important;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 99999;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
-    }
-    .custom-modal.active-modal {
-      display: flex !important;
-    }
   </style>
 </head>
 <body>
@@ -102,18 +72,18 @@
   <div class="app-wrapper">
     <div class="top-navbar">
       <div class="nav-buttons">
-        <button type="button" class="nav-btn active" id="btn-coins" onclick="switchNav('coins', this)">Coins</button>
-        <button type="button" class="nav-btn" id="btn-terms" onclick="switchNav('terms', this)">Terms</button>
-        <button type="button" class="nav-btn" id="btn-privacy" onclick="switchNav('privacy', this)">Privacy</button>
-        <button type="button" class="nav-btn" id="btn-refund" onclick="switchNav('refund', this)">Refund</button>
-        <button type="button" class="nav-btn" id="btn-contact" onclick="switchNav('contact', this)">Contact</button>
+        <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Coins</button>
+        <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
+        <button type="button" class="nav-btn" id="b-privacy" onclick="tab('privacy')">Privacy</button>
+        <button type="button" class="nav-btn" id="b-refund" onclick="tab('refund')">Refund</button>
+        <button type="button" class="nav-btn" id="b-contact" onclick="tab('contact')">Contact</button>
       </div>
     </div>
 
     <div class="container">
       
       <!-- Coins Section -->
-      <div id="tab-coins" class="page-section" style="display: block;">
+      <div id="p-coins" class="page-section" style="display: block;">
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
           <div class="brand-title">ALI DREAMWORK</div>
@@ -123,55 +93,55 @@
           <label>Enter your User ID:</label>
           <div class="id-group">
             <input type="text" id="userId" placeholder="Enter User ID">
-            <button type="button" class="verify-btn" onclick="handleUserVerify()">Verify</button>
+            <button type="button" class="verify-btn" onclick="verifyUID()">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
           <div class="section-title">SELECT COIN PACK (1-TAP SELECT)</div>
           <div class="plans-grid">
-            <div class="coin-card" onclick="choosePack(this, 14600, 200)">
+            <div class="coin-card" onclick="setPack(this, 14600, 200)">
               <div class="coin-number">14,600</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹200</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 21900, 300)">
+            <div class="coin-card" onclick="setPack(this, 21900, 300)">
               <div class="coin-number">21,900</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹300</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 36500, 500)">
+            <div class="coin-card" onclick="setPack(this, 36500, 500)">
               <div class="coin-number">36,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹500</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 73000, 1000)">
+            <div class="coin-card" onclick="setPack(this, 73000, 1000)">
               <div class="coin-number">73,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,000</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 109500, 1500)">
+            <div class="coin-card" onclick="setPack(this, 109500, 1500)">
               <div class="coin-number">109,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,500</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 146000, 2000)">
+            <div class="coin-card" onclick="setPack(this, 146000, 2000)">
               <div class="coin-number">146,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹2,000</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 219000, 3000)">
+            <div class="coin-card" onclick="setPack(this, 219000, 3000)">
               <div class="coin-number">219,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹3,000</div>
             </div>
-            <div class="coin-card" onclick="choosePack(this, 328500, 4500)">
+            <div class="coin-card" onclick="setPack(this, 328500, 4500)">
               <div class="coin-number">328,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
@@ -187,226 +157,214 @@
             <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
           </div>
 
-          <button type="button" class="main-buy-btn" onclick="openInstructions()">BUY NOW</button>
+          <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
         </div>
       </div>
 
-      <!-- Terms Section -->
-      <div id="tab-terms" class="page-section">
+      <!-- Static Tabs -->
+      <div id="p-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to <strong>Ali Dreamwork Store</strong>.</p>
         <p>All coins are directly sent to verified IDs upon successful payment.</p>
       </div>
 
-      <!-- Privacy Section -->
-      <div id="tab-privacy" class="page-section">
+      <div id="p-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy is strictly protected at <strong>Ali Dreamwork Store</strong>.</p>
+        <p>Your privacy is strictly protected at Ali Dreamwork Store.</p>
       </div>
 
-      <!-- Refund Section -->
-      <div id="tab-refund" class="page-section">
+      <div id="p-refund" class="page-section static-page">
         <h2>🔄 Refund Policy</h2>
-        <p>Coins are credited directly upon successful payment verification. If any issue occurs, contact WhatsApp: +917776881407.</p>
+        <p>Coins credited instantly. For issues: WhatsApp +917776881407.</p>
       </div>
 
-      <!-- Contact Section -->
-      <div id="tab-contact" class="page-section">
+      <div id="p-contact" class="page-section static-page">
         <h2>🎧 Contact Us</h2>
-        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
-        <p><strong>WhatsApp:</strong> +917776881407</p>
-        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
+        <p>WhatsApp: +917776881407</p>
+        <p>Email: alidreamwork@gmail.com</p>
       </div>
 
     </div>
   </div>
 
-  <!-- 1. निर्देश पॉपअप -->
-  <div id="noticeModal" class="custom-modal">
-    <div style="background:#fff;width:100%;max-width:360px;border-radius:14px;padding:18px;text-align:center;">
-      <div style="font-size:30px;margin-bottom:6px;">⚠️</div>
-      <div style="font-size:16px;font-weight:bold;color:#1e40af;margin-bottom:8px;">Payment Instructions / जरूरी सूचना</div>
-      
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px;text-align:left;font-size:12px;line-height:1.45;color:#1e3a8a;margin-bottom:12px;">
-        <b>English:</b>
-        <ul style="margin:4px 0 8px 18px;padding:0;">
-          <li>A QR Code scanner will open next with a <b>2-minute timer</b>.</li>
-          <li>Scan & pay <b id="noticeAmountEn">₹0</b>, then enter your <b>Banking Name</b> to verify.</li>
-          <li>You must complete this within <b>2 minutes</b>.</li>
-          <li>If time expires after payment, contact WhatsApp (+917776881407).</li>
-        </ul>
-        <b>हिंदी:</b>
-        <ul style="margin:4px 0 0 18px;padding:0;">
-          <li>आगे स्कैनर खुलेगा और <b>2 मिनट का टाइमर</b> चलेगा।</li>
-          <li>QR कोड से <b id="noticeAmountHi">₹0</b> पे करके अपना <b>बैंकिंग नाम</b> डालकर वेरीफाई करें।</li>
-          <li>यह <b>2 मिनट के अंदर</b> करना अनिवार्य है।</li>
-          <li>समय खत्म होने पर WhatsApp (+917776881407) पर संपर्क करें।</li>
-        </ul>
+  <!-- कोई अदृश्य ओवरले नहीं, सिर्फ जरूरत पड़ने पर दिखने वाले पॉपअप -->
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:350px;border-radius:12px;padding:16px;text-align:center;">
+      <div style="font-size:26px;">⚠️</div>
+      <b style="color:#1e40af;font-size:16px;">जरूरी सूचना / Notice</b>
+      <div style="text-align:left;font-size:12px;margin:10px 0;line-height:1.4;background:#f0f9ff;padding:8px;border-radius:6px;">
+        • आगे 2 मिनट का टाइमर और स्कैनर खुलेगा।<br>
+        • पेमेंट करके 2 मिनट के अंदर अपना बैंकिंग नाम डालकर वेरीफाई करें।<br>
+        • समय बीतने पर सहायता के लिए WhatsApp पर संपर्क करें।
       </div>
-
-      <button type="button" onclick="startScannerFlow()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">✅ I Understand, Open Scanner / आगे बढ़ें</button>
-      <button type="button" onclick="closeNoticeModal()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;font-size:12px;cursor:pointer;margin-top:8px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;cursor:pointer;">✅ समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#e5e7eb;border:none;padding:8px;border-radius:6px;margin-top:6px;cursor:pointer;">Cancel</button>
     </div>
   </div>
 
-  <!-- 2. स्कैनर और टाइमर पॉपअप -->
-  <div id="qrModal" class="custom-modal">
-    <div style="background:#fff;width:100%;max-width:350px;border-radius:14px;padding:16px;text-align:center;max-height:95vh;overflow-y:auto;">
-      <div style="font-weight:bold;font-size:16px;color:#1e40af;">Scan & Pay via Any UPI</div>
-      <div id="modalAmount" style="font-size:22px;font-weight:bold;color:#059669;margin:2px 0;">₹0</div>
+  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:340px;border-radius:12px;padding:15px;text-align:center;">
+      <b style="color:#1e40af;font-size:15px;">Scan & Pay</b>
+      <div id="payAmt" style="font-size:22px;font-weight:bold;color:#059669;margin:2px 0;">₹0</div>
+      <img id="qrImg" src="" style="width:140px;height:140px;margin:4px auto;display:block;border:1px solid #ddd;border-radius:6px;">
       
-      <img id="qrImageTag" src="" style="width:145px;height:145px;margin:4px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">
-      
-      <div style="background:#fef2f2;border:1px solid #f87171;border-radius:8px;padding:6px;margin:8px 0;">
-        <div style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left:</div>
-        <div id="orderTimer" style="font-size:20px;font-weight:800;color:#dc2626;">02:00</div>
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:4px;border-radius:6px;margin:6px 0;">
+        <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष: </span>
+        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
       </div>
 
-      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px;font-size:11px;color:#92400e;line-height:1.4;text-align:left;margin-bottom:8px;">
-        ⚠️ <b>English:</b> Pay & verify name within 2 mins. After timeout, contact support.<br>
-        ⚠️ <b>हिंदी:</b> 2 मिनट के अंदर पेमेंट करके नाम वेरीफाई करें। समय खत्म होने पर सपोर्ट से संपर्क करें।
-      </div>
-
-      <a id="openUpiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:8px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:8px;">⚡ Open UPI App</a>
+      <a id="upiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:8px;border-radius:6px;font-weight:bold;font-size:12px;margin-bottom:6px;">⚡ Open UPI App</a>
       
-      <div style="border-top:1px dashed #d1d5db;padding-top:8px;">
-        <div style="font-size:11.5px;color:#374151;margin-bottom:4px;font-weight:bold;">
-          Enter your Bank/UPI Name after payment:<br>
-          <span style="font-size:11px;color:#4b5563;font-weight:normal;">(पेमेंट के बाद अपना बैंक/UPI वाला नाम डालें)</span>
-        </div>
-        <input type="text" id="bankingNameInput" placeholder="Enter Your Banking Name" style="text-align:center;padding:9px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">
-        <button id="verifyBtnId" type="button" onclick="confirmPaymentName()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>
-      </div>
-      
-      <button type="button" onclick="closeScannerModal()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:6px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>
+      <input type="text" id="bankName" placeholder="अपना बैंकिंग नाम डालें" style="text-align:center;padding:8px;font-size:13px;width:100%;border:1px solid #ccc;border-radius:6px;">
+      <button id="vBtn" type="button" onclick="verifyPay()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#e5e7eb;border:none;padding:6px;border-radius:6px;margin-top:6px;cursor:pointer;font-size:12px;">Cancel</button>
     </div>
   </div>
 
   <script>
-    var BHARATPE_VPA = "BHARATPE.220P0L0B8I71717@unitype";
-    var MERCHANT_NAME = "VASIM ALI";
-    
-    var activePack = null;
-    var userVerified = false;
-    var currentOrderId = "";
-    var pollTimer = null;
-    var countTimer = null;
-    var secondsRemaining = 120;
+    var selectedPack = null;
+    var isUidValid = false;
+    var orderId = "";
+    var timerObj = null;
+    var pollObj = null;
+    var leftTime = 120;
 
-    function switchNav(tabKey, btnElement) {
-      var keys = ['coins', 'terms', 'privacy', 'refund', 'contact'];
-      for (var i = 0; i < keys.length; i++) {
-        var sec = document.getElementById('tab-' + keys[i]);
-        if (sec) sec.style.display = 'none';
+    function tab(key) {
+      var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
+      for (var i = 0; i < arr.length; i++) {
+        document.getElementById('p-' + arr[i]).style.display = 'none';
+        document.getElementById('b-' + arr[i]).classList.remove('active');
       }
-      var targetSec = document.getElementById('tab-' + tabKey);
-      if (targetSec) targetSec.style.display = 'block';
-
-      var allBtns = document.querySelectorAll('.nav-btn');
-      for (var j = 0; j < allBtns.length; j++) {
-        allBtns[j].classList.remove('active');
-      }
-      if (btnElement) btnElement.classList.add('active');
-      window.scrollTo(0, 0);
+      document.getElementById('p-' + key).style.display = 'block';
+      document.getElementById('b-' + key).classList.add('active');
     }
 
-    function choosePack(cardElem, coins, price) {
-      var allCards = document.querySelectorAll('.coin-card');
-      for (var i = 0; i < allCards.length; i++) {
-        allCards[i].classList.remove('selected');
-      }
-      cardElem.classList.add('selected');
-      activePack = { coins: coins, price: price };
-      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
+    function setPack(el, coins, price) {
+      var all = document.querySelectorAll('.coin-card');
+      for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+      el.classList.add('selected');
+      selectedPack = { coins: coins, price: price };
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
-    function handleUserVerify() {
+    function verifyUID() {
       var uid = document.getElementById('userId').value.trim();
-      var resBox = document.getElementById('verifyResult');
-      if (!uid) { alert('Please enter User ID first'); return; }
-
-      resBox.style.display = "flex";
-      resBox.innerHTML = "Verifying...";
+      var res = document.getElementById('verifyResult');
+      if (!uid) { alert('Enter User ID'); return; }
+      res.style.display = "flex";
+      res.innerHTML = "Verifying...";
 
       fetch('/api/verify-user', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
-          userVerified = true;
-          var info = data.data || data;
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.code === 200 || d.status === 200 || d.success === true || d.nick) {
+          isUidValid = true;
+          var info = d.data || d;
           var name = info.nick || info.nickName || info.name || "Verified User";
           var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" onerror="this.src=\'https://i.ibb.co/21P3nGZR/logo.jpg\'"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+          res.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
         } else {
-          userVerified = false;
-          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+          isUidValid = false;
+          res.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
         }
-      })
-      .catch(function() {
-        userVerified = true;
-        resBox.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+      }).catch(function(){
+        isUidValid = true;
+        res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
       });
     }
 
-    function openInstructions() {
+    function startBuy() {
       var uid = document.getElementById('userId').value.trim();
-      var phone = document.getElementById('userPhone').value.trim();
+      var ph = document.getElementById('userPhone').value.trim();
+      if (!uid) { alert('Enter User ID'); return; }
+      if (!selectedPack) { alert('Select coin pack first'); return; }
+      if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number'); return; }
+      if (!isUidValid) { alert('Verify User ID first'); return; }
 
-      if (!uid) { alert('Please enter User ID first.'); return; }
-      if (!activePack) { alert('Please tap on a coin pack to select it.'); return; }
-      if (!phone || phone.length < 10) { alert('Please enter a valid WhatsApp number.'); return; }
-      if (!userVerified) { alert('Please verify your User ID first.'); return; }
-
-      document.getElementById('noticeAmountEn').innerText = '₹' + activePack.price;
-      document.getElementById('noticeAmountHi').innerText = '₹' + activePack.price;
-      document.getElementById('noticeModal').classList.add('active-modal');
+      document.getElementById('modalNotice').style.display = 'flex';
     }
 
-    function closeNoticeModal() {
-      document.getElementById('noticeModal').classList.remove('active-modal');
-    }
-
-    function startScannerFlow() {
-      closeNoticeModal();
-
+    function showQR() {
+      document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
-      currentOrderId = "ORD" + Date.now();
-      secondsRemaining = 120;
+      orderId = "ORD" + Date.now();
+      leftTime = 120;
 
       fetch('/api/create-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: activePack.price, orderId: currentOrderId })
+        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
       }).catch(function(){});
 
-      var upiUrl = "upi://pay?pa=" + encodeURIComponent(BHARATPE_VPA) + "&pn=" + encodeURIComponent(MERCHANT_NAME) + "&am=" + activePack.price + "&cu=INR&tn=CoinPurchase";
-      var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(upiUrl);
+      var upi = "upi://pay?pa=BHARATPE.220P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + selectedPack.price + "&cu=INR&tn=CoinPurchase";
+      document.getElementById('payAmt').innerText = '₹' + selectedPack.price;
+      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=" + encodeURIComponent(upi);
+      document.getElementById('upiLink').href = upi;
+      document.getElementById('bankName').value = '';
+      document.getElementById('timerText').innerText = "02:00";
+      document.getElementById('modalQR').style.display = 'flex';
 
-      document.getElementById('modalAmount').innerText = '₹' + activePack.price;
-      document.getElementById('qrImageTag').src = qrImgUrl;
-      document.getElementById('openUpiLink').href = upiUrl;
-      document.getElementById('orderTimer').innerText = '02:00';
-      document.getElementById('bankingNameInput').value = '';
-
-      document.getElementById('qrModal').classList.add('active-modal');
-
-      clearInterval(countTimer);
-      countTimer = setInterval(function() {
-        secondsRemaining--;
-        var mins = Math.floor(secondsRemaining / 60);
-        var secs = secondsRemaining % 60;
-        var timerEl = document.getElementById('orderTimer');
-        if (timerEl) {
-          timerEl.innerText = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+      clearInterval(timerObj);
+      timerObj = setInterval(function(){
+        leftTime--;
+        var m = Math.floor(leftTime / 60);
+        var s = leftTime % 60;
+        document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        if (leftTime <= 0) {
+          hideAllModals();
+          alert("2 मिनट पूरे हो चुके हैं। सहायता के लिए WhatsApp (+917776881407) पर संपर्क करें।");
         }
+      }, 1000);
 
-        if (secondsRemaining <= 0) {
-          clearInterval(countTimer);
-          clearInterval(pollTimer);
-          closeScannerModal();
-          alert(
+      clearInterval(pollObj);
+      pollObj = setInterval(function(){
+        fetch('/api/check-order-status?orderId=' + orderId).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.status === 'PAID') {
+            hideAllModals();
+            alert("Payment Verified! Coins successfully delivered.");
+            location.reload();
+          }
+        }).catch(function(){});
+      }, 3000);
+    }
+
+    function hideAllModals() {
+      clearInterval(timerObj);
+      clearInterval(pollObj);
+      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalQR').style.display = 'none';
+    }
+
+    function verifyPay() {
+      var name = document.getElementById('bankName').value.trim();
+      var btn = document.getElementById('vBtn');
+      if (!name || name.length < 2) { alert('Enter your Banking Name'); return; }
+
+      btn.innerText = "Verifying...";
+      btn.disabled = true;
+
+      fetch('/api/manual-verify', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: orderId, senderName: name })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.success) {
+          hideAllModals();
+          alert("Payment Verified! Coins delivered.");
+          location.reload();
+        } else {
+          alert(d.message || "Payment not found.");
+          btn.innerText = "✅ Verify Payment";
+          btn.disabled = false;
+        }
+      }).catch(function(){
+        alert("Server error.");
+        btn.innerText = "✅ Verify Payment";
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
