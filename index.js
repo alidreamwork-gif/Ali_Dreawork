@@ -12,20 +12,20 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// सक्रिय ऑर्डर्स: orderId -> { uid, amount, coins, status: 'PENDING' | 'PAID', createdAt }
+// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
 const activeOrders = new Map();
 
-// BharatPe नोटिफिकेशन्स का इन-मेमोरी स्टोरेज
-const receivedNotifications = [];
+// यूनिक पैसे असाइन करने के लिए काउंटर (1 से 99 पैसे)
+let paiseCounter = 1;
 
-// ऑर्डर की अधिकतम वैलिडिटी: ठीक 100 सेकंड (100000 ms)
-const ORDER_VALIDITY_MS = 100 * 1000;
+// ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
+const ORDER_VALIDITY_MS = 120 * 1000;
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 1. User Verification Endpoint
+// 1. User Verification
 app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
@@ -52,7 +52,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. BharatPe Order Initialization (100s लाइफस्पैन)
+// 2. Order Create (यूनिक डायनामिक अमाउंट जनरेटर)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -60,34 +60,42 @@ app.post('/api/create-order', (req, res) => {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
-        const amtNum = Math.round(Number(amount));
-        let coins = amtNum * 73;
+        const baseAmt = Math.round(Number(amount));
+        let coins = baseAmt * 73;
 
-        if (amtNum === 200) coins = 14600;
-        else if (amtNum === 300) coins = 21900;
-        else if (amtNum === 500) coins = 36500;
-        else if (amtNum === 1000) coins = 73000;
-        else if (amtNum === 1500) coins = 109500;
-        else if (amtNum === 2000) coins = 146000;
-        else if (amtNum === 3000) coins = 219000;
-        else if (amtNum === 4500) coins = 328500;
+        if (baseAmt === 200) coins = 14600;
+        else if (baseAmt === 300) coins = 21900;
+        else if (baseAmt === 500) coins = 36500;
+        else if (baseAmt === 1000) coins = 73000;
+        else if (baseAmt === 1500) coins = 109500;
+        else if (baseAmt === 2000) coins = 146000;
+        else if (baseAmt === 3000) coins = 219000;
+        else if (baseAmt === 4500) coins = 328500;
+
+        // 1 से 90 पैसे तक डायनामिक असाइनमेंट
+        const paise = paiseCounter;
+        paiseCounter = (paiseCounter % 90) + 1;
+
+        // सटीक फ्लोटिंग अमाउंट (जैसे 200.01)
+        const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
         activeOrders.set(orderId, {
             uid: uid.toString().trim(),
-            amount: amtNum,
+            baseAmount: baseAmt,
+            exactAmount: exactAmount,
             coins: coins,
             status: 'PENDING',
-            createdAt: Date.now() // ऑर्डर बनने का सटीक समय
+            createdAt: Date.now()
         });
 
-        console.log(`[ORDER CREATED] ${orderId} | UID: ${uid} | Amount: ₹${amtNum} | Coins: ${coins} | Time: ${new Date().toLocaleTimeString()}`);
-        return res.json({ success: true, orderId: orderId });
+        console.log(`[ORDER CREATED] ID: ${orderId} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
     }
 });
 
-// 3. Helper function to deliver coins
+// 3. Helper: कॉइन डिलीवरी
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -103,13 +111,11 @@ async function deliverCoinsToUser(uid, coins, orderId) {
         sign: sign
     };
 
-    console.log("Delivering Coins Payload:", payload);
-
     try {
         const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
             headers: { 'Content-Type': 'application/json' }
         });
-        console.log("Delivery Success:", response.data);
+        console.log("Coins Delivered Successfully:", response.data);
         return response.data;
     } catch (error) {
         console.error("Coin delivery failed:", error.response ? error.response.data : error.message);
@@ -117,133 +123,54 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. BharatPe Notification Webhook Endpoint
+// 4. BharatPe Notification Webhook (सटीक पैसे मैचिंग)
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
         console.log("================== BHARATPE WEBHOOK HIT ==================");
         const text = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
         console.log("Notification Content:", text);
 
-        if (!text) {
-            return res.status(200).json({ status: false, message: "Empty notification" });
-        }
+        if (!text) return res.status(200).json({ status: false });
 
-        // 1. अमाउंट निकालना
+        // BharatPe नोटिफिकेशन से सटीक फ्लोट अमाउंट निकालना (उदा: 200.01 या 200.00)
         let detectedAmount = 0;
         const amtMatch = text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
                       || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
         if (amtMatch) {
-            detectedAmount = Math.round(parseFloat(amtMatch[1].replace(/,/g, '')));
+            detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
         }
 
-        // 2. नाम निकालना
-        let detectedSender = "";
-        const nameMatch = text.match(/From\s+([^.\n\r]+)/i);
-        if (nameMatch) {
-            detectedSender = nameMatch[1].replace(/[^a-zA-Z0-9\s]/g, '').trim().toUpperCase();
-        }
-
-        const receiveTime = Date.now();
-        console.log(`[PAYMENT LOGGED] ₹${detectedAmount} from "${detectedSender}" at ${new Date(receiveTime).toLocaleTimeString()}`);
+        console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
+        const now = Date.now();
 
         if (detectedAmount > 0) {
-            receivedNotifications.push({
-                amount: detectedAmount,
-                senderName: detectedSender,
-                rawText: text,
-                used: false,
-                receivedAt: receiveTime
-            });
+            // क्या यह अमाउंट किसी सक्रिय पेंडिंग ऑर्डर से मेल खा रहा है?
+            for (let [ordId, ordData] of activeOrders.entries()) {
+                if (ordData.status === 'PENDING') {
+                    // क्या समय 2 मिनट के अंदर है?
+                    if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
+                        // ठीक पैसे से पैसे मैच
+                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
+                            console.log(`[MATCH FOUND] Order: ${ordId} verified with ₹${detectedAmount}`);
+                            ordData.status = 'PAID';
+                            
+                            // तुरंत ऑटोमैटिक कॉइन डिलीवर
+                            await deliverCoinsToUser(ordData.uid, ordData.coins, ordId);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
-        return res.status(200).json({ status: true, amount: detectedAmount, sender: detectedSender });
+        return res.status(200).json({ status: true, amount: detectedAmount });
     } catch (err) {
         console.error("Webhook processing error:", err);
         return res.status(500).json({ status: false });
     }
 });
 
-// 5. Secure Manual Verify (Strict 100s Window)
-app.post('/api/manual-verify', async (req, res) => {
-    try {
-        const { orderId, senderName } = req.body;
-        if (!orderId || !activeOrders.has(orderId)) {
-            return res.status(400).json({ success: false, message: "Order session expired. Please create a new order." });
-        }
-
-        const orderData = activeOrders.get(orderId);
-        const now = Date.now();
-
-        // 1. क्या 100 सेकंड बीत चुके हैं?
-        const timePassed = now - orderData.createdAt;
-        if (timePassed > ORDER_VALIDITY_MS) {
-            activeOrders.delete(orderId);
-            return res.status(400).json({ 
-                success: false, 
-                message: "⏳ 100 सेकंड का समय समाप्त हो गया है! अगर आपने पेमेंट कर दिया है, तो सहायता के लिए WhatsApp (+917776881407) पर संपर्क करें।" 
-            });
-        }
-
-        const inputName = senderName ? senderName.toString().replace(/[^a-zA-Z0-9\s]/g, '').trim().toUpperCase() : "";
-        if (!inputName || inputName.length < 2) {
-            return res.status(400).json({ success: false, message: "Please enter your valid Banking Name." });
-        }
-
-        console.log(`[VERIFY REQUEST] Order: ${orderId} | Need: ₹${orderData.amount} | Name: "${inputName}" | Elapsed: ${Math.round(timePassed / 1000)}s`);
-
-        // 2. सख्त मिलान: पेमेंट केवल BUY NOW दबाने के बाद आया होना चाहिए
-        const matchedIndex = receivedNotifications.findIndex(n => {
-            if (n.used) return false;
-
-            // सुरक्षा नियम: पेमेंट ऑर्डर बनने से पहले का नहीं होना चाहिए (सिर्फ 5s का नेटवर्क टॉलरेंस)
-            if (n.receivedAt < (orderData.createdAt - 5000)) return false;
-
-            // पेमेंट 100 सेकंड से पुराना न हो
-            if ((now - n.receivedAt) > ORDER_VALIDITY_MS) return false;
-
-            // अमाउंट ठीक मेल खाना चाहिए
-            if (n.amount !== orderData.amount) return false;
-
-            // नाम मैचिंग
-            const notifSender = n.senderName;
-            if (!notifSender) return true;
-
-            const nameMatched = notifSender.includes(inputName) || inputName.includes(notifSender) ||
-                                inputName.split(" ").some(part => part.length >= 3 && notifSender.includes(part));
-
-            return nameMatched;
-        });
-
-        if (matchedIndex === -1) {
-            const secLeft = Math.max(0, Math.round((ORDER_VALIDITY_MS - timePassed) / 1000));
-            return res.status(400).json({ 
-                success: false, 
-                message: `❌ Wrong Name or Payment Not Received! ₹${orderData.amount} from "${inputName}" not found yet. (शेष समय: ${secLeft}s)` 
-            });
-        }
-
-        // पेमेंट प्रमाणित!
-        const payment = receivedNotifications[matchedIndex];
-        payment.used = true;
-
-        console.log(`[PAYMENT VERIFIED] Delivering ${orderData.coins} Coins to UID: ${orderData.uid}`);
-        const result = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
-
-        orderData.status = 'PAID';
-
-        return res.json({ 
-            success: true, 
-            message: "Payment Verified! Coins successfully delivered.", 
-            result: result 
-        });
-
-    } catch (error) {
-        console.error("Manual verify error:", error);
-        return res.status(500).json({ success: false, message: "Server error during verification." });
-    }
-});
-
-// 6. Polling Endpoint
+// 5. Polling Endpoint (फ्रंटएंड हर 2 सेकंड में चेक करेगा)
 app.get('/api/check-order-status', (req, res) => {
     const { orderId } = req.query;
     if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
