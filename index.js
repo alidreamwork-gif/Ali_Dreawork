@@ -12,11 +12,16 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// सक्रिय ऑर्डर्स: orderId -> { uid, amount, coins, status: 'PENDING' | 'PAID' }
+// सक्रिय ऑर्डर्स का मेमोरी मैप
 const activeOrders = new Map();
 
-// BharatPe नोटिफिकेशन्स का स्टोरेज: [{ amount, senderName, rawText, used, receivedAt }]
+// BharatPe नोटिफिकेशन्स का स्टोरेज
 const receivedNotifications = [];
+
+// रूट पेज
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // 1. User Verification Endpoint
 app.post('/api/verify-user', async (req, res) => {
@@ -110,36 +115,32 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. BharatPe Notification Webhook Endpoint
-// फॉर्मेट: "Received 200.00 Rupees From AYAN KHAN."
-app.post('/api/sms-webhook', async (req, res) => {
+// 4. BharatPe Notification Webhook Endpoint (सुपर रोबस्ट)
+app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
-        console.log("================== BHARATPE NOTIFICATION RECEIVED ==================");
-        console.log("Incoming Payload:", JSON.stringify(req.body, null, 2));
+        console.log("================== BHARATPE WEBHOOK HIT ==================");
+        console.log("Raw Payload:", JSON.stringify(req.body, null, 2));
 
-        const text = req.body.message || req.body.text || req.body.body || req.body.content || "";
-        console.log("Extracted Text:", text);
+        // ऐप चाहे किसी भी नाम से टेक्स्ट भेजे (message, text, body, msg, key, content)
+        const text = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        console.log("Captured Text:", text);
 
-        if (!text) {
-            return res.status(200).json({ status: false, message: "Empty text" });
-        }
-
-        // 1. अमाउंट निकालना (उदा. 200.00)
+        // 1. अमाउंट निकालना
         let detectedAmount = 0;
-        const amtMatch = text.match(/Received\s*([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
+        const amtMatch = text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
                       || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
         if (amtMatch) {
             detectedAmount = Math.round(parseFloat(amtMatch[1].replace(/,/g, '')));
         }
 
-        // 2. भेजने वाले का नाम (Sender Name) निकालना: "From AYAN KHAN"
+        // 2. नाम निकालना (फुल स्टॉप और फालतू कैरेक्टर हटाकर)
         let detectedSender = "";
-        const nameMatch = text.match(/From\s+([^.]+)/i);
+        const nameMatch = text.match(/From\s+([^.\n\r]+)/i);
         if (nameMatch) {
-            detectedSender = nameMatch[1].trim().toUpperCase();
+            detectedSender = nameMatch[1].replace(/[^a-zA-Z0-9\s]/g, '').trim().toUpperCase();
         }
 
-        console.log(`Parsed Data -> Amount: ₹${detectedAmount} | Sender Name: "${detectedSender}"`);
+        console.log(`Extracted -> Amount: ₹${detectedAmount} | Sender: "${detectedSender}"`);
 
         if (detectedAmount > 0) {
             receivedNotifications.push({
@@ -149,7 +150,7 @@ app.post('/api/sms-webhook', async (req, res) => {
                 used: false,
                 receivedAt: Date.now()
             });
-            console.log(`Notification logged successfully in memory.`);
+            console.log("Payment successfully logged in server memory!");
         }
 
         return res.status(200).json({ status: true, amount: detectedAmount, sender: detectedSender });
@@ -159,60 +160,65 @@ app.post('/api/sms-webhook', async (req, res) => {
     }
 });
 
-// 5. Secure Manual Verify (Name + Amount Matching)
+// 5. Secure Manual Verify (लचीली नाम मैचिंग)
 app.post('/api/manual-verify', async (req, res) => {
     try {
         const { orderId, senderName } = req.body;
         if (!orderId || !activeOrders.has(orderId)) {
-            return res.status(400).json({ success: false, message: "Session expired or Order not found." });
+            return res.status(400).json({ success: false, message: "Order session expired. Please refresh and try again." });
         }
 
-        const inputName = senderName ? senderName.toString().trim().toUpperCase() : "";
+        // यूजर का इनपुट नाम साफ़ करना
+        const inputName = senderName ? senderName.toString().replace(/[^a-zA-Z0-9\s]/g, '').trim().toUpperCase() : "";
         if (!inputName || inputName.length < 2) {
-            return res.status(400).json({ success: false, message: "Please enter a valid banking name." });
+            return res.status(400).json({ success: false, message: "Please enter your valid Banking Name." });
         }
 
         const orderData = activeOrders.get(orderId);
         const now = Date.now();
 
-        console.log(`Manual Verify Request: Order ${orderId} | Expected Amount: ₹${orderData.amount} | User Input Name: "${inputName}"`);
+        console.log(`Verify Check -> Order: ${orderId} | Need: ₹${orderData.amount} | Name: "${inputName}"`);
+        console.log("Currently Available in Server:", JSON.stringify(receivedNotifications, null, 2));
 
-        // हाल ही के 15 मिनट के नोटिफिकेशन्स में अमाउंट और नाम मैच करें
+        // मैचिंग लॉजिक
         const matchedIndex = receivedNotifications.findIndex(n => {
             if (n.used) return false;
-            // 15 मिनट से पुराना नहीं होना चाहिए
-            if ((now - n.receivedAt) > 15 * 60 * 1000) return false;
+            // 20 मिनट की वैलिडिटी
+            if ((now - n.receivedAt) > 20 * 60 * 1000) return false;
             
-            // अमाउंट मैच होना चाहिए
+            // अमाउंट मैच
             if (n.amount !== orderData.amount) return false;
 
-            // नाम मैचिंग (चाहे पहला नाम मैच हो या पूरा नाम, जैसे 'AYAN' in 'AYAN KHAN')
-            const notifName = n.senderName.toUpperCase();
-            const isNameMatched = notifName.includes(inputName) || inputName.includes(notifName);
+            // नाम मैच: चाहे पहला नाम डाले (AYAN) या पूरा (AYAN KHAN)
+            const notifSender = n.senderName;
+            if (!notifSender) return true;
 
-            return isNameMatched;
+            const nameMatched = notifSender.includes(inputName) || inputName.includes(notifSender) ||
+                                inputName.split(" ").some(part => part.length >= 3 && notifSender.includes(part));
+
+            return nameMatched;
         });
 
         if (matchedIndex === -1) {
             return res.status(400).json({ 
                 success: false, 
-                message: `❌ Wrong Name or Payment Not Received! ₹${orderData.amount} from "${inputName}" not found yet. Please wait 10 seconds and retry.` 
+                message: `❌ Payment not found for ₹${orderData.amount} from "${inputName}". Please wait 5 seconds and retry.` 
             });
         }
 
-        // सही पेमेंट मैच हो गया!
+        // पेमेंट मैच हो गया!
         const payment = receivedNotifications[matchedIndex];
-        payment.used = true; // दोबारा क्लेम होने से रोकें
+        payment.used = true;
 
-        console.log(`Match Confirmed! Delivering ${orderData.coins} Coins to UID: ${orderData.uid}`);
-        const deliveryResult = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
+        console.log(`Payment Verified! Delivering ${orderData.coins} Coins to UID: ${orderData.uid}`);
+        const result = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
 
         orderData.status = 'PAID';
 
         return res.json({ 
             success: true, 
             message: "Payment Verified! Coins successfully delivered.", 
-            result: deliveryResult 
+            result: result 
         });
 
     } catch (error) {
@@ -221,11 +227,14 @@ app.post('/api/manual-verify', async (req, res) => {
     }
 });
 
-// 6. Check Order Status (Polling)
+// 6. Polling Endpoint
 app.get('/api/check-order-status', (req, res) => {
     const { orderId } = req.query;
-    if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
-    return res.json({ status: activeOrders.get(orderId).status });
+    if (!orderId || !activeOrders.has(orderId)) {
+        return res.json({ status: 'NOT_FOUND' });
+    }
+    const order = activeOrders.get(orderId);
+    return res.json({ status: order.status });
 });
 
 const PORT = process.env.PORT || 10000;
