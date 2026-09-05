@@ -9,7 +9,7 @@
     body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
     
-    /* Thin & Sleek Top Bar */
+    /* Sleek Top Bar */
     .top-navbar { background: #1e40af; padding: 8px 10px; text-align: center; position: sticky; top: 0; z-index: 99; }
     .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
     .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
@@ -88,7 +88,6 @@
     }
     .main-buy-btn:active { background: #1d4ed8; transform: scale(0.99); }
 
-    /* Static Pages Styling */
     .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
     .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
   </style>
@@ -205,7 +204,7 @@
 
       <div id="tab-refund" class="page-section static-page">
         <h2>🔄 Refund Policy</h2>
-        <p>Coins are credited directly upon successful payment verification. If any failure occurs, reach out with your 12-digit UTR within 15 minutes.</p>
+        <p>Coins are credited directly upon successful payment verification. If any failure occurs, reach out within 15 minutes.</p>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
@@ -225,6 +224,7 @@
     let selectedCoinPack = null;
     let isVerified = false;
     let currentOrderId = "";
+    let pollInterval = null;
 
     function changeTab(tabId, btnElement) {
       var sections = document.querySelectorAll('.page-section');
@@ -342,28 +342,53 @@
       modalDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;justify-content:center;align-items:center;padding:15px;';
       
       modalDiv.innerHTML = 
-        '<div style="background:#fff;width:100%;max-width:330px;border-radius:12px;padding:16px;text-align:center;">' +
-          '<div style="font-weight:bold;font-size:15px;color:#1e40af;">Scan & Pay via Any UPI</div>' +
-          '<div style="font-size:22px;font-weight:bold;color:#059669;margin:6px 0;">₹' + selectedCoinPack.price + '</div>' +
+        '<div style="background:#fff;width:100%;max-width:340px;border-radius:14px;padding:18px;text-align:center;">' +
+          '<div style="font-weight:bold;font-size:16px;color:#1e40af;">Scan & Pay via Any UPI</div>' +
+          '<div style="font-size:24px;font-weight:bold;color:#059669;margin:6px 0;">₹' + selectedCoinPack.price + '</div>' +
           '<img src="' + qrImgUrl + '" style="width:170px;height:170px;margin:5px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">' +
           '<a href="' + upiUrl + '" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:8px;">⚡ Open UPI App</a>' +
+          
+          '' +
           '<div style="margin-top:12px;border-top:1px dashed #d1d5db;padding-top:10px;">' +
-            '<div style="font-size:11px;color:#4b5563;margin-bottom:5px;font-weight:bold;">पेमेंट के बाद 12-अंकों का UPI Ref / UTR डालें:</div>' +
-            '<input type="text" id="dynamicUtr" placeholder="Enter 12-digit UTR" style="text-align:center;padding:8px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">' +
-            '<button id="utrBtn" type="button" onclick="submitUtr()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>' +
+            '<div style="font-size:12px;color:#374151;margin-bottom:5px;font-weight:bold;">पेमेंट के बाद अपना बैंक/UPI वाला नाम डालें:</div>' +
+            '<input type="text" id="bankingNameInput" placeholder="Enter Your Banking Name" style="text-align:center;padding:9px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">' +
+            '<button id="verifyBtnId" type="button" onclick="submitNameVerify()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>' +
           '</div>' +
-          '<button type="button" onclick="document.getElementById(\'runtimeQrModal\').remove()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:7px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>' +
+          
+          '<button type="button" onclick="closePopup()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:7px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>' +
         '</div>';
 
       document.body.appendChild(modalDiv);
+
+      // बैकग्राउंड में ऑटो-चेक चालू रहेगा
+      clearInterval(pollInterval);
+      pollInterval = setInterval(function() {
+        fetch('/api/check-order-status?orderId=' + currentOrderId)
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.status === 'PAID') {
+              clearInterval(pollInterval);
+              closePopup();
+              alert("Payment Verified! Coins successfully delivered.");
+              location.reload();
+            }
+          }).catch(()=>{});
+      }, 3000);
     }
 
-    function submitUtr() {
-      var utr = document.getElementById('dynamicUtr').value.trim();
-      var btn = document.getElementById('utrBtn');
+    function closePopup() {
+      clearInterval(pollInterval);
+      var m = document.getElementById('runtimeQrModal');
+      if (m) m.remove();
+    }
 
-      if (!utr || utr.length < 8) {
-        alert('कृपया सही 12-अंकों का UPI UTR / Ref नंबर दर्ज करें।');
+    // Name + Amount Verification
+    function submitNameVerify() {
+      var nameVal = document.getElementById('bankingNameInput').value.trim();
+      var btn = document.getElementById('verifyBtnId');
+
+      if (!nameVal || nameVal.length < 2) {
+        alert('कृपया अपना सही बैंकिंग नाम (Sender Name) दर्ज करें।');
         return;
       }
 
@@ -373,13 +398,12 @@
       fetch('/api/manual-verify', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: currentOrderId, utr: utr })
+        body: JSON.stringify({ orderId: currentOrderId, senderName: nameVal })
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data.success) {
-          var m = document.getElementById('runtimeQrModal');
-          if (m) m.remove();
+          closePopup();
           alert("Payment Verified! Coins successfully delivered.");
           location.reload();
         } else {
