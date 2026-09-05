@@ -184,7 +184,7 @@
             <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
           </div>
 
-          <button type="button" class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
+          <button type="button" class="main-buy-btn" onclick="showInstructionPopup()">BUY NOW</button>
         </div>
       </div>
 
@@ -222,7 +222,7 @@
     let currentOrderId = "";
     let pollInterval = null;
     let countdownInterval = null;
-    let timeLeft = 100; // ठीक 100 सेकंड (01:40)
+    let timeLeft = 120; // 2 मिनट (120 सेकंड)
 
     function changeTab(tabId, btnElement) {
       document.querySelectorAll('.page-section').forEach(sec => {
@@ -280,7 +280,8 @@
       });
     }
 
-    function initiatePayment() {
+    // 1. बारकोड और टाइमर से पहले आने वाला निर्देश पॉपअप (Step 1 Popup)
+    function showInstructionPopup() {
       const uid = document.getElementById('userId').value.trim();
       const phone = document.getElementById('userPhone').value.trim();
 
@@ -289,9 +290,53 @@
       if (!phone || phone.length < 10) { alert('Please enter a valid WhatsApp number.'); return; }
       if (!isVerified) { alert('Please verify your User ID first.'); return; }
 
-      currentOrderId = "ORD" + Date.now();
-      timeLeft = 100; // 100 सेकंड टाइमर सेट
+      const existingNotice = document.getElementById('prePayNoticeModal');
+      if (existingNotice) existingNotice.remove();
 
+      const noticeModal = document.createElement('div');
+      noticeModal.id = 'prePayNoticeModal';
+      noticeModal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99998;display:flex;justify-content:center;align-items:center;padding:15px;';
+
+      noticeModal.innerHTML = `
+        <div style="background:#fff;width:100%;max-width:360px;border-radius:14px;padding:18px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.3);">
+          <div style="font-size:32px;margin-bottom:6px;">⚠️</div>
+          <div style="font-size:17px;font-weight:bold;color:#1e40af;margin-bottom:8px;">Payment Instructions / जरूरी सूचना</div>
+          
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px;text-align:left;font-size:12px;line-height:1.45;color:#1e3a8a;margin-bottom:12px;">
+            <b>English:</b>
+            <ul style="margin:4px 0 8px 18px;padding:0;">
+              <li>A QR Code scanner will open next with a <b>2-minute timer</b>.</li>
+              <li>Scan & pay ₹${selectedCoinPack.price}, then enter your <b>Banking Name</b> to verify.</li>
+              <li>You must complete this within <b>2 minutes</b>.</li>
+              <li>If time expires after payment, contact WhatsApp support (+917776881407) to claim coins.</li>
+            </ul>
+            <b>हिंदी:</b>
+            <ul style="margin:4px 0 0 18px;padding:0;">
+              <li>ओके दबाने पर स्कैनर खुलेगा और <b>2 मिनट का टाइमर</b> शुरू होगा।</li>
+              <li>QR कोड स्कैन करके ₹${selectedCoinPack.price} पे करें और अपना <b>बैंकिंग नाम</b> डालकर वेरीफाई करें।</li>
+              <li>यह प्रक्रिया <b>2 मिनट के अंदर</b> पूरी करनी अनिवार्य है।</li>
+              <li>अगर समय खत्म हो जाता है और पैसे कट जाते हैं, तो WhatsApp सपोर्ट (+917776881407) पर संपर्क करें।</li>
+            </ul>
+          </div>
+
+          <button type="button" onclick="startScannerAndTimer()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">✅ I Understand, Open Scanner / समझ गया, आगे बढ़ें</button>
+          <button type="button" onclick="document.getElementById('prePayNoticeModal').remove()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;font-size:12px;cursor:pointer;margin-top:8px;">Cancel / रद्द करें</button>
+        </div>
+      `;
+
+      document.body.appendChild(noticeModal);
+    }
+
+    // 2. जब यूजर "I Understand" दबाएगा, तब बारकोड खुलेगा और टाइमर शुरू होगा (Step 2)
+    function startScannerAndTimer() {
+      const noticeModal = document.getElementById('prePayNoticeModal');
+      if (noticeModal) noticeModal.remove();
+
+      const uid = document.getElementById('userId').value.trim();
+      currentOrderId = "ORD" + Date.now();
+      timeLeft = 120; // ठीक 2 मिनट
+
+      // बैकएंड पर ऑर्डर बनाएं
       fetch('/api/create-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -309,29 +354,33 @@
       modalDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:99999;display:flex;justify-content:center;align-items:center;padding:12px;';
       
       modalDiv.innerHTML = `
-        <div style="background:#fff;width:100%;max-width:340px;border-radius:14px;padding:16px;text-align:center;max-height:96vh;overflow-y:auto;">
+        <div style="background:#fff;width:100%;max-width:350px;border-radius:14px;padding:16px;text-align:center;max-height:96vh;overflow-y:auto;">
           <div style="font-weight:bold;font-size:16px;color:#1e40af;">Scan & Pay via Any UPI</div>
           <div style="font-size:22px;font-weight:bold;color:#059669;margin:2px 0;">₹${selectedCoinPack.price}</div>
           
           <!-- Barcode QR -->
           <img src="${qrImgUrl}" style="width:150px;height:150px;margin:4px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">
           
-          <!-- बारकोड के ठीक नीचे 100 सेकंड का टाइमर -->
+          <!-- बारकोड के नीचे 2 मिनट का टाइमर -->
           <div style="background:#fef2f2;border:1px solid #f87171;border-radius:8px;padding:6px;margin:8px 0;">
-            <div style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष (Time Left):</div>
-            <div id="orderTimer" style="font-size:20px;font-weight:800;color:#dc2626;letter-spacing:1px;">01:40</div>
+            <div style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left:</div>
+            <div id="orderTimer" style="font-size:20px;font-weight:800;color:#dc2626;letter-spacing:1px;">02:00</div>
           </div>
 
-          <!-- महत्वपूर्ण सूचना / नोटिस -->
-          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px;font-size:10.5px;color:#92400e;line-height:1.3;text-align:left;margin-bottom:8px;">
-            ⚠️ <b>ध्यान दें:</b> टाइमर खत्म होने से पहले पेमेंट करके अपना बैंकिंग नाम डालकर वेरीफाई करें। 100 सेकंड बाद यह पेज एक्सपायर हो जाएगा और आपको सपोर्ट टीम से संपर्क करना होगा।
+          <!-- द्विभाषी नोटिस (English & Hindi) -->
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:7px;font-size:11px;color:#92400e;line-height:1.4;text-align:left;margin-bottom:8px;">
+            ⚠️ <b>English:</b> Pay and verify your banking name within 2 minutes. After timeout, auto-verification expires and you must contact support.<br>
+            ⚠️ <b>हिंदी:</b> 2 मिनट के अंदर पेमेंट करके अपना बैंकिंग नाम डालकर वेरीफाई करें। समय खत्म होने के बाद ऑटो-वेरिफिकेशन एक्सपायर हो जाएगा और आपको सपोर्ट टीम से संपर्क करना होगा।
           </div>
 
           <a href="${upiUrl}" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:8px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:8px;">⚡ Open UPI App</a>
           
-          <!-- Name Input -->
+          <!-- द्विभाषी इनपुट लेबल (English & Hindi) -->
           <div style="border-top:1px dashed #d1d5db;padding-top:8px;">
-            <div style="font-size:11.5px;color:#374151;margin-bottom:4px;font-weight:bold;">पेमेंट के बाद अपना बैंक/UPI वाला नाम डालें:</div>
+            <div style="font-size:11.5px;color:#374151;margin-bottom:4px;font-weight:bold;">
+              Enter your Bank/UPI Name after payment:<br>
+              <span style="font-size:11px;color:#4b5563;font-weight:normal;">(पेमेंट के बाद अपना बैंक/UPI वाला नाम डालें)</span>
+            </div>
             <input type="text" id="bankingNameInput" placeholder="Enter Your Banking Name" style="text-align:center;padding:9px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">
             <button id="verifyBtnId" type="button" onclick="submitNameVerify()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>
           </div>
@@ -339,88 +388,4 @@
           <button type="button" onclick="closePopup()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:6px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>
         </div>`;
 
-      document.body.appendChild(modalDiv);
-
-      // लाइव काउंटडाउन टाइमर (100 सेकंड)
-      clearInterval(countdownInterval);
-      countdownInterval = setInterval(() => {
-        timeLeft--;
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        const timerEl = document.getElementById('orderTimer');
-        if (timerEl) {
-          timerEl.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        if (timeLeft <= 0) {
-          clearInterval(countdownInterval);
-          clearInterval(pollInterval);
-          closePopup();
-          alert("⏳ समय समाप्त (Session Expired)! 100 सेकंड पूरे हो चुके हैं।\n\nअगर आपने पेमेंट कर दिया है, तो कॉइन प्राप्त करने के लिए कृपया तुरंत WhatsApp सपोर्ट (+917776881407) पर संपर्क करें।");
-        }
-      }, 1000);
-
-      // बैकग्राउंड पोलिंग
-      clearInterval(pollInterval);
-      pollInterval = setInterval(() => {
-        fetch('/api/check-order-status?orderId=' + currentOrderId)
-          .then(r => r.json())
-          .then(d => {
-            if (d && d.status === 'PAID') {
-              clearInterval(pollInterval);
-              clearInterval(countdownInterval);
-              closePopup();
-              alert("Payment Verified! Coins successfully delivered.");
-              location.reload();
-            }
-          }).catch(() => {});
-      }, 3000);
-    }
-
-    function closePopup() {
-      clearInterval(pollInterval);
-      clearInterval(countdownInterval);
-      const m = document.getElementById('runtimeQrModal');
-      if (m) m.remove();
-    }
-
-    function submitNameVerify() {
-      const nameVal = document.getElementById('bankingNameInput').value.trim();
-      const btn = document.getElementById('verifyBtnId');
-
-      if (!nameVal || nameVal.length < 2) {
-        alert('कृपया अपना सही बैंकिंग नाम (Sender Name) दर्ज करें।');
-        return;
-      }
-
-      btn.innerText = "Verifying...";
-      btn.disabled = true;
-
-      fetch('/api/manual-verify', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: currentOrderId, senderName: nameVal })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          clearInterval(pollInterval);
-          clearInterval(countdownInterval);
-          closePopup();
-          alert("Payment Verified! Coins successfully delivered.");
-          location.reload();
-        } else {
-          alert(data.message || "Payment not verified yet.");
-          btn.innerText = "✅ Verify Payment";
-          btn.disabled = false;
-        }
-      })
-      .catch(() => {
-        alert("Server connection error.");
-        btn.innerText = "✅ Verify Payment";
-        btn.disabled = false;
-      });
-    }
-  </script>
-</body>
-</html>
+      d
