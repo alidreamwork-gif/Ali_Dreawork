@@ -24,7 +24,7 @@
     
     label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; color: #374151; }
     .id-group { display: flex; gap: 6px; margin-top: 5px; }
-    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
+    input[type="text"], input[type="tel"] { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
     
     .verify-btn { background: #059669; color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
     #verifyResult { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
@@ -50,6 +50,10 @@
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
     
+    /* Terms Checkbox */
+    .terms-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 15px; font-size: 12.5px; color: #374151; }
+    .terms-wrapper input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: #2563eb; }
+
     .main-buy-btn { 
       width: 100%; 
       background: #2563eb; 
@@ -60,7 +64,7 @@
       font-weight: bold; 
       border-radius: 8px; 
       cursor: pointer; 
-      margin-top: 18px; 
+      margin-top: 14px; 
     }
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
@@ -157,6 +161,14 @@
             <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
           </div>
 
+          <!-- Terms Checkbox -->
+          <div class="terms-wrapper">
+            <input type="checkbox" id="termsAgree" checked>
+            <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
+              I accept all <a href="javascript:void(0)" onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;">Terms & Conditions</a> (नियम व शर्तें स्वीकार हैं)
+            </label>
+          </div>
+
           <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
         </div>
       </div>
@@ -165,6 +177,7 @@
       <div id="p-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
         <p>All coins are directly sent to verified IDs upon successful payment.</p>
+        <p>Please ensure you pay the exact amount shown on the barcode to ensure automatic fulfillment.</p>
       </div>
 
       <div id="p-privacy" class="page-section static-page">
@@ -186,56 +199,63 @@
     </div>
   </div>
 
-  <!-- 1. निर्देश पॉपअप (Notice Modal) -->
+  <!-- 1. विस्तृत निर्देश पॉपअप (Detailed Instructions Notice) -->
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:350px;border-radius:14px;padding:18px;text-align:center;">
-      <div style="font-size:28px;margin-bottom:4px;">⚡</div>
-      <b style="color:#1e40af;font-size:16px;">Fast Auto-Payment / जरूरी सूचना</b>
+    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
+      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
+      <b style="color:#1e40af;font-size:16px;">जरूरी सूचना / Important Notice</b>
       
-      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;color:#1e3a8a;">
-        <b>English:</b>
-        <ul style="margin:3px 0 8px 16px;padding:0;">
-          <li>A QR Code scanner will open with the exact payable amount.</li>
-          <li><b>Important:</b> Pay the exact amount shown (e.g. ₹200.01). Do not change paise.</li>
-          <li>Coins will be credited <b>automatically within 5 seconds</b> of payment!</li>
-        </ul>
-        <b>हिंदी:</b>
-        <ul style="margin:3px 0 0 16px;padding:0;">
-          <li>आगे स्कैनर खुलेगा जिसमें सटीक रकम दिखाई जाएगी।</li>
-          <li><b>ज़रूरी:</b> जितना अमाउंट (पैसे सहित) दिखेगा उतना ही पे करें।</li>
-          <li>पेमेंट होते ही <b>5 सेकंड के अंदर ऑटोमैटिक</b> कॉइन मिल जाएंगे!</li>
-        </ul>
+      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
+        <b style="color:#1e40af;font-size:12px;">English:</b>
+        <ol style="margin:4px 0 10px 18px;padding:0;">
+          <li>A <b>Barcode</b> will open with a 2-minute timer and the exact payable amount.</li>
+          <li>Take a <b>Screenshot</b> of the barcode.</li>
+          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
+          <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
+        </ol>
+
+        <b style="color:#1e40af;font-size:12px;">हिंदी:</b>
+        <ol style="margin:4px 0 0 18px;padding:0;">
+          <li>आगे 2 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
+          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खोलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
+        </ol>
       </div>
 
-      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:11px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:7px;border-radius:8px;margin-top:7px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
-  <!-- 2. ऑटोमैटिक स्कैनर और टाइमर पॉपअप -->
+  <!-- 2. ऑटोमैटिक बारकोड और टाइमर पॉपअप -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
       
-      <!-- सटीक डायनामिक रकम (जैसे ₹200.01) -->
+      <!-- सटीक रकम -->
       <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
       <div style="font-size:11px;color:#dc2626;font-weight:bold;margin-bottom:6px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
       
-      <!-- बड़ा 220px QR कोड -->
-      <img id="qrImg" src="" style="width:220px;height:220px;margin:4px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      <!-- बड़ा 225px बारकोड -->
+      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
       
-      <div style="background:#fee2e2;border:1px solid #f87171;padding:5px;border-radius:6px;margin:8px 0;">
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
         <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
       </div>
 
-      <a id="upiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:10px;">⚡ Open UPI App</a>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px;font-size:11px;color:#1e40af;margin-bottom:8px;line-height:1.4;text-align:left;">
+        📸 <b>स्क्रीनशॉट लें:</b> इस बारकोड का स्क्रीनशॉट लेकर GPay / PhonePe / Paytm के स्कैनर में 'गैलरी' से चुनें और पे करें।
+      </div>
       
-      <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:8px;font-size:11.5px;color:#065f46;line-height:1.4;">
-        🔄 <b>ऑटो-डिटेक्शन चालू है:</b> जैसे ही आप UPI ऐप से पे करेंगे, कॉइन अपने-आप डिलीवर हो जाएंगे। आपको कोई नाम दर्ज करने की आवश्यकता नहीं है।
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:7px;font-size:11.5px;color:#065f46;line-height:1.4;">
+        🔄 <b>ऑटो-डिटेक्शन चालू है:</b> पेमेंट होते ही सिस्टम खुद डिटेक्ट करके 5 सेकंड में कॉइन ट्रांसफर कर देगा।
       </div>
 
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:7px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
@@ -270,7 +290,7 @@
     function verifyUID() {
       var uid = document.getElementById('userId').value.trim();
       var res = document.getElementById('verifyResult');
-      if (!uid) { alert('Please enter User ID'); return; }
+      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
       res.style.display = "flex";
       res.innerHTML = "Verifying...";
 
@@ -298,10 +318,13 @@
     function startBuy() {
       var uid = document.getElementById('userId').value.trim();
       var ph = document.getElementById('userPhone').value.trim();
+      var termsChecked = document.getElementById('termsAgree').checked;
+
       if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
       if (!selectedPack) { alert('Please select a coin pack / कृपया कॉइन पैक चुनें'); return; }
       if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number / सही WhatsApp नंबर दर्ज करें'); return; }
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
+      if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
       document.getElementById('modalNotice').style.display = 'flex';
     }
@@ -312,7 +335,6 @@
       orderId = "ORD" + Date.now();
       leftTime = 120;
 
-      // बैकएंड से यूनिक पैसे वाला अमाउंट मंगाना
       fetch('/api/create-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -322,14 +344,12 @@
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
 
-        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        var upi = "upi://pay?pa=BHARATPE.220P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
         document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-        document.getElementById('upiLink').href = upi;
         document.getElementById('timerText').innerText = "02:00";
         document.getElementById('modalQR').style.display = 'flex';
 
-        // टाइमर शुरू
         clearInterval(timerObj);
         timerObj = setInterval(function(){
           leftTime--;
@@ -342,7 +362,6 @@
           }
         }, 1000);
 
-        // ऑटो-पोलिंग (हर 2.5 सेकंड में सर्वर चेक करेगा)
         clearInterval(pollObj);
         pollObj = setInterval(function(){
           fetch('/api/check-order-status?orderId=' + orderId)
