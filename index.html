@@ -106,7 +106,7 @@
               <div class="coin-price">₹200</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 21900, 300)">
-              <div class="coin-number">21900</div>
+              <div class="coin-number">21,900</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹300</div>
@@ -186,7 +186,7 @@
     </div>
   </div>
 
-  <!-- 1. द्विभाषी नोटिस पॉपअप (Notice Modal) -->
+  <!-- 1. द्विभाषी नोटिस पॉपअप -->
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:350px;border-radius:14px;padding:18px;text-align:center;">
       <div style="font-size:28px;margin-bottom:4px;">⚠️</div>
@@ -212,21 +212,22 @@
     </div>
   </div>
 
-  <!-- 2. स्कैनर और टाइमर पॉपअप -->
+  <!-- 2. स्कैनर और टाइमर पॉपअप (बड़ा QR साइज़) -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:340px;border-radius:14px;padding:16px;text-align:center;max-height:96vh;overflow-y:auto;">
+    <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
-      <div id="payAmt" style="font-size:22px;font-weight:bold;color:#059669;margin:2px 0;">₹0</div>
-      <img id="qrImg" src="" style="width:145px;height:145px;margin:4px auto;display:block;border:1px solid #ddd;border-radius:6px;">
+      <div id="payAmt" style="font-size:24px;font-weight:bold;color:#059669;margin:2px 0;">₹0</div>
       
-      <div style="background:#fee2e2;border:1px solid #f87171;padding:5px;border-radius:6px;margin:6px 0;">
+      <!-- बड़ा 220px QR कोड -->
+      <img id="qrImg" src="" style="width:220px;height:220px;margin:8px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
         <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
       </div>
 
-      <a id="upiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:8px;border-radius:6px;font-weight:bold;font-size:12px;margin-bottom:8px;">⚡ Open UPI App</a>
+      <a id="upiLink" href="#" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:8px;">⚡ Open UPI App</a>
       
-      <!-- द्विभाषी इनपुट लेबल और प्लेसहोल्डर -->
       <div style="border-top:1px dashed #d1d5db;padding-top:8px;">
         <div style="font-size:11.5px;color:#374151;margin-bottom:4px;font-weight:bold;">
           Enter Your Real Banking Name:<br>
@@ -320,7 +321,7 @@
 
       var upi = "upi://pay?pa=BHARATPE.220P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + selectedPack.price + "&cu=INR&tn=CoinPurchase";
       document.getElementById('payAmt').innerText = '₹' + selectedPack.price;
-      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=" + encodeURIComponent(upi);
+      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
       document.getElementById('upiLink').href = upi;
       document.getElementById('bankName').value = '';
       document.getElementById('timerText').innerText = "02:00";
