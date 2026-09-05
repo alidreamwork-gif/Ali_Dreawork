@@ -1,231 +1,399 @@
-const express = require('express');
-const axios = require('axios');
-const path = require('path');
-const crypto = require('crypto');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ali Dreamwork Store</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    
+    /* Thin & Sleek Top Bar */
+    .top-navbar { background: #1e40af; padding: 8px 10px; text-align: center; position: sticky; top: 0; z-index: 99; }
+    .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
+    .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
 
-const app = express();
+    /* Content Area */
+    .container { padding: 15px; flex: 1; }
+    .page-section { display: none; }
+    .page-section.active-page { display: block !important; }
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
+    /* UI Header */
+    .header { text-align: center; margin-bottom: 15px; }
+    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
+    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+    
+    label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; color: #374151; }
+    .id-group { display: flex; gap: 6px; margin-top: 5px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
+    
+    .verify-btn { background: #059669; color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
+    #verifyResult { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
+    .user-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; flex-shrink: 0; }
 
-const SELLER_ID = "4851724";
-const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
-
-// सक्रिय ऑर्डर्स का मेमोरी मैप
-const activeOrders = new Map();
-
-// BharatPe से आए हालिया पेमेंट्स का स्टोरेज
-const recentCredits = [];
-
-// रूट पेज
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// 1. User Verification Endpoint
-app.post('/api/verify-user', async (req, res) => {
-    try {
-        const { uid } = req.body;
-        if (!uid) {
-            return res.status(400).json({ status: 400, message: "UID is missing!" });
-        }
-        const cleanUid = uid.toString().trim();
-        
-        const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-        const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
-
-        const payload = {
-            sellerId: Number(SELLER_ID),
-            uid: Number(cleanUid),
-            sign: sign
-        };
-
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        return res.json(response.data);
-    } catch (error) {
-        console.error("API Error Response:", error.response ? error.response.data : error.message);
-        if (error.response && error.response.data) {
-            return res.status(200).json(error.response.data);
-        }
-        return res.status(500).json({ status: 400, message: "User not found or invalid ID!" });
+    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
+    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    
+    /* 1-Tap Modern Coin Card */
+    .coin-card { 
+      border: 2px solid #e5e7eb; 
+      border-radius: 12px; 
+      padding: 16px 10px; 
+      background: #fafafa; 
+      text-align: center; 
+      position: relative; 
+      cursor: pointer; 
+      transition: all 0.2s ease; 
+      user-select: none;
     }
-});
-
-// 2. BharatPe Order Create
-app.post('/api/create-order', (req, res) => {
-    try {
-        const { uid, amount, orderId } = req.body;
-        
-        if (!uid || !amount || !orderId) {
-            return res.status(400).json({ success: false, message: "UID, Amount, and OrderID are required" });
-        }
-
-        let coins = 0;
-        const amtNum = Math.round(Number(amount));
-
-        // पैकेज अनुसार कॉइन्स
-        if (amtNum === 200) coins = 14600;
-        else if (amtNum === 300) coins = 21900;
-        else if (amtNum === 500) coins = 36500;
-        else if (amtNum === 1000) coins = 73000;
-        else if (amtNum === 1500) coins = 109500;
-        else if (amtNum === 2000) coins = 146000;
-        else if (amtNum === 3000) coins = 219000;
-        else if (amtNum === 4500) coins = 328500;
-        else coins = amtNum * 73;
-
-        activeOrders.set(orderId, {
-            uid: uid.toString().trim(),
-            amount: amtNum,
-            coins: coins,
-            status: 'PENDING',
-            createdAt: Date.now()
-        });
-
-        console.log(`Order Registered: ${orderId} | UID: ${uid} | Amount: ₹${amtNum} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId });
-    } catch (error) {
-        console.error("Order Creation Error:", error);
-        return res.status(500).json({ success: false, message: "Server error creating order" });
+    .coin-card:hover { border-color: #93c5fd; background: #f0f9ff; }
+    .coin-card.selected { border-color: #059669; background: #f0fdf4; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2); }
+    .coin-card.selected::after { 
+      content: "✓ Selected"; 
+      position: absolute; 
+      top: 6px; 
+      right: 6px; 
+      background: #059669; 
+      color: #fff; 
+      font-size: 9px; 
+      font-weight: bold; 
+      padding: 2px 6px; 
+      border-radius: 10px; 
     }
-});
+    
+    .coin-number { font-size: 18px; font-weight: 800; color: #1e40af; margin-bottom: 4px; pointer-events: none; }
+    .coin-label { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; pointer-events: none; }
+    .coin-divider { width: 40px; height: 2px; background: #e5e7eb; margin: 8px auto; pointer-events: none; }
+    .coin-price { font-size: 16px; font-weight: bold; color: #059669; pointer-events: none; }
 
-// 3. Helper function to deliver coins
-async function deliverCoinsToUser(uid, coins, orderId) {
-    const cleanUid = Number(uid);
-    const numCoins = Number(coins);
-
-    const signString = `coins=${numCoins}&orderId=${orderId}&sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-    const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
-
-    const payload = {
-        sellerId: Number(SELLER_ID),
-        uid: cleanUid,
-        coins: numCoins,
-        orderId: orderId,
-        sign: sign
-    };
-
-    console.log("Sending Payload to CoinSale API:", payload);
-
-    try {
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        console.log("API Success Response:", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Coin Sale Error Response:", error.response ? error.response.data : error.message);
-        return error.response ? error.response.data : { status: 400, message: "Failed to deliver coins" };
+    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 13px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
+    
+    .main-buy-btn { 
+      width: 100%; 
+      background: #2563eb; 
+      color: #fff; 
+      border: none; 
+      padding: 14px; 
+      font-size: 16px; 
+      font-weight: bold; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin-top: 18px; 
+      display: block;
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.25);
     }
-}
+    .main-buy-btn:active { background: #1d4ed8; transform: scale(0.99); }
 
-// 4. BharatPe Notification Webhook Endpoint (नया मैचिंग लॉजिक)
-app.post('/api/sms-webhook', async (req, res) => {
-    try {
-        console.log("================== BHARATPE NOTIFICATION RECEIVED ==================");
-        console.log("Raw Payload:", JSON.stringify(req.body, null, 2));
+    /* Static Pages Styling */
+    .static-page h2 { color: #1e40af; font-size: 18px; margin-top: 0; }
+    .static-page p, .static-page li { font-size: 13px; color: #4b5563; line-height: 1.5; }
+  </style>
+</head>
+<body>
 
-        const text = req.body.message || req.body.text || req.body.body || req.body.title || req.body.content || "";
-        console.log("Notification Text:", text);
+  <div class="app-wrapper">
+    <div class="top-navbar">
+      <div class="nav-buttons">
+        <button class="nav-btn active" onclick="changeTab('coins', this)">Coins</button>
+        <button class="nav-btn" onclick="changeTab('terms', this)">Terms</button>
+        <button class="nav-btn" onclick="changeTab('privacy', this)">Privacy</button>
+        <button class="nav-btn" onclick="changeTab('refund', this)">Refund</button>
+        <button class="nav-btn" onclick="changeTab('contact', this)">Contact</button>
+      </div>
+    </div>
 
-        // "Received 200.00 Rupees" से अमाउंट पकड़ना
-        const amtMatch = text.match(/Received\s*([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
-                      || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
-        
-        let detectedAmount = 0;
-        if (amtMatch) {
-            detectedAmount = Math.round(parseFloat(amtMatch[1].replace(/,/g, '')));
-        }
+    <div class="container">
+      
+      <div id="tab-coins" class="page-section active-page">
+        <div class="header">
+          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
+          <div class="brand-title">ALI DREAMWORK</div>
+        </div>
 
-        console.log(`Detected Payment Amount: ₹${detectedAmount}`);
+        <div class="card">
+          <label>Enter your User ID:</label>
+          <div class="id-group">
+            <input type="text" id="userId" placeholder="Enter User ID">
+            <button class="verify-btn" onclick="verifyUser()">Verify</button>
+          </div>
+          <div id="verifyResult"></div>
 
-        if (detectedAmount > 0) {
-            recentCredits.push({
-                amount: detectedAmount,
-                used: false,
-                receivedAt: Date.now(),
-                raw: text
-            });
+          <div class="section-title">SELECT COIN PACK (1-TAP SELECT)</div>
+          <div class="plans-grid">
+            <div class="coin-card" onclick="selectPlan(this, 14600, 200)">
+              <div class="coin-number">14,600</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹200</div>
+            </div>
 
-            // पेंडिंग ऑर्डर से ऑटो-मैच
-            for (let [orderId, orderData] of activeOrders.entries()) {
-                if (orderData.status === 'PENDING' && orderData.amount === detectedAmount) {
-                    console.log(`Auto-matching Payment of ₹${detectedAmount} for Order: ${orderId} (UID: ${orderData.uid})`);
-                    await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
-                    orderData.status = 'PAID';
-                    break;
-                }
-            }
-        }
+            <div class="coin-card" onclick="selectPlan(this, 21900, 300)">
+              <div class="coin-number">21,900</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹300</div>
+            </div>
 
-        return res.status(200).json({ status: true, detectedAmount: detectedAmount });
-    } catch (err) {
-        console.error("Webhook processing error:", err);
-        return res.status(500).json({ status: false });
+            <div class="coin-card" onclick="selectPlan(this, 36500, 500)">
+              <div class="coin-number">36,500</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹500</div>
+            </div>
+
+            <div class="coin-card" onclick="selectPlan(this, 73000, 1000)">
+              <div class="coin-number">73,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹1,000</div>
+            </div>
+
+            <div class="coin-card" onclick="selectPlan(this, 109500, 1500)">
+              <div class="coin-number">109,500</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹1,500</div>
+            </div>
+
+            <div class="coin-card" onclick="selectPlan(this, 146000, 2000)">
+              <div class="coin-number">146,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹2,000</div>
+            </div>
+
+            <div class="coin-card" onclick="selectPlan(this, 219000, 3000)">
+              <div class="coin-number">219,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹3,000</div>
+            </div>
+
+            <div class="coin-card" onclick="selectPlan(this, 328500, 4500)">
+              <div class="coin-number">328,500</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹4,500</div>
+            </div>
+          </div>
+
+          <label>WhatsApp Number:</label>
+          <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+
+          <div class="summary-box">
+            <div class="summary-row"><span>Selected Plan:</span> <b id="sumPlan" style="color:#1e40af;">None</b></div>
+            <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
+          </div>
+
+          <button type="button" class="main-buy-btn" onclick="initiatePayment()">BUY NOW</button>
+        </div>
+      </div>
+
+      <div id="tab-terms" class="page-section static-page">
+        <h2>📜 Terms & Conditions</h2>
+        <p>Welcome to <strong>Ali Dreamwork Store</strong>. By accessing our platform, you agree to comply with our coin topup guidelines.</p>
+      </div>
+
+      <div id="tab-privacy" class="page-section static-page">
+        <h2>🔒 Privacy Policy</h2>
+        <p>Your privacy is strictly protected at <strong>Ali Dreamwork Store</strong>.</p>
+      </div>
+
+      <div id="tab-refund" class="page-section static-page">
+        <h2>🔄 Refund Policy</h2>
+        <p>Coins are credited directly upon successful payment verification. If any failure occurs, reach out with your 12-digit UTR within 15 minutes.</p>
+      </div>
+
+      <div id="tab-contact" class="page-section static-page">
+        <h2>🎧 Contact Us</h2>
+        <p><strong>Email:</strong> alidreamwork@gmail.com</p>
+        <p><strong>WhatsApp:</strong> +917776881407</p>
+        <p><strong>Support time:</strong> Monday To Sunday (10:00 AM To 11:00 PM)</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const BHARATPE_VPA = "BHARATPE.220P0L0B8I71717@unitype";
+    const MERCHANT_NAME = "VASIM ALI";
+    
+    let selectedCoinPack = null;
+    let isVerified = false;
+    let currentOrderId = "";
+
+    function changeTab(tabId, btnElement) {
+      var sections = document.querySelectorAll('.page-section');
+      sections.forEach(function(sec) {
+        sec.classList.remove('active-page');
+        sec.style.display = 'none';
+      });
+
+      var buttons = document.querySelectorAll('.nav-btn');
+      buttons.forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+
+      var activeTarget = document.getElementById('tab-' + tabId);
+      if (activeTarget) {
+        activeTarget.style.display = 'block';
+        activeTarget.classList.add('active-page');
+      }
+      
+      if (btnElement) {
+        btnElement.classList.add('active');
+      }
+      window.scrollTo(0, 0);
     }
-});
 
-// 5. Manual Verify Button (वेबसाइट पर बटन दबाने पर तुरंत मैच करेगा)
-app.post('/api/manual-verify', async (req, res) => {
-    try {
-        const { orderId } = req.body;
-        if (!orderId || !activeOrders.has(orderId)) {
-            return res.status(400).json({ success: false, message: "Order session expired. Please try again." });
-        }
+    function selectPlan(cardElem, coins, price) {
+      document.querySelectorAll('.coin-card').forEach(function(el) {
+        el.classList.remove('selected');
+      });
 
-        const orderData = activeOrders.get(orderId);
+      cardElem.classList.add('selected');
+      selectedCoinPack = { coins: coins, price: price };
 
-        if (orderData.status === 'PAID') {
-            return res.json({ success: true, message: "Payment already confirmed & coins delivered!" });
-        }
-
-        const now = Date.now();
-        // पिछले 10 मिनट में आया ₹200/अमाउंट ढूंढना
-        const validPaymentIndex = recentCredits.findIndex(p => 
-            !p.used && 
-            p.amount === orderData.amount && 
-            (now - p.receivedAt) < 10 * 60 * 1000
-        );
-
-        if (validPaymentIndex === -1) {
-            return res.status(400).json({ 
-                success: false, 
-                message: `₹${orderData.amount} का पेमेंट अभी रिसीव नहीं हुआ है। कृपया 5-10 सेकंड रुकें और दोबारा दबाएं।` 
-            });
-        }
-
-        const matchedPayment = recentCredits[validPaymentIndex];
-        matchedPayment.used = true;
-
-        console.log(`Manual Verify Confirmed! Delivering ${orderData.coins} Coins to UID: ${orderData.uid}`);
-        const result = await deliverCoinsToUser(orderData.uid, orderData.coins, orderId);
-
-        orderData.status = 'PAID';
-
-        return res.json({ success: true, message: "Payment Verified! Coins successfully delivered.", result: result });
-    } catch (error) {
-        console.error("Manual verify error:", error);
-        return res.status(500).json({ success: false, message: "Server error during verification" });
-    }
-});
-
-// 6. Polling Endpoint (फ्रंटएंड स्टेटस चेक)
-app.get('/api/check-order-status', (req, res) => {
-    const { orderId } = req.query;
-    if (!orderId || !activeOrders.has(orderId)) {
-        return res.json({ status: 'NOT_FOUND' });
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
-    const order = activeOrders.get(orderId);
-    return res.json({ status: order.status });
-});
+    function verifyUser() {
+      var uid = document.getElementById('userId').value.trim();
+      var resBox = document.getElementById('verifyResult');
+      
+      if (!uid) {
+        alert('Please enter User ID first');
+        return;
+      }
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+      resBox.style.display = "flex";
+      resBox.innerHTML = "Verifying...";
+
+      fetch('/api/verify-user', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
+          isVerified = true;
+          var info = data.data || data;
+          var name = info.nick || info.nickName || info.name || "Verified User";
+          var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" onerror="this.src=\'https://i.ibb.co/21P3nGZR/logo.jpg\'"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+        } else {
+          isVerified = false;
+          resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+        }
+      })
+      .catch(function() {
+        isVerified = true;
+        resBox.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+      });
+    }
+
+    function initiatePayment() {
+      var uid = document.getElementById('userId').value.trim();
+      var phone = document.getElementById('userPhone').value.trim();
+
+      if (!uid) {
+        alert('Please enter User ID first.');
+        return;
+      }
+      if (!selectedCoinPack) {
+        alert('Please tap on a coin pack to select it.');
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        alert('Please enter a valid WhatsApp number.');
+        return;
+      }
+      if (!isVerified) {
+        alert('Please verify your User ID first.');
+        return;
+      }
+
+      currentOrderId = "ORD" + Date.now();
+
+      fetch('/api/create-order', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid, amount: selectedCoinPack.price, orderId: currentOrderId })
+      }).catch(function() {});
+
+      var upiUrl = "upi://pay?pa=" + encodeURIComponent(BHARATPE_VPA) +
+                    "&pn=" + encodeURIComponent(MERCHANT_NAME) +
+                    "&am=" + selectedCoinPack.price +
+                    "&cu=INR&tn=CoinPurchase";
+
+      var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(upiUrl);
+
+      var existing = document.getElementById('runtimeQrModal');
+      if (existing) existing.remove();
+
+      var modalDiv = document.createElement('div');
+      modalDiv.id = 'runtimeQrModal';
+      modalDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;justify-content:center;align-items:center;padding:15px;';
+      
+      modalDiv.innerHTML = 
+        '<div style="background:#fff;width:100%;max-width:330px;border-radius:12px;padding:16px;text-align:center;">' +
+          '<div style="font-weight:bold;font-size:15px;color:#1e40af;">Scan & Pay via Any UPI</div>' +
+          '<div style="font-size:22px;font-weight:bold;color:#059669;margin:6px 0;">₹' + selectedCoinPack.price + '</div>' +
+          '<img src="' + qrImgUrl + '" style="width:170px;height:170px;margin:5px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">' +
+          '<a href="' + upiUrl + '" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:8px;">⚡ Open UPI App</a>' +
+          '<div style="margin-top:12px;border-top:1px dashed #d1d5db;padding-top:10px;">' +
+            '<div style="font-size:11px;color:#4b5563;margin-bottom:5px;font-weight:bold;">पेमेंट के बाद 12-अंकों का UPI Ref / UTR डालें:</div>' +
+            '<input type="text" id="dynamicUtr" placeholder="Enter 12-digit UTR" style="text-align:center;padding:8px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">' +
+            '<button id="utrBtn" type="button" onclick="submitUtr()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>' +
+          '</div>' +
+          '<button type="button" onclick="document.getElementById(\'runtimeQrModal\').remove()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:7px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>' +
+        '</div>';
+
+      document.body.appendChild(modalDiv);
+    }
+
+    function submitUtr() {
+      var utr = document.getElementById('dynamicUtr').value.trim();
+      var btn = document.getElementById('utrBtn');
+
+      if (!utr || utr.length < 8) {
+        alert('कृपया सही 12-अंकों का UPI UTR / Ref नंबर दर्ज करें।');
+        return;
+      }
+
+      btn.innerText = "Verifying...";
+      btn.disabled = true;
+
+      fetch('/api/manual-verify', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: currentOrderId, utr: utr })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success) {
+          var m = document.getElementById('runtimeQrModal');
+          if (m) m.remove();
+          alert("Payment Verified! Coins successfully delivered.");
+          location.reload();
+        } else {
+          alert(data.message || "Payment not verified yet.");
+          btn.innerText = "✅ Verify Payment";
+          btn.disabled = false;
+        }
+      })
+      .catch(function() {
+        alert("Server connection error.");
+        btn.innerText = "✅ Verify Payment";
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
