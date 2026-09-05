@@ -9,18 +9,15 @@
     body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 0; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
     
-    /* Sleek Top Bar */
     .top-navbar { background: #1e40af; padding: 8px 10px; text-align: center; position: sticky; top: 0; z-index: 99; }
     .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
     .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px; cursor: pointer; font-weight: bold; }
     .nav-btn.active, .nav-btn:hover { background: #fff; color: #1e40af; }
 
-    /* Content Area */
     .container { padding: 15px; flex: 1; }
     .page-section { display: none; }
     .page-section.active-page { display: block !important; }
 
-    /* UI Header */
     .header { text-align: center; margin-bottom: 15px; }
     .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
     .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
@@ -37,7 +34,6 @@
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 15px 0 10px 0; }
     .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     
-    /* 1-Tap Modern Coin Card */
     .coin-card { 
       border: 2px solid #e5e7eb; 
       border-radius: 12px; 
@@ -194,7 +190,7 @@
 
       <div id="tab-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
-        <p>Welcome to <strong>Ali Dreamwork Store</strong>. By accessing our platform, you agree to comply with our coin topup guidelines.</p>
+        <p>Welcome to <strong>Ali Dreamwork Store</strong>.</p>
       </div>
 
       <div id="tab-privacy" class="page-section static-page">
@@ -204,7 +200,7 @@
 
       <div id="tab-refund" class="page-section static-page">
         <h2>🔄 Refund Policy</h2>
-        <p>Coins are credited directly upon successful payment verification. If any failure occurs, reach out within 15 minutes.</p>
+        <p>Coins are credited directly upon successful payment verification. If any issue occurs, contact WhatsApp: +917776881407.</p>
       </div>
 
       <div id="tab-contact" class="page-section static-page">
@@ -218,58 +214,44 @@
   </div>
 
   <script>
-    const BHARATPE_VPA = "BHARATPE2Z0P0L0B8I71717@unitype";
+    const BHARATPE_VPA = "BHARATPE.220P0L0B8I71717@unitype";
     const MERCHANT_NAME = "VASIM ALI";
     
     let selectedCoinPack = null;
     let isVerified = false;
     let currentOrderId = "";
     let pollInterval = null;
+    let countdownInterval = null;
+    let timeLeft = 100; // ठीक 100 सेकंड (01:40)
 
     function changeTab(tabId, btnElement) {
-      var sections = document.querySelectorAll('.page-section');
-      sections.forEach(function(sec) {
+      document.querySelectorAll('.page-section').forEach(sec => {
         sec.classList.remove('active-page');
         sec.style.display = 'none';
       });
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
-      var buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-
-      var activeTarget = document.getElementById('tab-' + tabId);
-      if (activeTarget) {
-        activeTarget.style.display = 'block';
-        activeTarget.classList.add('active-page');
+      const target = document.getElementById('tab-' + tabId);
+      if (target) {
+        target.style.display = 'block';
+        target.classList.add('active-page');
       }
-      
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
+      if (btnElement) btnElement.classList.add('active');
       window.scrollTo(0, 0);
     }
 
     function selectPlan(cardElem, coins, price) {
-      document.querySelectorAll('.coin-card').forEach(function(el) {
-        el.classList.remove('selected');
-      });
-
+      document.querySelectorAll('.coin-card').forEach(el => el.classList.remove('selected'));
       cardElem.classList.add('selected');
       selectedCoinPack = { coins: coins, price: price };
-
       document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
     function verifyUser() {
-      var uid = document.getElementById('userId').value.trim();
-      var resBox = document.getElementById('verifyResult');
-      
-      if (!uid) {
-        alert('Please enter User ID first');
-        return;
-      }
+      const uid = document.getElementById('userId').value.trim();
+      const resBox = document.getElementById('verifyResult');
+      if (!uid) { alert('Please enter User ID first'); return; }
 
       resBox.style.display = "flex";
       resBox.innerHTML = "Verifying...";
@@ -279,113 +261,132 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid })
       })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
+      .then(res => res.json())
+      .then(data => {
         if (data.code === 200 || data.status === 200 || data.success === true || data.nick) {
           isVerified = true;
-          var info = data.data || data;
-          var name = info.nick || info.nickName || info.name || "Verified User";
-          var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          resBox.innerHTML = '<img src="' + avatar + '" class="user-avatar" onerror="this.src=\'https://i.ibb.co/21P3nGZR/logo.jpg\'"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+          const info = data.data || data;
+          const name = info.nick || info.nickName || info.name || "Verified User";
+          const avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          resBox.innerHTML = `<img src="${avatar}" class="user-avatar" onerror="this.src='https://i.ibb.co/21P3nGZR/logo.jpg'"> <div><b>${name}</b><br><small style="color:#059669;">ID: ${uid} (Verified ✅)</small></div>`;
         } else {
           isVerified = false;
           resBox.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
         }
       })
-      .catch(function() {
+      .catch(() => {
         isVerified = true;
-        resBox.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+        resBox.innerHTML = `<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ${uid} (Verified ✅)</small></div>`;
       });
     }
 
     function initiatePayment() {
-      var uid = document.getElementById('userId').value.trim();
-      var phone = document.getElementById('userPhone').value.trim();
+      const uid = document.getElementById('userId').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
 
-      if (!uid) {
-        alert('Please enter User ID first.');
-        return;
-      }
-      if (!selectedCoinPack) {
-        alert('Please tap on a coin pack to select it.');
-        return;
-      }
-      if (!phone || phone.length < 10) {
-        alert('Please enter a valid WhatsApp number.');
-        return;
-      }
-      if (!isVerified) {
-        alert('Please verify your User ID first.');
-        return;
-      }
+      if (!uid) { alert('Please enter User ID first.'); return; }
+      if (!selectedCoinPack) { alert('Please tap on a coin pack to select it.'); return; }
+      if (!phone || phone.length < 10) { alert('Please enter a valid WhatsApp number.'); return; }
+      if (!isVerified) { alert('Please verify your User ID first.'); return; }
 
       currentOrderId = "ORD" + Date.now();
+      timeLeft = 100; // 100 सेकंड टाइमर सेट
 
       fetch('/api/create-order', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: uid, amount: selectedCoinPack.price, orderId: currentOrderId })
-      }).catch(function() {});
+      }).catch(() => {});
 
-      var upiUrl = "upi://pay?pa=" + encodeURIComponent(BHARATPE_VPA) +
-                    "&pn=" + encodeURIComponent(MERCHANT_NAME) +
-                    "&am=" + selectedCoinPack.price +
-                    "&cu=INR&tn=CoinPurchase";
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(BHARATPE_VPA)}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${selectedCoinPack.price}&cu=INR&tn=CoinPurchase`;
+      const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
 
-      var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(upiUrl);
-
-      var existing = document.getElementById('runtimeQrModal');
+      const existing = document.getElementById('runtimeQrModal');
       if (existing) existing.remove();
 
-      var modalDiv = document.createElement('div');
+      const modalDiv = document.createElement('div');
       modalDiv.id = 'runtimeQrModal';
-      modalDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;justify-content:center;align-items:center;padding:15px;';
+      modalDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:99999;display:flex;justify-content:center;align-items:center;padding:12px;';
       
-      modalDiv.innerHTML = 
-        '<div style="background:#fff;width:100%;max-width:340px;border-radius:14px;padding:18px;text-align:center;">' +
-          '<div style="font-weight:bold;font-size:16px;color:#1e40af;">Scan & Pay via Any UPI</div>' +
-          '<div style="font-size:24px;font-weight:bold;color:#059669;margin:6px 0;">₹' + selectedCoinPack.price + '</div>' +
-          '<img src="' + qrImgUrl + '" style="width:170px;height:170px;margin:5px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">' +
-          '<a href="' + upiUrl + '" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:9px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:8px;">⚡ Open UPI App</a>' +
+      modalDiv.innerHTML = `
+        <div style="background:#fff;width:100%;max-width:340px;border-radius:14px;padding:16px;text-align:center;max-height:96vh;overflow-y:auto;">
+          <div style="font-weight:bold;font-size:16px;color:#1e40af;">Scan & Pay via Any UPI</div>
+          <div style="font-size:22px;font-weight:bold;color:#059669;margin:2px 0;">₹${selectedCoinPack.price}</div>
           
-          '' +
-          '<div style="margin-top:12px;border-top:1px dashed #d1d5db;padding-top:10px;">' +
-            '<div style="font-size:12px;color:#374151;margin-bottom:5px;font-weight:bold;">पेमेंट के बाद अपना बैंक/UPI वाला नाम डालें:</div>' +
-            '<input type="text" id="bankingNameInput" placeholder="Enter Your Banking Name" style="text-align:center;padding:9px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">' +
-            '<button id="verifyBtnId" type="button" onclick="submitNameVerify()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>' +
-          '</div>' +
+          <!-- Barcode QR -->
+          <img src="${qrImgUrl}" style="width:150px;height:150px;margin:4px auto;display:block;border:1px solid #e5e7eb;border-radius:6px;">
           
-          '<button type="button" onclick="closePopup()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:7px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>' +
-        '</div>';
+          <!-- बारकोड के ठीक नीचे 100 सेकंड का टाइमर -->
+          <div style="background:#fef2f2;border:1px solid #f87171;border-radius:8px;padding:6px;margin:8px 0;">
+            <div style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष (Time Left):</div>
+            <div id="orderTimer" style="font-size:20px;font-weight:800;color:#dc2626;letter-spacing:1px;">01:40</div>
+          </div>
+
+          <!-- महत्वपूर्ण सूचना / नोटिस -->
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px;font-size:10.5px;color:#92400e;line-height:1.3;text-align:left;margin-bottom:8px;">
+            ⚠️ <b>ध्यान दें:</b> टाइमर खत्म होने से पहले पेमेंट करके अपना बैंकिंग नाम डालकर वेरीफाई करें। 100 सेकंड बाद यह पेज एक्सपायर हो जाएगा और आपको सपोर्ट टीम से संपर्क करना होगा।
+          </div>
+
+          <a href="${upiUrl}" style="display:block;background:#059669;color:#fff;text-decoration:none;padding:8px;border-radius:6px;font-weight:bold;font-size:13px;margin-bottom:8px;">⚡ Open UPI App</a>
+          
+          <!-- Name Input -->
+          <div style="border-top:1px dashed #d1d5db;padding-top:8px;">
+            <div style="font-size:11.5px;color:#374151;margin-bottom:4px;font-weight:bold;">पेमेंट के बाद अपना बैंक/UPI वाला नाम डालें:</div>
+            <input type="text" id="bankingNameInput" placeholder="Enter Your Banking Name" style="text-align:center;padding:9px;font-size:13px;width:100%;border:1px solid #d1d5db;border-radius:6px;outline:none;">
+            <button id="verifyBtnId" type="button" onclick="submitNameVerify()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:bold;font-size:13px;margin-top:6px;cursor:pointer;">✅ Verify Payment</button>
+          </div>
+          
+          <button type="button" onclick="closePopup()" style="background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;width:100%;padding:6px;border-radius:6px;margin-top:8px;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>`;
 
       document.body.appendChild(modalDiv);
 
-      // बैकग्राउंड में ऑटो-चेक चालू रहेगा
+      // लाइव काउंटडाउन टाइमर (100 सेकंड)
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timerEl = document.getElementById('orderTimer');
+        if (timerEl) {
+          timerEl.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval);
+          clearInterval(pollInterval);
+          closePopup();
+          alert("⏳ समय समाप्त (Session Expired)! 100 सेकंड पूरे हो चुके हैं।\n\nअगर आपने पेमेंट कर दिया है, तो कॉइन प्राप्त करने के लिए कृपया तुरंत WhatsApp सपोर्ट (+917776881407) पर संपर्क करें।");
+        }
+      }, 1000);
+
+      // बैकग्राउंड पोलिंग
       clearInterval(pollInterval);
-      pollInterval = setInterval(function() {
+      pollInterval = setInterval(() => {
         fetch('/api/check-order-status?orderId=' + currentOrderId)
           .then(r => r.json())
           .then(d => {
             if (d && d.status === 'PAID') {
               clearInterval(pollInterval);
+              clearInterval(countdownInterval);
               closePopup();
               alert("Payment Verified! Coins successfully delivered.");
               location.reload();
             }
-          }).catch(()=>{});
+          }).catch(() => {});
       }, 3000);
     }
 
     function closePopup() {
       clearInterval(pollInterval);
-      var m = document.getElementById('runtimeQrModal');
+      clearInterval(countdownInterval);
+      const m = document.getElementById('runtimeQrModal');
       if (m) m.remove();
     }
 
-    // Name + Amount Verification
     function submitNameVerify() {
-      var nameVal = document.getElementById('bankingNameInput').value.trim();
-      var btn = document.getElementById('verifyBtnId');
+      const nameVal = document.getElementById('bankingNameInput').value.trim();
+      const btn = document.getElementById('verifyBtnId');
 
       if (!nameVal || nameVal.length < 2) {
         alert('कृपया अपना सही बैंकिंग नाम (Sender Name) दर्ज करें।');
@@ -400,9 +401,11 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId: currentOrderId, senderName: nameVal })
       })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
+      .then(res => res.json())
+      .then(data => {
         if (data.success) {
+          clearInterval(pollInterval);
+          clearInterval(countdownInterval);
           closePopup();
           alert("Payment Verified! Coins successfully delivered.");
           location.reload();
@@ -412,7 +415,7 @@
           btn.disabled = false;
         }
       })
-      .catch(function() {
+      .catch(() => {
         alert("Server connection error.");
         btn.innerText = "✅ Verify Payment";
         btn.disabled = false;
