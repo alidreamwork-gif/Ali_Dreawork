@@ -385,11 +385,11 @@
       </div>
 
       <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px;font-size:11px;color:#1e40af;margin-bottom:8px;line-height:1.4;text-align:left;">
-        📸 <b>स्क्रीनशॉट लें:</b> इस बारकोड का स्क्रीनशॉट लेकर GPay / PhonePe / Paytm के स्कैनर में 'गैलरी' से चुनें और पे करें।
+        📸 <b>Take A Screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in the GPay, PhonePe, or Paytm scanner, and make the payment.
       </div>
       
       <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:7px;font-size:11.5px;color:#065f46;line-height:1.4;">
-        🔄 <b>ऑटो-डिटेक्शन चालू है:</b> पेमेंट होते ही सिस्टम खुद डिटेक्ट करके 5 सेकंड में कॉइन ट्रांसफर कर देगा।
+        🔄 <b>Auto-detection is on:</b> As soon as the payment is made, the system will automatically detect it and transfer the coins within 5 seconds.
       </div>
 
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
@@ -495,7 +495,7 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            alert("⏳ समय समाप्त! 2 मिनट की समय सीमा समाप्त हो गई है। पेमेंट कट गया है और आपको सिक्का नहीं मिला है टाइम आउट की वजह से तुरंत हमारी सपोर्ट टीम से संपर्क करें कैरे.व्हाट्सएप : 7776881407");
+            alert("⏳ Time's up! The 2-minute time limit has expired. If Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 7776881407;
           }
         }, 1000);
 
