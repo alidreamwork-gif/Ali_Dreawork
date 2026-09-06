@@ -63,15 +63,17 @@ app.post('/api/create-order', (req, res) => {
         const baseAmt = Math.round(Number(amount));
         let coins = baseAmt * 73;
 
-        if (baseAmt === 200) coins = 14600;
-        else if (baseAmt === 300) coins = 21900;
-        else if (baseAmt === 500) coins = 36500;
-        else if (baseAmt === 1000) coins = 73000;
-        else if (baseAmt === 1500) coins = 109500;
-        else if (baseAmt === 2000) coins = 146000;
+        if (baseAmt === 151) coins = 11000;
+        else if (baseAmt === 220) coins = 16100;
+        else if (baseAmt === 330) coins = 24100;
+        else if (baseAmt === 440) coins = 32100;
+        else if (baseAmt === 685) coins = 50000;
+        else if (baseAmt === 1370) coins = 100000;
+        else if (baseAmt === 1600) coins = 116800;
+        else if (baseAmt === 1999) coins = 146000;
         else if (baseAmt === 3000) coins = 219000;
-        else if (baseAmt === 4500) coins = 328500;
-
+       else if (baseAmt === 4500) coins = 328500;
+        
         // 1 से 90 पैसे तक डायनामिक असाइनमेंट
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
