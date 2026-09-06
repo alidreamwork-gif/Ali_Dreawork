@@ -340,7 +340,7 @@
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
-      <b style="color:#1e40af;font-size:16px;">जरूरी सूचना / Important Notice</b>
+      <b style="color:#1e40af;font-size:16px;">Payment Instructions / भुगतान निर्देश</b>
       
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
         <b style="color:#1e40af;font-size:12px;">English:</b>
@@ -495,7 +495,7 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            alert("⏳ समय समाप्त! 2 मिनट की समय सीमा समाप्त हो गई है।");
+            alert("⏳ समय समाप्त! 2 मिनट की समय सीमा समाप्त हो गई है। पेमेंट कट गया है और आपको सिक्का नहीं मिला है टाइम आउट की वजह से तुरंत हमारी सपोर्ट टीम से संपर्क करें कैरे.व्हाट्सएप : 7776881407");
           }
         }, 1000);
 
@@ -506,7 +506,7 @@
             .then(function(d){
               if (d && d.status === 'PAID') {
                 hideAllModals();
-                alert("🎉 Payment Verified! Coins successfully delivered to your ID.\n\nपेमेंट वेरीफाई हो गया! कॉइन सफलतापूर्वक आपके खाते में डाल दिए गए हैं।");
+                alert("🎉Congratulations Payment Verified! Coins successfully delivered to your ID.\n\nपेमेंट वेरीफाई हो गया! कॉइन सफलतापूर्वक आपके खाते में डाल दिए गए हैं।");
                 location.reload();
               }
             }).catch(function(){});
