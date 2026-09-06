@@ -69,7 +69,6 @@ app.post('/api/create-order', (req, res) => {
         else if (baseAmt === 440) coins = 32100;
         else if (baseAmt === 685) coins = 50000;
         else if (baseAmt === 1370) coins = 100000;
-        else if (baseAmt === 1600) coins = 116800;
         else if (baseAmt === 1999) coins = 146000;
         else if (baseAmt === 3000) coins = 219000;
        else if (baseAmt === 4500) coins = 328500;
