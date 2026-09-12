@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// अधिकृत 9 प्लान्स की सख्त मैपिंग (Amount -> Coins)
+// 1. आपके 9 असली प्लान्स की मैपिंग (अमाउंट छेड़छाड़ रोकने के लिए सुरक्षा ताला)
 const COIN_PLANS = {
     151: 11000,
     220: 16100,
@@ -25,7 +25,31 @@ const COIN_PLANS = {
     4500: 328500
 };
 
-// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
+// 2. UPI कॉन्फ़िगरेशन
+const BHARATPE_CONFIG = {
+    name: "BHARATPE",
+    vpa: "BHARATPE2Z0P0L0B8I71717@unitype",
+    merchantName: "VASIM ALI"
+};
+
+const PHONEPE_CONFIG = {
+    name: "PHONEPE",
+    vpa: "Q524225259@ybl", // <-- यहाँ अपनी PhonePe मर्चेंट UPI ID डालें
+    merchantName: "Ali dreamwork"      // <-- PhonePe पर जो बिज़नेस नाम दिखता है
+};
+
+// 4:1 रोटेशन पूल: 4 बार BharatPe, 1 बार PhonePe (हर 5 ऑर्डर के बाद ऑटो-रिसेट)
+const UPI_ROTATION_POOL = [
+    BHARATPE_CONFIG, // 1st Order
+    BHARATPE_CONFIG, // 2nd Order
+    BHARATPE_CONFIG, // 3rd Order
+    BHARATPE_CONFIG, // 4th Order
+    PHONEPE_CONFIG   // 5th Order
+];
+
+let rotationIndex = 0;
+
+// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, gateway, createdAt }
 const activeOrders = new Map();
 
 // यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
@@ -38,7 +62,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 1. User Verification
+// 1. User Verification Endpoint
 app.post('/api/verify-user', async (req, res) => {
     try {
         const { uid } = req.body;
@@ -65,7 +89,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (छेड़छाड़-सुरक्षित सख्त वैलिडेशन)
+// 2. Order Create (4:1 UPI Rotation + Security Lock)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -75,24 +99,29 @@ app.post('/api/create-order', (req, res) => {
 
         const baseAmt = Math.round(Number(amount));
 
-        // सुरक्षा ताला: अगर अमाउंट इन 9 प्लान्स में नहीं है, तो तुरंत ब्लॉक करें
+        // सुरक्षा जांच: अगर अमाउंट 9 प्लान में नहीं है, तो तुरंत रिजेक्ट करें
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
+            console.warn(`[SECURITY ALERT] फर्जी अमाउंट ब्लॉक किया गया: ₹${amount} | UID: ${uid}`);
             return res.status(400).json({ 
                 success: false, 
                 message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
             });
         }
 
-        // सही कॉइन संख्या सीधे सर्वर मैपिंग से ली जाएगी
         const coins = COIN_PLANS[baseAmt];
         
-        // 1 से 90 पैसे तक डायनामिक असाइनमेंट
+        // 1 से 90 पैसे का डायनामिक असाइनमेंट
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
 
-        // सटीक फ्लोटिंग अमाउंट (जैसे 151.01)
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
+
+        // 4:1 पूल से अगला UPI अकाउंट चुनना (हर 5 के बाद अपने आप इंडेक्स 0 पर रिसेट होगा)
+        const currentUpi = UPI_ROTATION_POOL[rotationIndex];
+        rotationIndex = (rotationIndex + 1) % UPI_ROTATION_POOL.length;
+
+        // UPI Intent String तैयार करना
+        const upiString = `upi://pay?pa=${currentUpi.vpa}&pn=${encodeURIComponent(currentUpi.merchantName)}&am=${exactAmount}&cu=INR&tn=CoinPurchase`;
 
         activeOrders.set(orderId, {
             uid: uid.toString().trim(),
@@ -100,11 +129,18 @@ app.post('/api/create-order', (req, res) => {
             exactAmount: exactAmount,
             coins: coins,
             status: 'PENDING',
+            gateway: currentUpi.name,
             createdAt: Date.now()
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount });
+        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${currentUpi.name} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+
+        return res.json({ 
+            success: true, 
+            orderId: orderId, 
+            exactAmount: exactAmount,
+            upiString: upiString 
+        });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
     }
@@ -138,19 +174,22 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. BharatPe Notification Webhook (सटीक पैसे मैचिंग)
+// 4. Webhook (BharatPe और PhonePe दोनों के SMS/नोटिफिकेशन सपोर्ट)
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
-        console.log("================== BHARATPE WEBHOOK HIT ==================");
+        console.log("================== PAYMENT WEBHOOK HIT ==================");
         const text = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
         console.log("Notification Content:", text);
 
         if (!text) return res.status(200).json({ status: false });
 
-        // BharatPe नोटिफिकेशन से सटीक फ्लोट अमाउंट निकालना
         let detectedAmount = 0;
-        const amtMatch = text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
-                      || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
+
+        // दोनों मर्चेंट ऐप और बैंक SMS से सटीक अमाउंट निकालने का यूनिवर्सल पैटर्न
+        const amtMatch = text.match(/(?:received|credited|payment of|rs\.?|inr)\s*(?:rs\.?|inr)?\s*([\d,]+(?:\.\d{1,2})?)/i)
+                      || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i)
+                      || text.match(/([\d,]+(?:\.\d{1,2})?)\s*(?:rupees|rs|inr)/i);
+
         if (amtMatch) {
             detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
         }
@@ -162,11 +201,12 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
             for (let [ordId, ordData] of activeOrders.entries()) {
                 if (ordData.status === 'PENDING') {
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
+                        // पैसे से पैसे का सटीक मिलान
                         if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
-                            console.log(`[MATCH FOUND] Order: ${ordId} verified with ₹${detectedAmount}`);
+                            console.log(`[MATCH FOUND] Order: ${ordId} (${ordData.gateway}) verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
                             
-                            // तुरंत ऑटोमैटिक कॉइन डिलीवर
+                            // तुरंत कॉइन डिलीवर
                             await deliverCoinsToUser(ordData.uid, ordData.coins, ordId);
                             break;
                         }
@@ -182,7 +222,7 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     }
 });
 
-// 5. Polling Endpoint (फ्रंटएंड हर 2 सेकंड में चेक करेगा)
+// 5. Polling Endpoint
 app.get('/api/check-order-status', (req, res) => {
     const { orderId } = req.query;
     if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
