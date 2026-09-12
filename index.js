@@ -12,10 +12,23 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
+// अधिकृत 9 प्लान्स की सख्त मैपिंग (Amount -> Coins)
+const COIN_PLANS = {
+    151: 11000,
+    220: 16100,
+    330: 24100,
+    440: 32100,
+    685: 50000,
+    1370: 100000,
+    1999: 146000,
+    3000: 219000,
+    4500: 328500
+};
+
 // activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
 const activeOrders = new Map();
 
-// यूनिक पैसे असाइन करने के लिए काउंटर (1 से 99 पैसे)
+// यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
 let paiseCounter = 1;
 
 // ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
@@ -52,7 +65,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (यूनिक डायनामिक अमाउंट जनरेटर)
+// 2. Order Create (छेड़छाड़-सुरक्षित सख्त वैलिडेशन)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -61,23 +74,24 @@ app.post('/api/create-order', (req, res) => {
         }
 
         const baseAmt = Math.round(Number(amount));
-        let coins = baseAmt * 73;
 
-        if (baseAmt === 151) coins = 11000;
-        else if (baseAmt === 220) coins = 16100;
-        else if (baseAmt === 330) coins = 24100;
-        else if (baseAmt === 440) coins = 32100;
-        else if (baseAmt === 685) coins = 50000;
-        else if (baseAmt === 1370) coins = 100000;
-        else if (baseAmt === 1999) coins = 146000;
-        else if (baseAmt === 3000) coins = 219000;
-       else if (baseAmt === 4500) coins = 328500;
+        // सुरक्षा ताला: अगर अमाउंट इन 9 प्लान्स में नहीं है, तो तुरंत ब्लॉक करें
+        if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
+            console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
+            return res.status(400).json({ 
+                success: false, 
+                message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
+            });
+        }
+
+        // सही कॉइन संख्या सीधे सर्वर मैपिंग से ली जाएगी
+        const coins = COIN_PLANS[baseAmt];
         
         // 1 से 90 पैसे तक डायनामिक असाइनमेंट
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
 
-        // सटीक फ्लोटिंग अमाउंट (जैसे 200.01)
+        // सटीक फ्लोटिंग अमाउंट (जैसे 151.01)
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
         activeOrders.set(orderId, {
@@ -133,7 +147,7 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
 
         if (!text) return res.status(200).json({ status: false });
 
-        // BharatPe नोटिफिकेशन से सटीक फ्लोट अमाउंट निकालना (उदा: 200.01 या 200.00)
+        // BharatPe नोटिफिकेशन से सटीक फ्लोट अमाउंट निकालना
         let detectedAmount = 0;
         const amtMatch = text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
                       || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
@@ -145,12 +159,9 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
         const now = Date.now();
 
         if (detectedAmount > 0) {
-            // क्या यह अमाउंट किसी सक्रिय पेंडिंग ऑर्डर से मेल खा रहा है?
             for (let [ordId, ordData] of activeOrders.entries()) {
                 if (ordData.status === 'PENDING') {
-                    // क्या समय 2 मिनट के अंदर है?
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
-                        // ठीक पैसे से पैसे मैच
                         if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
                             console.log(`[MATCH FOUND] Order: ${ordId} verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
