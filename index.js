@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// 1. आपके 9 असली प्लान्स की मैपिंग (अमाउंट छेड़छाड़ रोकने के लिए सुरक्षा ताला)
+// 1. आपके 9 आधिकारिक प्लान्स (छेड़छाड़ रोकने के लिए सुरक्षा ताला)
 const COIN_PLANS = {
     151: 11000,
     220: 16100,
@@ -34,11 +34,11 @@ const BHARATPE_CONFIG = {
 
 const PHONEPE_CONFIG = {
     name: "PHONEPE",
-    vpa: "Q524225259@ybl", // <-- यहाँ अपनी PhonePe मर्चेंट UPI ID डालें
-    merchantName: "Ali dreamwork"      // <-- PhonePe पर जो बिज़नेस नाम दिखता है
+    vpa: "Q908322573@ybl", // <-- यहाँ अपनी असली PhonePe मर्चेंट UPI ID डालें
+    merchantName: "VASIM ALI"      // <-- PhonePe Business पर जो नाम दिखता है
 };
 
-// 4:1 रोटेशन पूल: 4 बार BharatPe, 1 बार PhonePe (हर 5 ऑर्डर के बाद ऑटो-रिसेट)
+// 4:1 रोटेशन पूल: 4 बार BharatPe और 1 बार PhonePe (हर 5 ऑर्डर पर ऑटो-रिपीट)
 const UPI_ROTATION_POOL = [
     BHARATPE_CONFIG, // 1st Order
     BHARATPE_CONFIG, // 2nd Order
@@ -57,6 +57,17 @@ let paiseCounter = 1;
 
 // ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
 const ORDER_VALIDITY_MS = 120 * 1000;
+
+// फैंसी/स्टाइलिश यूनिकोड अंकों (Mathematical Alphanumeric Symbols) को सामान्य 0-9 में बदलना
+function normalizeNumbers(str) {
+    if (!str) return "";
+    return str
+        .normalize('NFKD')
+        .replace(/[\u{1D7CE}-\u{1D7F5}]/gu, ch => {
+            const code = ch.codePointAt(0);
+            return String((code - 0x1D7CE) % 10);
+        });
+}
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -89,7 +100,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (4:1 UPI Rotation + Security Lock)
+// 2. Order Create Endpoint (4:1 UPI Rotation + Tampering Protection)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -99,9 +110,9 @@ app.post('/api/create-order', (req, res) => {
 
         const baseAmt = Math.round(Number(amount));
 
-        // सुरक्षा जांच: अगर अमाउंट 9 प्लान में नहीं है, तो तुरंत रिजेक्ट करें
+        // सुरक्षा जांच: केवल लिस्टेड प्लान्स मान्य होंगे
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] फर्जी अमाउंट ब्लॉक किया गया: ₹${amount} | UID: ${uid}`);
+            console.warn(`[SECURITY ALERT] फर्जी प्लान पकड़ा गया: ₹${amount} | UID: ${uid}`);
             return res.status(400).json({ 
                 success: false, 
                 message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
@@ -116,7 +127,7 @@ app.post('/api/create-order', (req, res) => {
 
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // 4:1 पूल से अगला UPI अकाउंट चुनना (हर 5 के बाद अपने आप इंडेक्स 0 पर रिसेट होगा)
+        // 4:1 रोटेशन से गेटवे पिक करना
         const currentUpi = UPI_ROTATION_POOL[rotationIndex];
         rotationIndex = (rotationIndex + 1) % UPI_ROTATION_POOL.length;
 
@@ -133,7 +144,7 @@ app.post('/api/create-order', (req, res) => {
             createdAt: Date.now()
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${currentUpi.name} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${currentUpi.name} | Amount: ₹${exactAmount} | Coins: ${coins}`);
 
         return res.json({ 
             success: true, 
@@ -146,7 +157,7 @@ app.post('/api/create-order', (req, res) => {
     }
 });
 
-// 3. Helper: कॉइन डिलीवरी
+// 3. Helper: कॉइन ऑटो-क्रेडिट
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -174,21 +185,25 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Webhook (BharatPe और PhonePe दोनों के SMS/नोटिफिकेशन सपोर्ट)
+// 4. Webhook (BharatPe और PhonePe Notification Parser)
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
-        const text = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        console.log("Notification Content:", text);
+        const rawText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        console.log("Raw Notification Content:", rawText);
 
-        if (!text) return res.status(200).json({ status: false });
+        if (!rawText) return res.status(200).json({ status: false });
+
+        // PhonePe के स्टाइलिश यूनिकोड फ़ॉन्ट को साधारण टेक्स्ट में बदलना
+        const cleanText = normalizeNumbers(rawText);
+        console.log("Normalized Content:", cleanText);
 
         let detectedAmount = 0;
 
-        // दोनों मर्चेंट ऐप और बैंक SMS से सटीक अमाउंट निकालने का यूनिवर्सल पैटर्न
-        const amtMatch = text.match(/(?:received|credited|payment of|rs\.?|inr)\s*(?:rs\.?|inr)?\s*([\d,]+(?:\.\d{1,2})?)/i)
-                      || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i)
-                      || text.match(/([\d,]+(?:\.\d{1,2})?)\s*(?:rupees|rs|inr)/i);
+        // BharatPe, PhonePe, बैंक SMS सभी से रकम निकालना
+        const amtMatch = cleanText.match(/(?:received|credited|payment of|rs\.?|inr)\s*(?:rs\.?|inr)?\s*([\d,]+(?:\.\d{1,2})?)/i)
+                      || cleanText.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i)
+                      || cleanText.match(/([\d,]+(?:\.\d{1,2})?)\s*(?:rupees|rs|inr)/i);
 
         if (amtMatch) {
             detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
