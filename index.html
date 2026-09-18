@@ -5,12 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Ali Dreamwork Store</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { width: 100%; overflow-x: hidden; font-family: sans-serif; background: #f3f4f6; }
     body { display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    /* कॉम्पैक्ट हेडर - नीला बैकग्राउंड */
+    .app-wrapper { 
+      width: 100%; 
+      max-width: 480px; 
+      background: #fff; 
+      min-height: 100vh; 
+      padding-bottom: 30px; 
+      position: relative; 
+      overflow-x: hidden;
+    }
+    
+    /* कॉम्पैक्ट हेडर - नीला बैकग्राउंड (कोई सफेद बॉक्स नहीं) */
     .top-navbar { 
       background: #1e40af; 
       padding: 8px 10px; 
@@ -25,18 +34,19 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
+      background: transparent;
     }
-    /* लोगो - ब्लैक बॉर्डर */
+    /* लोगो: ब्लैक बॉर्डर */
     .nav-brand-left img {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: 2px solid #000000;
       object-fit: cover;
       display: block;
       background: #fff;
     }
-    /* ब्रांड नाम - ब्लैक */
+    /* ब्रांड नाम: ब्लैक */
     .nav-brand-title {
       color: #000000;
       font-size: 13.5px;
@@ -46,13 +56,13 @@
       text-shadow: 0 0 2px rgba(255,255,255,0.8);
     }
 
-    /* दाएँ साइड के बटन्स */
+    /* दाएँ साइड के बटन्स - बिना कटिंग के सुरक्षित */
     .nav-buttons-right { 
       display: flex; 
       flex-direction: column; 
       gap: 4px; 
       align-items: flex-end; 
-      flex: 1;
+      flex-shrink: 1;
       min-width: 0;
     }
     .nav-row {
@@ -81,8 +91,8 @@
     .container { padding: 10px 12px; width: 100%; }
     .page-section { display: none; }
 
-    /* कार रश बैनर - पूरा दिखेगा */
-    .banner-wrapper { margin: 2px 0 10px 0; text-align: center; width: 100%; }
+    /* कार रश बैनर */
+    .banner-wrapper { margin: 2px 0 10px 0; text-align: center; }
     .race-banner-img { 
       width: 100%; 
       height: auto; 
@@ -114,15 +124,17 @@
       text-align: center; 
       cursor: pointer; 
       user-select: none;
+      transition: all 0.12s ease;
     }
     .coin-card.selected { 
-      border-color: #059669; 
-      background: #f0fdf4; 
+      border-color: #059669 !important; 
+      background: #f0fdf4 !important; 
+      box-shadow: 0 0 0 1.5px #059669;
     }
-    .coin-number { font-size: 16.5px; font-weight: 800; color: #1e40af; }
-    .coin-label { font-size: 10px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
-    .coin-divider { width: 30px; height: 2px; background: #e5e7eb; margin: 6px auto; }
-    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
+    .coin-number { font-size: 16.5px; font-weight: 800; color: #1e40af; pointer-events: none; }
+    .coin-label { font-size: 10px; color: #6b7280; font-weight: 600; text-transform: uppercase; pointer-events: none; }
+    .coin-divider { width: 30px; height: 2px; background: #e5e7eb; margin: 6px auto; pointer-events: none; }
+    .coin-price { font-size: 15px; font-weight: bold; color: #059669; pointer-events: none; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
@@ -144,4 +156,295 @@
     }
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
-    .static-page p { font-size: 13px; color: #4b5563; line-height: 1.
+    .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    
+    <!-- नेविगेशन बार -->
+    <div class="top-navbar">
+      <div class="nav-brand-left">
+        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
+        <div class="nav-brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
+      </div>
+
+      <div class="nav-buttons-right">
+        <div class="nav-row">
+          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
+          <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="nav-btn" id="b-privacy" onclick="tab('privacy')">Privacy</button>
+          <button type="button" class="nav-btn" id="b-refund" onclick="tab('refund')">Refund</button>
+          <button type="button" class="nav-btn" id="b-contact" onclick="tab('contact')">Contact</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      
+      <!-- Coins Section -->
+      <div id="p-coins" class="page-section" style="display: block;">
+
+        <!-- कार रश बैनर -->
+        <div class="banner-wrapper">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openCarRush()">
+        </div>
+
+        <div class="card">
+          <label>DUOO & DORAN USER ID:</label>
+          <div class="id-group">
+            <input type="text" id="userId" placeholder="Enter User ID">
+            <button type="button" class="verify-btn" onclick="verifyUID()">Verify</button>
+          </div>
+          <div id="verifyResult"></div>
+
+          <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
+          <div class="plans-grid">
+            <div class="coin-card" onclick="setPack(this, 11000, 151)">
+              <div class="coin-number">11,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹151</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 16100, 220)">
+              <div class="coin-number">16,100</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹220</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 24100, 330)">
+              <div class="coin-number">24,100</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹330</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 32100, 440)">
+              <div class="coin-number">32,100</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹440</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 50000, 685)">
+              <div class="coin-number">50,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹685</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 100000, 1370)">
+              <div class="coin-number">100,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹1,370</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 146000, 1999)">
+              <div class="coin-number">146,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹1,999</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 219000, 3000)">
+              <div class="coin-number">219,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹3,000</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 328500, 4500)">
+              <div class="coin-number">328,500</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹4,500</div>
+            </div>
+          </div>
+
+          <label>WhatsApp Number:</label>
+          <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+
+          <div class="summary-box">
+            <div class="summary-row"><span>Selected Plan:</span> <b id="sumPlan" style="color:#1e40af;">None</b></div>
+            <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
+          </div>
+
+          <div class="terms-wrapper">
+            <input type="checkbox" id="termsAgree" checked>
+            <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
+              I accept all <span onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;cursor:pointer;">Terms & Conditions</span>
+            </label>
+          </div>
+
+          <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
+        </div>
+      </div>
+
+      <!-- Static Tabs -->
+      <div id="p-terms" class="page-section static-page">
+        <h2>📜 Terms & Conditions</h2>
+        <p>Welcome to <strong>Ali Dreamwork</strong>. All coin packs are delivered automatically to verified User IDs.</p>
+      </div>
+
+      <div id="p-privacy" class="page-section static-page">
+        <h2>🔒 Privacy Policy</h2>
+        <p>Your privacy and data security are strictly protected. We never share customer data.</p>
+      </div>
+
+      <div id="p-refund" class="page-section static-page">
+        <h2>🔄 Refund & Cancellation Policy</h2>
+        <p>Digital coins once delivered cannot be reversed. For any issue, contact support.</p>
+      </div>
+
+      <div id="p-contact" class="page-section static-page">
+        <h2>🎧 Contact Us</h2>
+        <p>WhatsApp: +917776881407</p>
+        <p>Email: alidreamwork@gmail.com</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- कार रश पॉपअप (वीडियो जैसा) -->
+  <div id="modalCarRush" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;">
+    <div style="position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);">
+      <button type="button" onclick="closeCarRush()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;">✕</button>
+      <iframe id="carRushIframe" src="about:blank" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <!-- 1. पेमेंट निर्देश पॉपअप -->
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
+    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
+      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
+      <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
+      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
+        <ol style="margin:4px 0 0 18px;padding:0;">
+          <li>आगे 2 मिनट के टाइमर के साथ बारकोड खुलेगा।</li>
+          <li>उसका स्क्रीनशॉट लें और अपने UPI स्कैनर की गैलरी से पे करें।</li>
+          <li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>
+        </ol>
+      </div>
+      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <!-- 2. बारकोड पॉपअप -->
+  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
+    <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
+      <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
+      <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
+      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
+        <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
+        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
+      </div>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <script>
+    var selectedPack = null;
+    var isUidValid = false;
+    var orderId = "";
+    var exactPayableAmount = 0;
+    var timerObj = null;
+    var pollObj = null;
+    var leftTime = 120;
+
+    // कॉइन पैक चयन
+    window.setPack = function(el, coins, price) {
+      var all = document.getElementsByClassName('coin-card');
+      for (var i = 0; i < all.length; i++) {
+        all[i].classList.remove('selected');
+      }
+      el.classList.add('selected');
+      selectedPack = { coins: coins, price: price };
+      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
+    };
+
+    // कार रश पॉपअप
+    window.openCarRush = function() {
+      var m = document.getElementById('modalCarRush');
+      var f = document.getElementById('carRushIframe');
+      f.src = 'https://www.doran.live/car-rush-ad';
+      m.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeCarRush = function() {
+      var m = document.getElementById('modalCarRush');
+      var f = document.getElementById('carRushIframe');
+      m.style.display = 'none';
+      f.src = 'about:blank';
+      document.body.style.overflow = 'auto';
+    };
+
+    // टैब नेविगेशन
+    window.tab = function(key) {
+      var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
+      for (var i = 0; i < arr.length; i++) {
+        var p = document.getElementById('p-' + arr[i]);
+        var b = document.getElementById('b-' + arr[i]);
+        if (p) p.style.display = 'none';
+        if (b) b.classList.remove('active');
+      }
+      var tp = document.getElementById('p-' + key);
+      var tb = document.getElementById('b-' + key);
+      if (tp) tp.style.display = 'block';
+      if (tb) tb.classList.add('active');
+    };
+
+    // यूजर आईडी वेरिफिकेशन
+    window.verifyUID = function() {
+      var uid = document.getElementById('userId').value.trim();
+      var res = document.getElementById('verifyResult');
+      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+      res.style.display = "flex";
+      res.innerHTML = "Verifying...";
+
+      fetch('/api/verify-user', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.code === 200 || d.status === 200 || d.success === true || d.nick) {
+          isUidValid = true;
+          var info = d.data || d;
+          var name = info.nick || info.nickName || info.name || "Verified User";
+          var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          res.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+        } else {
+          isUidValid = false;
+          res.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+        }
+      }).catch(function(){
+        isUidValid = true;
+        res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+      });
+    };
+
+    // बाय नाउ
+    window.startBuy = function() {
+      var uid = document.getElementById('userId').value.trim();
+      var ph = document.getElementById('userPhone').value.trim();
+      var termsChecked = document.getElementById('termsAgree').checked;
+
+      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+      if (!selectedPack) { alert('Please select a coin pack / कृपया कॉइन पैक चुनें'); return; }
+      if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number / सही WhatsApp नंबर दर्ज करें'); return; }
+      if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
+      if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
+
+      document.getElementById('modalNotice').style.display = 'flex';
+    };
+
+    // बारकोड और टाइमर शुरू
+    window.showQR = function() {
+      document.getElementById('modalNotice').style.display = 'none';
+      var uid = document.getElementById('userId').value.trim();
+      orderId = "ORD" + Date.now();
+      leftTime = 120;
+
+      fetch('/api/create-order', {
+        me
