@@ -513,13 +513,29 @@
 
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
+    <!-- 1. विस्तृत निर्देश पॉपअप (Detailed Instructions Notice) -->
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
+      
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
+        <b style="color:#1e40af;font-size:12px;">English:</b>
+        <ol style="margin:4px 0 10px 18px;padding:0;">
+          <li>A <b>Barcode</b> will open with a 2-minute timer and the exact payable amount.</li>
+          <li>Take a <b>Screenshot</b> of the barcode.</li>
+          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
+          <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
+        </ol>
+
+        <b style="color:#1e40af;font-size:12px;">हिंदी:</b>
         <ol style="margin:4px 0 0 18px;padding:0;">
-          <li>आगे 2 मिनट के टाइमर के साथ बारकोड खुलेगा।</li>
-          <li>उसका स्क्रीनशॉट लें और अपने UPI स्कैनर की गैलरी से पे करें।</li>
-          <li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>
+          <li>आगे 2 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
+          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खोलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
         </ol>
       </div>
       <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
