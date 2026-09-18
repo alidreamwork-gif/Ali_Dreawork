@@ -9,7 +9,7 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    /* कॉम्पैक्ट हेडर - नीली पट्टी में लोगो और बटन्स */
+    /* कॉम्पैक्ट हेडर */
     .top-navbar { 
       background: #1e40af; 
       padding: 8px 10px; 
@@ -103,6 +103,7 @@
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 14px 0 10px 0; }
     .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     
+    /* टच सपोर्ट के साथ कॉइन कार्ड्स */
     .coin-card { 
       border: 2px solid #e5e7eb; 
       border-radius: 12px; 
@@ -111,6 +112,7 @@
       text-align: center; 
       cursor: pointer; 
       user-select: none;
+      touch-action: manipulation;
       transition: all 0.15s ease;
     }
     .coin-card.selected { 
@@ -140,6 +142,7 @@
       border-radius: 8px; 
       cursor: pointer; 
       margin-top: 14px; 
+      touch-action: manipulation;
     }
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
@@ -159,13 +162,13 @@
 
       <div class="nav-buttons-right">
         <div class="nav-row">
-          <button type="button" class="nav-btn active" id="btn-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
-          <button type="button" class="nav-btn" id="btn-terms" onclick="tab('terms')">Terms</button>
+          <button type="button" class="nav-btn active" id="tabCoins">Duoo & Doran Coins</button>
+          <button type="button" class="nav-btn" id="tabTerms">Terms</button>
         </div>
         <div class="nav-row">
-          <button type="button" class="nav-btn" id="btn-privacy" onclick="tab('privacy')">Privacy</button>
-          <button type="button" class="nav-btn" id="btn-refund" onclick="tab('refund')">Refund</button>
-          <button type="button" class="nav-btn" id="btn-contact" onclick="tab('contact')">Contact</button>
+          <button type="button" class="nav-btn" id="tabPrivacy">Privacy</button>
+          <button type="button" class="nav-btn" id="tabRefund">Refund</button>
+          <button type="button" class="nav-btn" id="tabContact">Contact</button>
         </div>
       </div>
     </div>
@@ -177,68 +180,68 @@
 
         <!-- कार रश बैनर -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openCarRushPopup()">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" id="raceBanner">
         </div>
 
         <div class="card">
           <label>DUOO & DORAN USER ID:</label>
           <div class="id-group">
             <input type="text" id="userId" placeholder="Enter User ID">
-            <button type="button" class="verify-btn" onclick="verifyUID()">Verify</button>
+            <button type="button" class="verify-btn" id="verifyBtn">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
           <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
           <div class="plans-grid">
-            <div class="coin-card" onclick="selectPlan(this, 11000, 151)">
+            <div class="coin-card" data-coins="11000" data-price="151">
               <div class="coin-number">11,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹151</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 16100, 220)">
+            <div class="coin-card" data-coins="16100" data-price="220">
               <div class="coin-number">16,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹220</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 24100, 330)">
+            <div class="coin-card" data-coins="24100" data-price="330">
               <div class="coin-number">24,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹330</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 32100, 440)">
+            <div class="coin-card" data-coins="32100" data-price="440">
               <div class="coin-number">32,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹440</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 50000, 685)">
+            <div class="coin-card" data-coins="50000" data-price="685">
               <div class="coin-number">50,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹685</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 100000, 1370)">
+            <div class="coin-card" data-coins="100000" data-price="1370">
               <div class="coin-number">100,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,370</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 146000, 1999)">
+            <div class="coin-card" data-coins="146000" data-price="1999">
               <div class="coin-number">146,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,999</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 219000, 3000)">
+            <div class="coin-card" data-coins="219000" data-price="3000">
               <div class="coin-number">219,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹3,000</div>
             </div>
-            <div class="coin-card" onclick="selectPlan(this, 328500, 4500)">
+            <div class="coin-card" data-coins="328500" data-price="4500">
               <div class="coin-number">328,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
@@ -257,11 +260,11 @@
           <div class="terms-wrapper">
             <input type="checkbox" id="termsAgree" checked>
             <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
-              I accept all <a href="javascript:void(0)" onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;">Terms & Conditions</a>
+              I accept all <span id="linkTerms" style="color:#2563eb;text-decoration:underline;cursor:pointer;">Terms & Conditions</span>
             </label>
           </div>
 
-          <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
+          <button type="button" class="main-buy-btn" id="buyBtn">BUY NOW</button>
         </div>
       </div>
 
@@ -299,67 +302,82 @@
     var pollObj = null;
     var leftTime = 120;
 
-    // 1. कॉइन पैक चयन
-    function selectPlan(el, coins, price) {
-      var cards = document.querySelectorAll('.coin-card');
-      for (var i = 0; i < cards.length; i++) {
-        cards[i].classList.remove('selected');
+    // 1. कॉइन पैक कार्ड्स पर टच और क्लिक हैंडलर
+    var cards = document.querySelectorAll('.coin-card');
+    cards.forEach(function(card) {
+      function chooseCard(e) {
+        if (e) e.preventDefault();
+        cards.forEach(function(c) { c.classList.remove('selected'); });
+        card.classList.add('selected');
+        var coins = parseInt(card.getAttribute('data-coins'), 10);
+        var price = parseInt(card.getAttribute('data-price'), 10);
+        selectedPack = { coins: coins, price: price };
+        document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
+        document.getElementById('sumPrice').innerText = "₹" + price;
       }
-      el.classList.add('selected');
-      selectedPack = { coins: coins, price: price };
-      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
-    }
+      card.addEventListener('click', chooseCard);
+      card.addEventListener('touchend', chooseCard);
+    });
 
     // 2. कार रश इन-पेज पॉपअप
-    function openCarRushPopup() {
-      if (document.getElementById('rushModalWrap')) return;
+    var banner = document.getElementById('raceBanner');
+    if (banner) {
+      banner.onclick = function() {
+        if (document.getElementById('rushModalWrap')) return;
 
-      var overlay = document.createElement('div');
-      overlay.id = 'rushModalWrap';
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
+        var overlay = document.createElement('div');
+        overlay.id = 'rushModalWrap';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
 
-      var box = document.createElement('div');
-      box.style.cssText = 'position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);';
+        var box = document.createElement('div');
+        box.style.cssText = 'position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);';
 
-      var closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.innerHTML = '✕';
-      closeBtn.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;';
-      closeBtn.onclick = function() {
-        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        document.body.style.overflow = 'auto';
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.innerHTML = '✕';
+        closeBtn.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;';
+        closeBtn.onclick = function() {
+          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          document.body.style.overflow = 'auto';
+        };
+
+        var frame = document.createElement('iframe');
+        frame.src = 'https://www.doran.live/car-rush-ad';
+        frame.style.cssText = 'width:100%;height:100%;border:none;background:#fff;';
+        frame.setAttribute('allow', 'fullscreen');
+
+        box.appendChild(closeBtn);
+        box.appendChild(frame);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
       };
-
-      var frame = document.createElement('iframe');
-      frame.src = 'https://www.doran.live/car-rush-ad';
-      frame.style.cssText = 'width:100%;height:100%;border:none;background:#fff;';
-      frame.setAttribute('allow', 'fullscreen');
-
-      box.appendChild(closeBtn);
-      box.appendChild(frame);
-      overlay.appendChild(box);
-      document.body.appendChild(overlay);
-      document.body.style.overflow = 'hidden';
     }
 
-    // 3. टैब नेविगेशन (बिना किसी JS एरर के)
-    function tab(key) {
-      var tabs = ['coins', 'terms', 'privacy', 'refund', 'contact'];
-      for (var i = 0; i < tabs.length; i++) {
-        var page = document.getElementById('p-' + tabs[i]);
-        var btn = document.getElementById('btn-' + tabs[i]);
-        if (page) page.style.display = 'none';
-        if (btn) btn.classList.remove('active');
+    // 3. टैब्स
+    function switchTab(key, btnElem) {
+      var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
+      for (var i = 0; i < arr.length; i++) {
+        var el = document.getElementById('p-' + arr[i]);
+        if (el) el.style.display = 'none';
       }
-      var activePage = document.getElementById('p-' + key);
-      var activeBtn = document.getElementById('btn-' + key);
-      if (activePage) activePage.style.display = 'block';
-      if (activeBtn) activeBtn.classList.add('active');
+      var target = document.getElementById('p-' + key);
+      if (target) target.style.display = 'block';
+
+      var allBtns = document.querySelectorAll('.nav-btn');
+      allBtns.forEach(function(b) { b.classList.remove('active'); });
+      if (btnElem) btnElem.classList.add('active');
     }
 
-    // 4. यूजर आईडी वेरिफिकेशन
-    function verifyUID() {
+    document.getElementById('tabCoins').onclick = function() { switchTab('coins', this); };
+    document.getElementById('tabTerms').onclick = function() { switchTab('terms', this); };
+    document.getElementById('tabPrivacy').onclick = function() { switchTab('privacy', this); };
+    document.getElementById('tabRefund').onclick = function() { switchTab('refund', this); };
+    document.getElementById('tabContact').onclick = function() { switchTab('contact', this); };
+    document.getElementById('linkTerms').onclick = function() { switchTab('terms', document.getElementById('tabTerms')); };
+
+    // 4. यूजर आईडी वेरीफाई
+    document.getElementById('verifyBtn').onclick = function() {
       var uid = document.getElementById('userId').value.trim();
       var res = document.getElementById('verifyResult');
       if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
@@ -385,10 +403,10 @@
         isUidValid = true;
         res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
       });
-    }
+    };
 
     // 5. बाय नाउ
-    function startBuy() {
+    document.getElementById('buyBtn').onclick = function() {
       var uid = document.getElementById('userId').value.trim();
       var ph = document.getElementById('userPhone').value.trim();
       var termsChecked = document.getElementById('termsAgree').checked;
@@ -399,11 +417,11 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
-      showNoticeModal();
-    }
+      showNotice();
+    };
 
-    // 6. पेमेंट निर्देश पॉपअप
-    function showNoticeModal() {
+    // 6. पेमेंट निर्देश पॉपअप (ऑन-डिमांड)
+    function showNotice() {
       if (document.getElementById('noticeWrap')) return;
 
       var wrap = document.createElement('div');
@@ -427,30 +445,7 @@
 
       document.getElementById('noticeOkBtn').onclick = function() {
         document.body.removeChild(wrap);
-        showQRModal();
+        showQR();
       };
       document.getElementById('noticeCancelBtn').onclick = function() {
         document.body.removeChild(wrap);
-      };
-    }
-
-    // 7. बारकोड और टाइमर पॉपअप
-    function showQRModal() {
-      var uid = document.getElementById('userId').value.trim();
-      orderId = "ORD" + Date.now();
-      leftTime = 120;
-
-      fetch('/api/create-order', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
-      })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        exactPayableAmount = data.exactAmount || selectedPack.price;
-        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-        var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-
-        var wrap = document.createElement('div');
-        wrap.id = 'qrWrap';
-        wrap.style.c
