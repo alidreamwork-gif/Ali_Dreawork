@@ -119,10 +119,10 @@
       background: #f0fdf4 !important; 
       box-shadow: 0 0 0 1.5px #059669;
     }
-    .coin-number { font-size: 17px; font-weight: 800; color: #1e40af; }
-    .coin-label { font-size: 10.5px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
-    .coin-divider { width: 34px; height: 2px; background: #e5e7eb; margin: 6px auto; }
-    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
+    .coin-number { font-size: 17px; font-weight: 800; color: #1e40af; pointer-events: none; }
+    .coin-label { font-size: 10.5px; color: #6b7280; font-weight: 600; text-transform: uppercase; pointer-events: none; }
+    .coin-divider { width: 34px; height: 2px; background: #e5e7eb; margin: 6px auto; pointer-events: none; }
+    .coin-price { font-size: 15px; font-weight: bold; color: #059669; pointer-events: none; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
@@ -160,13 +160,13 @@
 
       <div class="nav-buttons-right">
         <div class="nav-row">
-          <button type="button" class="nav-btn active" id="btnTabCoins" onclick="showTab('coins')">Duoo & Doran Coins</button>
-          <button type="button" class="nav-btn" id="btnTabTerms" onclick="showTab('terms')">Terms</button>
+          <button type="button" class="nav-btn active" data-tab="coins">Duoo & Doran Coins</button>
+          <button type="button" class="nav-btn" data-tab="terms">Terms</button>
         </div>
         <div class="nav-row">
-          <button type="button" class="nav-btn" id="btnTabPrivacy" onclick="showTab('privacy')">Privacy</button>
-          <button type="button" class="nav-btn" id="btnTabRefund" onclick="showTab('refund')">Refund</button>
-          <button type="button" class="nav-btn" id="btnTabContact" onclick="showTab('contact')">Contact</button>
+          <button type="button" class="nav-btn" data-tab="privacy">Privacy</button>
+          <button type="button" class="nav-btn" data-tab="refund">Refund</button>
+          <button type="button" class="nav-btn" data-tab="contact">Contact</button>
         </div>
       </div>
     </div>
@@ -178,68 +178,68 @@
 
         <!-- कार रश बैनर -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openGamePopup()">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" id="bannerAction">
         </div>
 
         <div class="card">
           <label>DUOO & DORAN USER ID:</label>
           <div class="id-group">
             <input type="text" id="userId" placeholder="Enter User ID">
-            <button type="button" class="verify-btn" onclick="executeVerify()">Verify</button>
+            <button type="button" class="verify-btn" id="btnDoVerify">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
           <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
-          <div class="plans-grid">
-            <div class="coin-card" onclick="chooseCoinPlan(this, 11000, 151)">
+          <div class="plans-grid" id="coinGridBox">
+            <div class="coin-card" data-coins="11000" data-price="151">
               <div class="coin-number">11,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹151</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 16100, 220)">
+            <div class="coin-card" data-coins="16100" data-price="220">
               <div class="coin-number">16,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹220</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 24100, 330)">
+            <div class="coin-card" data-coins="24100" data-price="330">
               <div class="coin-number">24,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹330</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 32100, 440)">
+            <div class="coin-card" data-coins="32100" data-price="440">
               <div class="coin-number">32,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹440</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 50000, 685)">
+            <div class="coin-card" data-coins="50000" data-price="685">
               <div class="coin-number">50,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹685</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 100000, 1370)">
+            <div class="coin-card" data-coins="100000" data-price="1370">
               <div class="coin-number">100,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,370</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 146000, 1999)">
+            <div class="coin-card" data-coins="146000" data-price="1999">
               <div class="coin-number">146,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,999</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 219000, 3000)">
+            <div class="coin-card" data-coins="219000" data-price="3000">
               <div class="coin-number">219,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹3,000</div>
             </div>
-            <div class="coin-card" onclick="chooseCoinPlan(this, 328500, 4500)">
+            <div class="coin-card" data-coins="328500" data-price="4500">
               <div class="coin-number">328,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
@@ -258,11 +258,11 @@
           <div class="terms-wrapper">
             <input type="checkbox" id="termsAgree" checked>
             <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
-              I accept all <span onclick="showTab('terms')" style="color:#2563eb;text-decoration:underline;cursor:pointer;">Terms & Conditions</span>
+              I accept all <span id="linkGoTerms" style="color:#2563eb;text-decoration:underline;cursor:pointer;">Terms & Conditions</span>
             </label>
           </div>
 
-          <button type="button" class="main-buy-btn" onclick="executeBuy()">BUY NOW</button>
+          <button type="button" class="main-buy-btn" id="btnDoBuy">BUY NOW</button>
         </div>
       </div>
 
@@ -300,118 +300,145 @@
     var pollObj = null;
     var leftTime = 120;
 
-    // 1. कॉइन पैक चयन
-    function chooseCoinPlan(elem, coins, price) {
-      var allCards = document.querySelectorAll('.coin-card');
-      allCards.forEach(function(c) { c.classList.remove('selected'); });
-      elem.classList.add('selected');
-      selectedPack = { coins: coins, price: price };
-      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
-    }
-
-    // 2. कार रश इन-पेज पॉपअप
-    function openGamePopup() {
-      if (document.getElementById('rushModalWrap')) return;
-
-      var overlay = document.createElement('div');
-      overlay.id = 'rushModalWrap';
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
-
-      var box = document.createElement('div');
-      box.style.cssText = 'position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);';
-
-      var closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.innerHTML = '✕';
-      closeBtn.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;';
-      closeBtn.onclick = function() {
-        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        document.body.style.overflow = 'auto';
-      };
-
-      var frame = document.createElement('iframe');
-      frame.src = 'https://www.doran.live/car-rush-ad';
-      frame.style.cssText = 'width:100%;height:100%;border:none;background:#fff;';
-      frame.setAttribute('allow', 'fullscreen');
-
-      box.appendChild(closeBtn);
-      box.appendChild(frame);
-      overlay.appendChild(box);
-      document.body.appendChild(overlay);
-      document.body.style.overflow = 'hidden';
-    }
-
-    // 3. टैब नेविगेशन
-    function showTab(key) {
-      var tabList = ['coins', 'terms', 'privacy', 'refund', 'contact'];
-      for (var i = 0; i < tabList.length; i++) {
-        var p = document.getElementById('p-' + tabList[i]);
-        if (p) p.style.display = 'none';
+    // 1. टैब बदलना (पूरी तरह सेफ)
+    function switchTab(targetTab) {
+      var tabs = ['coins', 'terms', 'privacy', 'refund', 'contact'];
+      for (var i = 0; i < tabs.length; i++) {
+        var page = document.getElementById('p-' + tabs[i]);
+        if (page) page.style.display = 'none';
       }
-      var targetPage = document.getElementById('p-' + key);
-      if (targetPage) targetPage.style.display = 'block';
+      var activePage = document.getElementById('p-' + targetTab);
+      if (activePage) activePage.style.display = 'block';
 
-      var buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(function(b) { b.classList.remove('active'); });
-
-      var activeBtnMap = {
-        'coins': 'btnTabCoins',
-        'terms': 'btnTabTerms',
-        'privacy': 'btnTabPrivacy',
-        'refund': 'btnTabRefund',
-        'contact': 'btnTabContact'
-      };
-      var targetBtn = document.getElementById(activeBtnMap[key]);
-      if (targetBtn) targetBtn.classList.add('active');
-    }
-
-    // 4. यूजर आईडी वेरिफिकेशन
-    function executeVerify() {
-      var uid = document.getElementById('userId').value.trim();
-      var res = document.getElementById('verifyResult');
-      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
-      res.style.display = "flex";
-      res.innerHTML = "Verifying...";
-
-      fetch('/api/verify-user', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid })
-      }).then(function(r){ return r.json(); }).then(function(d){
-        if (d.code === 200 || d.status === 200 || d.success === true || d.nick) {
-          isUidValid = true;
-          var info = d.data || d;
-          var name = info.nick || info.nickName || info.name || "Verified User";
-          var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          res.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+      var allNavBtns = document.querySelectorAll('.nav-btn');
+      allNavBtns.forEach(function(b) {
+        if (b.getAttribute('data-tab') === targetTab) {
+          b.classList.add('active');
         } else {
-          isUidValid = false;
-          res.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+          b.classList.remove('active');
         }
-      }).catch(function(){
-        isUidValid = true;
-        res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
       });
     }
 
-    // 5. बाय नाउ
-    function executeBuy() {
-      var uid = document.getElementById('userId').value.trim();
-      var ph = document.getElementById('userPhone').value.trim();
-      var termsChecked = document.getElementById('termsAgree').checked;
+    document.querySelectorAll('.nav-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        switchTab(this.getAttribute('data-tab'));
+      });
+    });
 
-      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
-      if (!selectedPack) { alert('Please select a coin pack / कृपया कॉइन पैक चुनें'); return; }
-      if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number / सही WhatsApp नंबर दर्ज करें'); return; }
-      if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
-      if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
-
-      showInstructionNotice();
+    var termLink = document.getElementById('linkGoTerms');
+    if (termLink) {
+      termLink.addEventListener('click', function() { switchTab('terms'); });
     }
 
-    // 6. पेमेंट निर्देश पॉपअप
-    function showInstructionNotice() {
+    // 2. कॉइन पैक सिलेक्शन (इवेंट डेलिगेशन - कभी ब्लॉक नहीं होगा)
+    var grid = document.getElementById('coinGridBox');
+    if (grid) {
+      grid.addEventListener('click', function(e) {
+        var card = e.target.closest('.coin-card');
+        if (!card) return;
+
+        document.querySelectorAll('.coin-card').forEach(function(c) {
+          c.classList.remove('selected');
+        });
+        card.classList.add('selected');
+
+        var coins = parseInt(card.getAttribute('data-coins'), 10);
+        var price = parseInt(card.getAttribute('data-price'), 10);
+        selectedPack = { coins: coins, price: price };
+
+        document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
+        document.getElementById('sumPrice').innerText = "₹" + price;
+      });
+    }
+
+    // 3. कार रश इन-पेज पॉपअप
+    var banner = document.getElementById('bannerAction');
+    if (banner) {
+      banner.addEventListener('click', function() {
+        if (document.getElementById('rushModalWrap')) return;
+
+        var overlay = document.createElement('div');
+        overlay.id = 'rushModalWrap';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
+
+        var box = document.createElement('div');
+        box.style.cssText = 'position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);';
+
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.innerHTML = '✕';
+        closeBtn.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;';
+        closeBtn.onclick = function() {
+          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          document.body.style.overflow = 'auto';
+        };
+
+        var frame = document.createElement('iframe');
+        frame.src = 'https://www.doran.live/car-rush-ad';
+        frame.style.cssText = 'width:100%;height:100%;border:none;background:#fff;';
+        frame.setAttribute('allow', 'fullscreen');
+
+        box.appendChild(closeBtn);
+        box.appendChild(frame);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    // 4. यूजर आईडी वेरिफिकेशन
+    var verifyBtn = document.getElementById('btnDoVerify');
+    if (verifyBtn) {
+      verifyBtn.addEventListener('click', function() {
+        var uid = document.getElementById('userId').value.trim();
+        var res = document.getElementById('verifyResult');
+        if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+        res.style.display = "flex";
+        res.innerHTML = "Verifying...";
+
+        fetch('/api/verify-user', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid: uid })
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (d.code === 200 || d.status === 200 || d.success === true || d.nick) {
+            isUidValid = true;
+            var info = d.data || d;
+            var name = info.nick || info.nickName || info.name || "Verified User";
+            var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
+            res.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+          } else {
+            isUidValid = false;
+            res.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+          }
+        }).catch(function(){
+          isUidValid = true;
+          res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+        });
+      });
+    }
+
+    // 5. बाय नाउ बटन
+    var buyBtn = document.getElementById('btnDoBuy');
+    if (buyBtn) {
+      buyBtn.addEventListener('click', function() {
+        var uid = document.getElementById('userId').value.trim();
+        var ph = document.getElementById('userPhone').value.trim();
+        var termsChecked = document.getElementById('termsAgree').checked;
+
+        if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+        if (!selectedPack) { alert('Please select a coin pack / कृपया कॉइन पैक चुनें'); return; }
+        if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number / सही WhatsApp नंबर दर्ज करें'); return; }
+        if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
+        if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
+
+        showPaymentNotice();
+      });
+    }
+
+    // 6. निर्देश पॉपअप
+    function showPaymentNotice() {
       if (document.getElementById('noticeWrap')) return;
 
       var wrap = document.createElement('div');
@@ -427,38 +454,21 @@
         + '<li>उसका स्क्रीनशॉट लें और अपने UPI स्कैनर की गैलरी से पे करें।</li>'
         + '<li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>'
         + '</ol></div>'
-        + '<button type="button" id="noticeOkBtn" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>'
-        + '<button type="button" id="noticeCancelBtn" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>'
+        + '<button type="button" id="btnNoticeAccept" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>'
+        + '<button type="button" id="btnNoticeDismiss" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>'
         + '</div>';
 
       document.body.appendChild(wrap);
 
-      document.getElementById('noticeOkBtn').onclick = function() {
+      document.getElementById('btnNoticeAccept').onclick = function() {
         document.body.removeChild(wrap);
         showPaymentBarcode();
       };
-      document.getElementById('noticeCancelBtn').onclick = function() {
+      document.getElementById('btnNoticeDismiss').onclick = function() {
         document.body.removeChild(wrap);
       };
     }
 
-    // 7. बारकोड और टाइमर पॉपअप
+    // 7. बारकोड और टाइमर
     function showPaymentBarcode() {
-      var uid = document.getElementById('userId').value.trim();
-      orderId = "ORD" + Date.now();
-      leftTime = 120;
-
-      fetch('/api/create-order', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
-      })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        exactPayableAmount = data.exactAmount || selectedPack.price;
-        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-        var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-
-        var wrap = document.createElement('div');
-        wrap.id = 'qrWrap';
-        wrap.style.cssText = 'position:fixed;top:0;left:0;w
+      var uid = document.getElementById('u
