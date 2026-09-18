@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork Store</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; z-index: 1; }
     
     /* कॉम्पैक्ट हेडर */
     .top-navbar { 
@@ -69,7 +69,7 @@
       border-color: #fff; 
     }
 
-    .container { padding: 12px 15px; }
+    .container { padding: 12px 15px; position: relative; z-index: 2; }
     .page-section { display: none; }
 
     /* कार रश बैनर */
@@ -132,6 +132,21 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+
+    /* पूरी तरह सुरक्षित मॉडल्स - जब बंद हों तो स्क्रीन पर शून्य दखल */
+    .custom-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.85);
+      z-index: 999999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
   </style>
 </head>
 <body>
@@ -165,7 +180,7 @@
 
         <!-- कार रश बैनर -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openCarRush()">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRaceDialog()">
         </div>
 
         <div class="card">
@@ -261,7 +276,7 @@
 
       <div id="p-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. All customer data is processed securely.</p>
+        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>.</p>
       </div>
 
       <div id="p-refund" class="page-section static-page">
@@ -278,8 +293,16 @@
     </div>
   </div>
 
-  <!-- 1. पेमेंट निर्देश पॉपअप (Zero Background Interruption) -->
-  <div id="modalNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+  <!-- कार रश पॉपअप (विंडो) -->
+  <div id="raceModal" class="custom-modal">
+    <div style="position:relative; width:100%; max-width:440px; height:88vh; background:#0f172a; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; border:1.5px solid #2563eb;">
+      <button type="button" onclick="closeRaceDialog()" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.75); color:#fff; border:2px solid #fff; width:34px; height:34px; border-radius:50%; font-size:18px; font-weight:bold; cursor:pointer; z-index:100; display:flex; align-items:center; justify-content:center;">✕</button>
+      <iframe id="raceFrame" src="about:blank" style="width:100%; height:100%; border:none; background:#fff;" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <!-- 1. पेमेंट निर्देश पॉपअप -->
+  <div id="modalNotice" class="custom-modal">
     <div style="background:#fff; width:100%; max-width:365px; border-radius:14px; padding:18px; text-align:center; max-height:92vh; overflow-y:auto;">
       <div style="font-size:26px; margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af; font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
@@ -296,7 +319,7 @@
   </div>
 
   <!-- 2. बारकोड पॉपअप -->
-  <div id="modalQR" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+  <div id="modalQR" class="custom-modal">
     <div style="background:#fff; width:100%; max-width:370px; border-radius:16px; padding:18px; text-align:center; max-height:96vh; overflow-y:auto;">
       <b style="color:#1e40af; font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px; font-weight:bold; color:#059669; margin:4px 0;">₹0.00</div>
@@ -318,36 +341,18 @@
     var pollObj = null;
     var leftTime = 120;
 
-    /* 100% Non-Blocking In-Page Car Rush Modal */
-    function openCarRush() {
-      if (document.getElementById('liveRushPopup')) return;
+    function openRaceDialog() {
+      var modal = document.getElementById('raceModal');
+      var frame = document.getElementById('raceFrame');
+      frame.src = "https://www.doran.live/car-rush-ad";
+      modal.style.display = 'flex';
+    }
 
-      var overlay = document.createElement('div');
-      overlay.id = 'liveRushPopup';
-      overlay.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999999; display:flex; justify-content:center; align-items:center; padding:12px; box-sizing:border-box;';
-
-      var box = document.createElement('div');
-      box.style.cssText = 'position:relative; width:100%; max-width:440px; height:88vh; background:#0f172a; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.7); border:1.5px solid #2563eb;';
-
-      var closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.innerHTML = '✕';
-      closeBtn.style.cssText = 'position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.75); color:#fff; border:2px solid #fff; width:34px; height:34px; border-radius:50%; font-size:18px; font-weight:bold; cursor:pointer; z-index:1000; display:flex; align-items:center; justify-content:center;';
-      closeBtn.onclick = function() {
-        document.body.removeChild(overlay);
-        document.body.style.overflow = 'auto';
-      };
-
-      var frame = document.createElement('iframe');
-      frame.src = 'https://www.doran.live/car-rush-ad';
-      frame.style.cssText = 'width:100%; height:100%; border:none; background:#fff;';
-      frame.setAttribute('allow', 'fullscreen');
-
-      box.appendChild(closeBtn);
-      box.appendChild(frame);
-      overlay.appendChild(box);
-      document.body.appendChild(overlay);
-      document.body.style.overflow = 'hidden';
+    function closeRaceDialog() {
+      var modal = document.getElementById('raceModal');
+      var frame = document.getElementById('raceFrame');
+      modal.style.display = 'none';
+      frame.src = "about:blank";
     }
 
     function tab(key) {
@@ -430,4 +435,13 @@
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
 
-        var upi = "upi://pay?pa=BHARAT
+        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
+        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
+        document.getElementById('timerText').innerText = "02:00";
+        document.getElementById('modalQR').style.display = 'flex';
+
+        clearInterval(timerObj);
+        timerObj = setInterval(function(){
+          leftTime--;
+          var m = Math.floor(leftTi
