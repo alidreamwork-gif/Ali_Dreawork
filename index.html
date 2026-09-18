@@ -32,13 +32,14 @@
       object-fit: cover;
       background: #fff;
     }
+    /* ब्रांड नेम - गोल्डन कलर */
     .nav-brand-title {
-      color: #000000;
+      color: #fbbf24;
       font-size: 13px;
       font-weight: 900;
       line-height: 1.1;
       white-space: nowrap;
-      text-shadow: 0 0 2px rgba(255,255,255,0.8);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
     .nav-buttons-right { 
       display: flex; 
@@ -154,7 +155,7 @@
       <div id="p-coins" class="page-section" style="display: block;">
 
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="window.open('https://www.doran.live/car-rush-ad', '_blank')">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="window.open('https://www.doran.live/car-rush-ad', '_self')">
         </div>
 
         <div class="card">
@@ -405,19 +406,3 @@
               if (d && d.status === 'PAID') {
                 hideAllModals();
                 alert("🎉 Congratulations Payment Verified! Coins successfully delivered.");
-                location.reload();
-              }
-            }).catch(function(){});
-        }, 2500);
-      });
-    }
-
-    function hideAllModals() {
-      clearInterval(timerObj);
-      clearInterval(pollObj);
-      document.getElementById('modalNotice').style.display = 'none';
-      document.getElementById('modalQR').style.display = 'none';
-    }
-  </script>
-</body>
-</html>
