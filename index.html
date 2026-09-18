@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; z-index: 1; }
     
     .top-navbar { background: #1e40af; padding: 10px; text-align: center; }
     .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -16,6 +16,17 @@
 
     .container { padding: 15px; }
     .page-section { display: none; }
+
+    /* Race Banner */
+    .banner-wrapper { margin: 10px 0 15px 0; text-align: center; }
+    .race-banner-img { 
+      width: 100%; 
+      height: auto; 
+      border-radius: 12px; 
+      display: block; 
+      cursor: pointer; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+    }
 
     .header { text-align: center; margin: 10px 0 15px 0; }
     .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
@@ -51,7 +62,6 @@
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
     
-    /* Terms Checkbox */
     .terms-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 15px; font-size: 12.5px; color: #374151; }
     .terms-wrapper input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: #2563eb; }
 
@@ -70,6 +80,27 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+
+    /* ALL MODALS: Never block touch when hidden */
+    .app-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 999999;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+    .app-modal.active {
+      display: flex !important;
+      pointer-events: auto !important;
+    }
   </style>
 </head>
 <body>
@@ -90,12 +121,9 @@
       <!-- Coins Section -->
       <div id="p-coins" class="page-section" style="display: block;">
 
-        <!-- Clickable Car Rush Banner -->
-        <div style="margin: 10px 0 15px 0; text-align: center;">
-          <img src="carrushbanner.jpeg" 
-               alt="Play Race Share Luck" 
-               onclick="openRaceModal()" 
-               style="width: 100%; height: auto; border-radius: 12px; display: block; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <!-- Car Rush Banner -->
+        <div class="banner-wrapper">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRaceModal()">
         </div>
 
         <div class="header">
@@ -177,11 +205,10 @@
             <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
           </div>
 
-          <!-- Terms Checkbox -->
           <div class="terms-wrapper">
             <input type="checkbox" id="termsAgree" checked>
             <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
-              I accept all <a href="javascript:void(0)" onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;">Terms & Conditions</a> (नियम व शर्तें स्वीकार हैं)
+              I accept all <a href="javascript:void(0)" onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;">Terms & Conditions</a>
             </label>
           </div>
 
@@ -215,8 +242,16 @@
     </div>
   </div>
 
+  <!-- Car Rush Modal -->
+  <div id="raceModal" class="app-modal">
+    <div style="position:relative;width:100%;max-width:420px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 35px rgba(0,0,0,0.7);border:1.5px solid #2563eb;">
+      <button type="button" onclick="closeRaceModal()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;">✕</button>
+      <iframe id="raceFrame" src="about:blank" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
   <!-- 1. विस्तृत निर्देश पॉपअप -->
-  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
+  <div id="modalNotice" class="app-modal">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
@@ -233,7 +268,7 @@
   </div>
 
   <!-- 2. ऑटोमैटिक बारकोड और टाइमर पॉपअप -->
-  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
+  <div id="modalQR" class="app-modal">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
@@ -255,26 +290,16 @@
     var pollObj = null;
     var leftTime = 120;
 
-    /* Dynamic Car Rush Modal - 0% Background Conflict */
     function openRaceModal() {
-      if (document.getElementById('raceModal')) return;
-      var m = document.createElement('div');
-      m.id = 'raceModal';
-      m.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
-      m.innerHTML = '<div style="position:relative;width:100%;max-width:420px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 35px rgba(0,0,0,0.7);border:1.5px solid #2563eb;">'
-        + '<button type="button" onclick="closeRaceModal()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;">✕</button>'
-        + '<iframe src="https://www.doran.live/car-rush-ad" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe>'
-        + '</div>';
-      document.body.appendChild(m);
-      document.body.style.overflow = 'hidden';
+      var frame = document.getElementById('raceFrame');
+      frame.src = "https://www.doran.live/car-rush-ad";
+      document.getElementById('raceModal').classList.add('active');
     }
 
     function closeRaceModal() {
-      var m = document.getElementById('raceModal');
-      if (m) {
-        m.parentNode.removeChild(m);
-      }
-      document.body.style.overflow = 'auto';
+      var frame = document.getElementById('raceFrame');
+      document.getElementById('raceModal').classList.remove('active');
+      frame.src = "about:blank";
     }
 
     function tab(key) {
@@ -339,11 +364,11 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
-      document.getElementById('modalNotice').style.display = 'flex';
+      document.getElementById('modalNotice').classList.add('active');
     }
 
     function showQR() {
-      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalNotice').classList.remove('active');
       var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
       leftTime = 120;
@@ -361,7 +386,7 @@
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
         document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
         document.getElementById('timerText').innerText = "02:00";
-        document.getElementById('modalQR').style.display = 'flex';
+        document.getElementById('modalQR').classList.add('active');
 
         clearInterval(timerObj);
         timerObj = setInterval(function(){
@@ -377,4 +402,6 @@
 
         clearInterval(pollObj);
         pollObj = setInterval(function(){
-          fetch('/api/check-order-status
+          fetch('/api/check-order-status?orderId=' + orderId)
+            .then(function(r){ return r.json(); })
+            .then(function(d){
