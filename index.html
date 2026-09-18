@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* इवेंट डिटेल्स पॉपअप बॉक्स (Car Event.jpeg के साथ) */
+    /* HD इमेज पॉपअप बॉक्स */
     #raceCustomModal {
       display: none;
       position: fixed;
@@ -87,23 +87,24 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.9);
       z-index: 999999;
       justify-content: center;
       align-items: center;
-      padding: 10px;
+      padding: 8px;
     }
     .custom-popup-box {
       position: relative;
       width: 100%;
       max-width: 440px;
-      height: 90vh;
+      height: 92vh;
       background: #0f172a;
       border-radius: 16px;
-      padding: 10px;
+      padding: 8px;
       overflow-y: auto;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
       border: 2px solid #2563eb;
+      -webkit-overflow-scrolling: touch;
     }
     .custom-close-btn {
       position: fixed;
@@ -316,7 +317,7 @@
   <div id="raceCustomModal">
     <div class="custom-popup-box">
       <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
-      <img src="Car Event.jpeg" alt="Car Event Details" style="width:100%; border-radius:10px; display:block;">
+      <img src="Car Event.jpeg" alt="Car Event HD Details" style="width:100%; height:auto; display:block; border-radius:8px; image-rendering: -webkit-optimize-contrast;">
     </div>
   </div>
 
