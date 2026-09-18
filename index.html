@@ -17,70 +17,15 @@
     .container { padding: 15px; }
     .page-section { display: none; }
 
-    /* Race Banner Styling */
-    .banner-container { margin: 10px 0 15px 0; text-align: center; }
-    .race-banner-btn { 
+    /* Race Banner */
+    .banner-container { margin: 10px 0 15px 0; width: 100%; }
+    .race-banner-img { 
       width: 100%; 
+      height: auto; 
       border-radius: 12px; 
       display: block; 
       cursor: pointer; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      object-fit: cover;
-    }
-
-    /* Modal - Pointer events disabled until active to protect background buttons */
-    #raceModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 999999;
-      justify-content: center;
-      align-items: center;
-      padding: 12px;
-      pointer-events: none;
-    }
-    #raceModal.active {
-      display: flex !important;
-      pointer-events: auto !important;
-    }
-    .race-modal-content {
-      position: relative;
-      width: 100%;
-      max-width: 420px;
-      height: 85vh;
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .race-close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      border: 2px solid #fff;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .race-iframe-view {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
     .header { text-align: center; margin: 10px 0 15px 0; }
@@ -153,15 +98,17 @@
 
     <div class="container">
       
+      <!-- Coins Section -->
       <div id="p-coins" class="page-section" style="display: block;">
 
+        <!-- Clickable Banner (GitHub Local Image) -->
         <div class="banner-container">
-          <img src="https://i.ibb.co/3ykbN580/Play-Race-Share-Luck.jpg" alt="Play Race Share Luck" class="race-banner-btn" onclick="openRaceModal()">
+          <img src="banner.jpg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRaceModal()">
         </div>
 
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-          <div class="brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃᵐʷ®️k</div>
+          <div class="brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
         </div>
 
         <div class="card">
@@ -238,6 +185,7 @@
             <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
           </div>
 
+          <!-- Terms Checkbox -->
           <div class="terms-wrapper">
             <input type="checkbox" id="termsAgree" checked>
             <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
@@ -249,6 +197,7 @@
         </div>
       </div>
 
+      <!-- Static Tabs -->
       <div id="p-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
         <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, registering an account, or purchasing any digital coins and virtual credit packs, you agree to comply with and be bound by the following comprehensive terms and conditions.</p>
@@ -256,12 +205,13 @@
 
       <div id="p-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. All user information collected is strictly used for order delivery.</p>
+        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>.</p>
       </div>
 
       <div id="p-refund" class="page-section static-page">
         <h2>🔄 Refund & Cancellation Policy</h2>
-        <p>At <strong>Ali Dreamwork</strong>, we strive to provide an instant, reliable, and automated delivery service for digital coins.</p>
+        <p>At <strong>Ali Dreamwork</strong>, we strive to provide an instant, reliable, and automated delivery service.</p>
+        <p><strong>WhatsApp Support:</strong> <a href="https://wa.me/917776881407" target="_blank" style="color: #2563eb; font-weight: bold;">+917776881407</a></p>
       </div>
 
       <div id="p-contact" class="page-section static-page">
@@ -273,14 +223,16 @@
     </div>
   </div>
 
-  <div id="raceModal">
-    <div class="race-modal-content">
-      <button type="button" class="race-close-btn" onclick="closeRaceModal()">✕</button>
-      <iframe id="raceFrame" src="" class="race-iframe-view"></iframe>
+  <!-- Car Rush Modal (Zero Interference) -->
+  <div id="raceModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;">
+    <div style="position:relative;width:100%;max-width:420px;height:85vh;background:#000;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;">
+      <button type="button" onclick="closeRaceModal()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:16px;font-weight:bold;cursor:pointer;z-index:100;display:flex;align-items:center;justify-content:center;">✕</button>
+      <iframe id="raceFrame" src="" style="width:100%;height:100%;border:none;background:#fff;"></iframe>
     </div>
   </div>
 
-  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+  <!-- 1. विस्तृत निर्देश पॉपअप -->
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
@@ -296,7 +248,8 @@
     </div>
   </div>
 
-  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+  <!-- 2. ऑटोमैटिक बारकोड और टाइमर पॉपअप -->
+  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
@@ -318,17 +271,20 @@
     var pollObj = null;
     var leftTime = 120;
 
-    /* Safe Car Rush Modal */
     function openRaceModal() {
+      var modal = document.getElementById('raceModal');
       var frame = document.getElementById('raceFrame');
       if (!frame.src || frame.src === "" || frame.src === window.location.href) {
         frame.src = "https://www.doran.live/car-rush-ad";
       }
-      document.getElementById('raceModal').classList.add('active');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
     }
 
     function closeRaceModal() {
-      document.getElementById('raceModal').classList.remove('active');
+      var modal = document.getElementById('raceModal');
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
     }
 
     function tab(key) {
@@ -423,3 +379,10 @@
           var m = Math.floor(leftTime / 60);
           var s = leftTime % 60;
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+          if (leftTime <= 0) {
+            hideAllModals();
+            alert("⏳ Time's up! The 2-minute time limit has expired. Please contact support via WhatsApp: 7776881407.");
+          }
+        }, 1000);
+
+        clearIn
