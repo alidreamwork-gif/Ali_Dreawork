@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; z-index: 1; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
     .top-navbar { background: #1e40af; padding: 10px; text-align: center; }
     .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -17,8 +17,9 @@
     .container { padding: 15px; }
     .page-section { display: none; }
 
-    /* Race Banner */
+    /* Clickable Race Banner */
     .banner-wrapper { margin: 10px 0 15px 0; text-align: center; }
+    .race-banner-link { display: block; text-decoration: none; border-radius: 12px; overflow: hidden; }
     .race-banner-img { 
       width: 100%; 
       height: auto; 
@@ -80,27 +81,6 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
-
-    /* ALL MODALS: Never block touch when hidden */
-    .app-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 999999;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
-      box-sizing: border-box;
-      pointer-events: none;
-    }
-    .app-modal.active {
-      display: flex !important;
-      pointer-events: auto !important;
-    }
   </style>
 </head>
 <body>
@@ -121,9 +101,11 @@
       <!-- Coins Section -->
       <div id="p-coins" class="page-section" style="display: block;">
 
-        <!-- Car Rush Banner -->
+        <!-- Clean Clickable Banner -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRaceModal()">
+          <a href="https://www.doran.live/car-rush-ad" target="_blank" class="race-banner-link">
+            <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img">
+          </a>
         </div>
 
         <div class="header">
@@ -224,13 +206,12 @@
 
       <div id="p-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
-        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>.</p>
+        <p>Your privacy and data security are of utmost importance to us at <strong>Ali Dreamwork</strong>. All customer data is processed securely.</p>
       </div>
 
       <div id="p-refund" class="page-section static-page">
         <h2>🔄 Refund & Cancellation Policy</h2>
-        <p>At <strong>Ali Dreamwork</strong>, we strive to provide an instant, reliable, and automated delivery service.</p>
-        <p><strong>WhatsApp Support:</strong> <a href="https://wa.me/917776881407" target="_blank" style="color: #2563eb; font-weight: bold;">+917776881407</a></p>
+        <p>At <strong>Ali Dreamwork</strong>, we strive to provide an instant, reliable, and automated delivery service for digital coins.</p>
       </div>
 
       <div id="p-contact" class="page-section static-page">
@@ -242,42 +223,34 @@
     </div>
   </div>
 
-  <!-- Car Rush Modal -->
-  <div id="raceModal" class="app-modal">
-    <div style="position:relative;width:100%;max-width:420px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 35px rgba(0,0,0,0.7);border:1.5px solid #2563eb;">
-      <button type="button" onclick="closeRaceModal()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;">✕</button>
-      <iframe id="raceFrame" src="about:blank" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe>
-    </div>
-  </div>
-
   <!-- 1. विस्तृत निर्देश पॉपअप -->
-  <div id="modalNotice" class="app-modal">
-    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
-      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
-      <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
-      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
-        <ol style="margin:4px 0 0 18px;padding:0;">
+  <div id="modalNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+    <div style="background:#fff; width:100%; max-width:365px; border-radius:14px; padding:18px; text-align:center; max-height:92vh; overflow-y:auto;">
+      <div style="font-size:26px; margin-bottom:2px;">⚠️</div>
+      <b style="color:#1e40af; font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
+      <div style="text-align:left; font-size:11.5px; margin:12px 0; line-height:1.45; background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:8px; color:#1e3a8a;">
+        <ol style="margin:4px 0 0 18px; padding:0;">
           <li>आगे 2 मिनट के टाइमर के साथ बारकोड खुलेगा।</li>
           <li>उसका स्क्रीनशॉट लें और अपने UPI स्कैनर की गैलरी से पे करें।</li>
           <li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>
         </ol>
       </div>
-      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="showQR()" style="width:100%; background:#059669; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%; background:#f3f4f6; border:1px solid #d1d5db; color:#4b5563; padding:8px; border-radius:8px; margin-top:8px; cursor:pointer; font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
   <!-- 2. ऑटोमैटिक बारकोड और टाइमर पॉपअप -->
-  <div id="modalQR" class="app-modal">
-    <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
-      <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
-      <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
-      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
-      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
-        <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
-        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
+  <div id="modalQR" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+    <div style="background:#fff; width:100%; max-width:370px; border-radius:16px; padding:18px; text-align:center; max-height:96vh; overflow-y:auto;">
+      <b style="color:#1e40af; font-size:16px;">Scan & Pay via Any UPI</b>
+      <div id="payAmt" style="font-size:26px; font-weight:bold; color:#059669; margin:4px 0;">₹0.00</div>
+      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px; height:225px; margin:6px auto; display:block; border:1px solid #e5e7eb; border-radius:8px; padding:4px; background:#fff;">
+      <div style="background:#fee2e2; border:1px solid #f87171; padding:6px; border-radius:6px; margin:8px 0;">
+        <span style="font-size:11px; color:#991b1b; font-weight:bold;">समय शेष / Time Left: </span>
+        <span id="timerText" style="font-size:18px; font-weight:800; color:#dc2626;">02:00</span>
       </div>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%; background:#f3f4f6; border:1px solid #d1d5db; color:#4b5563; padding:8px; border-radius:8px; margin-top:10px; cursor:pointer; font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
@@ -289,18 +262,6 @@
     var timerObj = null;
     var pollObj = null;
     var leftTime = 120;
-
-    function openRaceModal() {
-      var frame = document.getElementById('raceFrame');
-      frame.src = "https://www.doran.live/car-rush-ad";
-      document.getElementById('raceModal').classList.add('active');
-    }
-
-    function closeRaceModal() {
-      var frame = document.getElementById('raceFrame');
-      document.getElementById('raceModal').classList.remove('active');
-      frame.src = "about:blank";
-    }
 
     function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
@@ -364,11 +325,11 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
-      document.getElementById('modalNotice').classList.add('active');
+      document.getElementById('modalNotice').style.display = 'flex';
     }
 
     function showQR() {
-      document.getElementById('modalNotice').classList.remove('active');
+      document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
       leftTime = 120;
@@ -386,7 +347,7 @@
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
         document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
         document.getElementById('timerText').innerText = "02:00";
-        document.getElementById('modalQR').classList.add('active');
+        document.getElementById('modalQR').style.display = 'flex';
 
         clearInterval(timerObj);
         timerObj = setInterval(function(){
@@ -405,3 +366,22 @@
           fetch('/api/check-order-status?orderId=' + orderId)
             .then(function(r){ return r.json(); })
             .then(function(d){
+              if (d && d.status === 'PAID') {
+                hideAllModals();
+                alert("🎉 Congratulations Payment Verified! Coins successfully delivered.");
+                location.reload();
+              }
+            }).catch(function(){});
+        }, 2500);
+      });
+    }
+
+    function hideAllModals() {
+      clearInterval(timerObj);
+      clearInterval(pollObj);
+      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalQR').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
