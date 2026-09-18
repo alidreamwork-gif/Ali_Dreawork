@@ -5,21 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Ali Dreamwork Store</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; overflow-x: hidden; font-family: sans-serif; background: #f3f4f6; }
     body { display: flex; justify-content: center; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    .app-wrapper { 
-      width: 100%; 
-      max-width: 480px; 
-      background: #fff; 
-      min-height: 100vh; 
-      padding-bottom: 30px; 
-      position: relative; 
-      overflow-x: hidden;
-    }
-    
-    /* कॉम्पैक्ट हेडर */
+    /* कॉम्पैक्ट हेडर - नीला बैकग्राउंड */
     .top-navbar { 
       background: #1e40af; 
       padding: 8px 10px; 
@@ -34,19 +25,18 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      background: transparent;
     }
-    /* लोगो: ब्लैक बॉर्डर */
+    /* लोगो - ब्लैक बॉर्डर */
     .nav-brand-left img {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 2px solid #000000;
       object-fit: cover;
       display: block;
       background: #fff;
     }
-    /* ब्रांड नाम: ब्लैक */
+    /* ब्रांड नाम - ब्लैक */
     .nav-brand-title {
       color: #000000;
       font-size: 13.5px;
@@ -62,7 +52,7 @@
       flex-direction: column; 
       gap: 4px; 
       align-items: flex-end; 
-      flex-shrink: 1;
+      flex: 1;
       min-width: 0;
     }
     .nav-row {
@@ -91,8 +81,8 @@
     .container { padding: 10px 12px; width: 100%; }
     .page-section { display: none; }
 
-    /* कार रश बैनर */
-    .banner-wrapper { margin: 2px 0 10px 0; text-align: center; }
+    /* कार रश बैनर - पूरा दिखेगा */
+    .banner-wrapper { margin: 2px 0 10px 0; text-align: center; width: 100%; }
     .race-banner-img { 
       width: 100%; 
       height: auto; 
@@ -124,17 +114,15 @@
       text-align: center; 
       cursor: pointer; 
       user-select: none;
-      transition: all 0.12s ease;
     }
     .coin-card.selected { 
-      border-color: #059669 !important; 
-      background: #f0fdf4 !important; 
-      box-shadow: 0 0 0 1.5px #059669;
+      border-color: #059669; 
+      background: #f0fdf4; 
     }
-    .coin-number { font-size: 16.5px; font-weight: 800; color: #1e40af; pointer-events: none; }
-    .coin-label { font-size: 10px; color: #6b7280; font-weight: 600; text-transform: uppercase; pointer-events: none; }
-    .coin-divider { width: 30px; height: 2px; background: #e5e7eb; margin: 6px auto; pointer-events: none; }
-    .coin-price { font-size: 15px; font-weight: bold; color: #059669; pointer-events: none; }
+    .coin-number { font-size: 16.5px; font-weight: 800; color: #1e40af; }
+    .coin-label { font-size: 10px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+    .coin-divider { width: 30px; height: 2px; background: #e5e7eb; margin: 6px auto; }
+    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
@@ -156,20 +144,4 @@
     }
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
-    .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
-  </style>
-</head>
-<body>
-
-  <div class="app-wrapper">
-    
-    <div class="top-navbar">
-      <div class="nav-brand-left">
-        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
-        <div class="nav-brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
-      </div>
-
-      <div class="nav-buttons-right">
-        <div class="nav-row">
-          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
-          <button type="button"
+    .static-page p { font-size: 13px; color: #4b5563; line-height: 1.
