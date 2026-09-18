@@ -9,7 +9,7 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    /* कॉम्पैक्ट हेडर: बाएँ लोगो और नाम, दाएँ 2 लाइन में बटन */
+    /* कॉम्पैक्ट हेडर */
     .top-navbar { 
       background: #1e40af; 
       padding: 10px 12px; 
@@ -170,68 +170,68 @@
 
         <!-- कार रश बैनर -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRaceModal()">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" id="mainBannerImg">
         </div>
 
         <div class="card">
           <label>DUOO & DORAN USER ID:</label>
           <div class="id-group">
             <input type="text" id="userId" placeholder="Enter User ID">
-            <button type="button" class="verify-btn" onclick="verifyUID()">Verify</button>
+            <button type="button" class="verify-btn" id="btnVerify">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
           <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
           <div class="plans-grid">
-            <div class="coin-card" onclick="setPack(this, 11000, 151)">
+            <div class="coin-card" data-coins="11000" data-price="151">
               <div class="coin-number">11,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹151</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 16100, 220)">
+            <div class="coin-card" data-coins="16100" data-price="220">
               <div class="coin-number">16,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹220</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 24100, 330)">
+            <div class="coin-card" data-coins="24100" data-price="330">
               <div class="coin-number">24,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹330</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 32100, 440)">
+            <div class="coin-card" data-coins="32100" data-price="440">
               <div class="coin-number">32,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹440</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 50000, 685)">
+            <div class="coin-card" data-coins="50000" data-price="685">
               <div class="coin-number">50,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹685</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 100000, 1370)">
+            <div class="coin-card" data-coins="100000" data-price="1370">
               <div class="coin-number">100,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,370</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 146000, 1999)">
+            <div class="coin-card" data-coins="146000" data-price="1999">
               <div class="coin-number">146,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,999</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 219000, 3000)">
+            <div class="coin-card" data-coins="219000" data-price="3000">
               <div class="coin-number">219,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹3,000</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 328500, 4500)">
+            <div class="coin-card" data-coins="328500" data-price="4500">
               <div class="coin-number">328,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
@@ -254,7 +254,7 @@
             </label>
           </div>
 
-          <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
+          <button type="button" class="main-buy-btn" id="btnBuyNow">BUY NOW</button>
         </div>
       </div>
 
@@ -283,14 +283,6 @@
     </div>
   </div>
 
-  <!-- कार रश इन-पेज पॉपअप (सुरक्षित इनलाइन हाइड) -->
-  <div id="raceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:999999; justify-content:center; align-items:center; padding:12px; box-sizing:border-box;">
-    <div style="position:relative; width:100%; max-width:440px; height:88vh; background:#0f172a; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; border:1.5px solid #2563eb; box-shadow:0 12px 35px rgba(0,0,0,0.7);">
-      <button type="button" onclick="closeRaceModal()" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.75); color:#fff; border:2px solid #fff; width:34px; height:34px; border-radius:50%; font-size:18px; font-weight:bold; cursor:pointer; z-index:1000; display:flex; align-items:center; justify-content:center;">✕</button>
-      <iframe id="raceFrame" src="about:blank" style="width:100%; height:100%; border:none; background:#fff;" allow="fullscreen"></iframe>
-    </div>
-  </div>
-
   <!-- 1. पेमेंट निर्देश पॉपअप -->
   <div id="modalNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
     <div style="background:#fff; width:100%; max-width:365px; border-radius:14px; padding:18px; text-align:center; max-height:92vh; overflow-y:auto;">
@@ -303,7 +295,7 @@
           <li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>
         </ol>
       </div>
-      <button type="button" onclick="showQR()" style="width:100%; background:#059669; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" id="btnNoticeOk" style="width:100%; background:#059669; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%; background:#f3f4f6; border:1px solid #d1d5db; color:#4b5563; padding:8px; border-radius:8px; margin-top:8px; cursor:pointer; font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
@@ -331,20 +323,36 @@
     var pollObj = null;
     var leftTime = 120;
 
-    function openRaceModal() {
-      var modal = document.getElementById('raceModal');
-      var frame = document.getElementById('raceFrame');
-      frame.src = "https://www.doran.live/car-rush-ad";
-      modal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
+    // 100% सेफ कार रश पॉपअप (ऑन-डिमांड क्रिएशन)
+    function openCarRushModal() {
+      if (document.getElementById('activeCarRushModal')) return;
 
-    function closeRaceModal() {
-      var modal = document.getElementById('raceModal');
-      var frame = document.getElementById('raceFrame');
-      modal.style.display = 'none';
-      frame.src = "about:blank";
-      document.body.style.overflow = 'auto';
+      var overlay = document.createElement('div');
+      overlay.id = 'activeCarRushModal';
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
+
+      var box = document.createElement('div');
+      box.style.cssText = 'position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);';
+
+      var closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.innerHTML = '✕';
+      closeBtn.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;';
+      closeBtn.onclick = function() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        document.body.style.overflow = 'auto';
+      };
+
+      var frame = document.createElement('iframe');
+      frame.src = 'https://www.doran.live/car-rush-ad';
+      frame.style.cssText = 'width:100%;height:100%;border:none;background:#fff;';
+      frame.setAttribute('allow', 'fullscreen');
+
+      box.appendChild(closeBtn);
+      box.appendChild(frame);
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+      document.body.style.overflow = 'hidden';
     }
 
     function tab(key) {
@@ -359,17 +367,6 @@
       var tBtn = document.getElementById('b-' + key);
       if (target) target.style.display = 'block';
       if (tBtn) tBtn.classList.add('active');
-    }
-
-    function setPack(el, coins, price) {
-      var all = document.querySelectorAll('.coin-card');
-      for (var i = 0; i < all.length; i++) {
-        all[i].classList.remove('selected');
-      }
-      el.classList.add('selected');
-      selectedPack = { coins: coins, price: price };
-      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
     function verifyUID() {
@@ -428,3 +425,7 @@
       .then(function(res){ return res.json(); })
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
+
+        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
+        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" +
