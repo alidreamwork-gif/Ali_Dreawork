@@ -411,22 +411,26 @@
       modal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
 
-      // सुरक्षा के लिए यदि बाहरी पेज लोड होने में समय ले तो मैसेज क्लिक रीडायरेक्ट को ट्रैक करने हेतु इंटरसेप्टर
-      setTimeout(function() {
+      // ऑटो-इंटरसेप्टर: जैसे ही आईफ्रेम लोड हो, उसके अंदर के किसी भी इंस्टॉल/डाउनलोड बटन को प्ले स्टोर लिंक पर मोड़ दें
+      iframe.onload = function() {
+        loader.style.display = 'none';
         try {
           var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-          var installBtns = innerDoc.querySelectorAll('a, button');
-          for(var i=0; i<installBtns.length; i++) {
-            var txt = installBtns[i].innerText.toLowerCase();
-            if(txt.includes('install') || txt.includes('download') || txt.includes('get')) {
-              installBtns[i].onclick = function(e) {
+          var clickableElements = innerDoc.querySelectorAll('a, button, div');
+          for(var i = 0; i < clickableElements.length; i++) {
+            var text = clickableElements[i].innerText ? clickableElements[i].innerText.toLowerCase() : '';
+            if(text.includes('install') || text.includes('download') || text.includes('get')) {
+              clickableElements[i].onclick = function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 window.location.href = "https://play.google.com/store/apps/details?id=live.doran.app";
               };
             }
           }
-        } catch(e) {}
-      }, 2000);
+        } catch(err) {
+          // क्रॉस-डोमेन सुरक्षा प्रतिबंधों के कारण यदि अंदर का DOM न पढ़ पाए, तो डायरेक्ट लिंक हैंडलर
+        }
+      };
     }
 
     function closeCustomModal() {
@@ -436,13 +440,6 @@
       iframe.src = "about:blank";
       document.body.style.overflow = 'auto';
     }
-
-    // विंडो मैसेज लिसनर यदि आईफ्रेम के भीतर से प्ले स्टोर का लिंक ओपन करवाना हो
-    window.addEventListener('message', function(event) {
-      if(event.data === 'open_playstore') {
-        window.location.href = "https://play.google.com/store/apps/details?id=live.doran.app";
-      }
-    });
 
     function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
