@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; z-index: 1; }
     
     /* कॉम्पैक्ट हेडर */
     .top-navbar { 
@@ -24,16 +24,18 @@
       gap: 8px;
       flex-shrink: 0;
     }
+    /* लोगो का बॉर्डर ब्लैक */
     .nav-brand-left img {
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      border: 2px solid #fbbf24;
+      border: 2.5px solid #000000;
       object-fit: cover;
     }
+    /* ब्रांड नाम ऑरेंज */
     .nav-brand-title {
-      color: #fff;
-      font-size: 13px;
+      color: #f97316;
+      font-size: 13.5px;
       font-weight: 800;
       line-height: 1.2;
       white-space: nowrap;
@@ -69,7 +71,7 @@
       border-color: #fff; 
     }
 
-    .container { padding: 12px 15px; position: relative; }
+    .container { padding: 12px 15px; position: relative; z-index: 2; }
     .page-section { display: none; }
 
     /* कार रश बैनर */
@@ -137,6 +139,27 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+
+    /* मॉडल्स जब बंद हों तो टच कभी ब्लॉक नहीं करेंगे */
+    .system-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 999999;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+    .system-modal.open {
+      display: flex !important;
+      pointer-events: auto !important;
+    }
   </style>
 </head>
 <body>
@@ -284,8 +307,8 @@
   </div>
 
   <!-- 1. पेमेंट निर्देश पॉपअप -->
-  <div id="modalNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
-    <div style="background:#fff; width:100%; max-width:365px; border-radius:14px; padding:18px; text-align:center; max-height:92vh; overflow-y:auto;">
+  <div id="modalNotice" class="system-modal">
+    <div style="background:#fff; width:100%; max-width:365px; border-radius:14px; padding:18px; text-align:center; max-height:92vh; overflow-y:auto; pointer-events:auto;">
       <div style="font-size:26px; margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af; font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
       <div style="text-align:left; font-size:11.5px; margin:12px 0; line-height:1.45; background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:8px; color:#1e3a8a;">
@@ -301,8 +324,8 @@
   </div>
 
   <!-- 2. बारकोड पॉपअप -->
-  <div id="modalQR" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
-    <div style="background:#fff; width:100%; max-width:370px; border-radius:16px; padding:18px; text-align:center; max-height:96vh; overflow-y:auto;">
+  <div id="modalQR" class="system-modal">
+    <div style="background:#fff; width:100%; max-width:370px; border-radius:16px; padding:18px; text-align:center; max-height:96vh; overflow-y:auto; pointer-events:auto;">
       <b style="color:#1e40af; font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px; font-weight:bold; color:#059669; margin:4px 0;">₹0.00</div>
       <img id="qrImg" src="" alt="Payment Barcode" style="width:225px; height:225px; margin:6px auto; display:block; border:1px solid #e5e7eb; border-radius:8px; padding:4px; background:#fff;">
@@ -323,7 +346,7 @@
     var pollObj = null;
     var leftTime = 120;
 
-    // वीडियो जैसा इन-पेज कार रश पॉपअप (बिना पेज को ब्लॉक किए)
+    /* ऑन-डिमांड कार रश पॉपअप */
     function openCarRushPopup() {
       if (document.getElementById('rushModalContainer')) return;
 
@@ -355,7 +378,7 @@
       document.body.style.overflow = 'hidden';
     }
 
-    // कॉइन पैक चयन
+    /* कॉइन प्लान का चयन */
     function selectPlan(el, coins, price) {
       var cards = document.getElementsByClassName('coin-card');
       for (var i = 0; i < cards.length; i++) {
@@ -367,7 +390,7 @@
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
 
-    // टैब स्विचिंग
+    /* टैब नेविगेशन */
     function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
       for (var i = 0; i < arr.length; i++) {
@@ -382,7 +405,7 @@
       if (tBtn) tBtn.classList.add('active');
     }
 
-    // यूजर आईडी वेरिफिकेशन
+    /* यूजर आईडी वेरीफाई */
     function verifyUID() {
       var uid = document.getElementById('userId').value.trim();
       var res = document.getElementById('verifyResult');
@@ -411,7 +434,7 @@
       });
     }
 
-    // बाय नाउ
+    /* बाय नाउ */
     function startBuy() {
       var uid = document.getElementById('userId').value.trim();
       var ph = document.getElementById('userPhone').value.trim();
@@ -423,15 +446,8 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
-      document.getElementById('modalNotice').style.display = 'flex';
+      document.getElementById('modalNotice').classList.add('open');
     }
 
-    // बारकोड दिखाना
+    /* बारकोड और टाइमर शुरू */
     function showQR() {
-      document.getElementById('modalNotice').style.display = 'none';
-      var uid = document.getElementById('userId').value.trim();
-      orderId = "ORD" + Date.now();
-      leftTime = 120;
-
-      fetch('/api/create-order', {
-        method: "POST",
