@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; z-index: 1; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
     .top-navbar { background: #1e40af; padding: 10px; text-align: center; }
     .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -17,7 +17,7 @@
     .container { padding: 15px; }
     .page-section { display: none; }
 
-    /* Race Banner */
+    /* Clickable Race Banner */
     .banner-wrapper { margin: 10px 0 15px 0; text-align: center; }
     .race-banner-img { 
       width: 100%; 
@@ -25,55 +25,60 @@
       border-radius: 12px; 
       display: block; 
       cursor: pointer; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+      transition: transform 0.15s ease;
     }
+    .race-banner-img:active { transform: scale(0.98); }
 
-    /* Modal - Pointer events disabled until active to avoid blocking buttons */
+    /* Popup Modal Window - 100% Non-Blocking when hidden */
     #raceModal {
       display: none;
+      visibility: hidden;
+      pointer-events: none;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background: rgba(0,0,0,0.85);
-      z-index: 999999;
+      z-index: 9999999;
       justify-content: center;
       align-items: center;
       padding: 12px;
       box-sizing: border-box;
-      pointer-events: none;
     }
-    #raceModal.show {
+    #raceModal.is-open {
       display: flex !important;
+      visibility: visible !important;
       pointer-events: auto !important;
     }
     .race-modal-box {
       position: relative;
       width: 100%;
       max-width: 420px;
-      height: 85vh;
+      height: 88vh;
       background: #0f172a;
       border-radius: 16px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+      border: 1.5px solid #2563eb;
     }
     .race-close-btn {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.75);
       color: #fff;
       border: 2px solid #fff;
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
-      z-index: 10;
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -158,14 +163,14 @@
       <!-- Coins Section -->
       <div id="p-coins" class="page-section" style="display: block;">
 
-        <!-- Banner directly using your uploaded file name -->
+        <!-- Clickable Banner (GitHub Uploaded Image) -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Car Rush Banner" class="race-banner-img" onclick="openRaceModal()">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRaceModal()">
         </div>
 
         <div class="header">
           <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-          <div class="brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
+          <div class="brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃᵐʷ®️k</div>
         </div>
 
         <div class="card">
@@ -279,15 +284,15 @@
     </div>
   </div>
 
-  <!-- Car Rush Modal (Safely Layered) -->
+  <!-- Car Rush Modal Popup Window -->
   <div id="raceModal">
     <div class="race-modal-box">
       <button type="button" class="race-close-btn" onclick="closeRaceModal()">✕</button>
-      <iframe id="raceFrame" src="" class="race-frame"></iframe>
+      <iframe id="raceFrame" src="about:blank" class="race-frame" allow="fullscreen"></iframe>
     </div>
   </div>
 
-  <!-- 1. विस्तृत निर्देश पॉपअप -->
+  <!-- 1. Payment Instructions Modal -->
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
@@ -304,7 +309,7 @@
     </div>
   </div>
 
-  <!-- 2. ऑटोमैटिक बारकोड और टाइमर पॉपअप -->
+  <!-- 2. QR Code Modal -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
@@ -327,17 +332,21 @@
     var pollObj = null;
     var leftTime = 120;
 
-    /* Car Rush Modal Functions */
+    /* Car Rush Modal Logic */
     function openRaceModal() {
+      var modal = document.getElementById('raceModal');
       var frame = document.getElementById('raceFrame');
-      if (!frame.src || frame.src === "" || frame.src === window.location.href) {
-        frame.src = "https://www.doran.live/car-rush-ad";
-      }
-      document.getElementById('raceModal').classList.add('show');
+      frame.src = "https://www.doran.live/car-rush-ad";
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeRaceModal() {
-      document.getElementById('raceModal').classList.remove('show');
+      var modal = document.getElementById('raceModal');
+      var frame = document.getElementById('raceFrame');
+      modal.classList.remove('is-open');
+      frame.src = "about:blank"; // बैकग्राउंड मेमोरी और साउंड रोकने के लिए
+      document.body.style.overflow = 'auto';
     }
 
     function tab(key) {
@@ -421,9 +430,3 @@
         exactPayableAmount = data.exactAmount || selectedPack.price;
 
         var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
-        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-        document.getElementById('timerText').innerText = "02:00";
-        document.getElementById('modalQR').style.display = 'flex';
-
-        clearInterval
