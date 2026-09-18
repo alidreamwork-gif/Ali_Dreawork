@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* पॉपअप बॉक्स और कस्टम इंस्टॉल बार */
+    /* पॉपअप बॉक्स और स्मार्ट ओवरले लेयर */
     #raceCustomModal {
       display: none;
       position: fixed;
@@ -106,50 +106,46 @@
       box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       border: 2px solid #2563eb;
     }
-
-    /* ऊपर की तरफ हमारा फिक्स किया हुआ इंस्टॉल बार */
-    .popup-top-bar {
-      background: #1e293b;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #334155;
-    }
-    .popup-install-btn {
-      background: #2563eb;
-      color: #ffffff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-    }
+    
+    /* क्रॉस बटन */
     .custom-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
       background: #ef4444;
       color: #ffffff;
-      border: none;
-      width: 30px;
-      height: 30px;
+      border: 2px solid #ffffff;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      font-size: 15px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 100000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
-    
+
+    /* असली 'Install' बटन के ऊपर सटीक बैठने वाला ट्रांसपेरेंट क्लिक एरिया */
+    .smart-install-overlay {
+      position: absolute;
+      top: 12px;
+      right: 55px;
+      width: 75px;
+      height: 35px;
+      background: transparent;
+      z-index: 99999;
+      cursor: pointer;
+    }
+
     #iframeLoading {
       position: absolute;
-      top: 50px;
+      top: 0;
       left: 0;
       width: 100%;
-      height: calc(100% - 50px);
+      height: 100%;
       background: #0f172a;
       color: #fbbf24;
       display: flex;
@@ -371,10 +367,10 @@
 
   <div id="raceCustomModal">
     <div class="custom-popup-box">
-      <div class="popup-top-bar">
-        <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="popup-install-btn">Install App 🚀</a>
-        <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
-      </div>
+      <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="smart-install-overlay"></a>
+      
+      <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
+      
       <div id="iframeLoading">
         <div class="spinner"></div>
         <span>Loading Event Details...</span>
