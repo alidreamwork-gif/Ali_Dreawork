@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; z-index: 1; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
     /* नीली पट्टी का हेडर */
     .top-navbar { 
@@ -65,7 +65,7 @@
     }
     .nav-btn.active { background: #fff; color: #1e40af; }
 
-    .container { padding: 12px; position: relative; z-index: 2; }
+    .container { padding: 12px; }
     .page-section { display: none; }
 
     /* कार रश बैनर */
@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* सेफ पॉपअप मॉडल - जब बंद हो तब टच बिल्कुल ब्लॉक नहीं करेगा */
+    /* रियल-टाइम जैसा शानदार पॉपअप मॉडल */
     #raceCustomModal {
       display: none;
       position: fixed;
@@ -87,32 +87,28 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 999999;
       justify-content: center;
       align-items: center;
-      padding: 20px;
-      pointer-events: none;
-    }
-    #raceCustomModal.active {
-      display: flex !important;
-      pointer-events: auto !important;
+      padding: 15px;
     }
     .custom-popup-box {
       position: relative;
       width: 100%;
-      max-width: 360px;
-      background: #ffffff;
+      max-width: 400px;
+      background: #0f172a;
       border-radius: 16px;
-      padding: 25px 20px;
+      padding: 20px;
       text-align: center;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-      border: 2px solid #1e40af;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border: 2px solid #2563eb;
+      color: #fff;
     }
     .custom-close-btn {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 10px;
+      right: 10px;
       background: #ef4444;
       color: #ffffff;
       border: none;
@@ -125,7 +121,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 
     .card { background: #fff; border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; }
@@ -319,9 +315,10 @@
   <div id="raceCustomModal">
     <div class="custom-popup-box">
       <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
-      <h3 style="color: #1e40af; margin-bottom: 10px; font-size: 18px;">Play Race, Share Luck 🏎️</h3>
-      <p style="color: #4b5563; font-size: 13px; margin-bottom: 18px; line-height: 1.5;">Join the race event, win big rewards and share your luck with friends!</p>
-      <a href="https://www.doran.live/car-rush-ad" target="_blank" style="display: inline-block; background: #2563eb; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">Visit Event Page 🚀</a>
+      <img src="carrushbanner.jpeg" alt="Banner" style="width:100%; border-radius:8px; margin-bottom:12px;">
+      <h3 style="color: #fbbf24; margin-bottom: 8px; font-size: 16px;">Play Race, Share Luck 🏎️</h3>
+      <p style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px; line-height: 1.4;">Prize Pool: 3,000,000 Coins! Check rewards and participate now.</p>
+      <a href="https://www.doran.live/car-rush-ad" target="_blank" style="display: block; background: #2563eb; color: #fff; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px;">Open Full Event Page 🚀</a>
     </div>
   </div>
 
@@ -364,11 +361,11 @@
     var leftTime = 120;
 
     function openCustomModal() {
-      document.getElementById('raceCustomModal').classList.add('active');
+      document.getElementById('raceCustomModal').style.display = 'flex';
     }
 
     function closeCustomModal() {
-      document.getElementById('raceCustomModal').classList.remove('active');
+      document.getElementById('raceCustomModal').style.display = 'none';
     }
 
     function tab(key) {
