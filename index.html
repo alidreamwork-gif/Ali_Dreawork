@@ -2,24 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork Store</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; overflow-x: hidden; font-family: sans-serif; background: #f3f4f6; }
-    body { display: flex; justify-content: center; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; }
     
-    .app-wrapper { 
-      width: 100%; 
-      max-width: 480px; 
-      background: #fff; 
-      min-height: 100vh; 
-      padding-bottom: 30px; 
-      position: relative; 
-      overflow-x: hidden;
-    }
-    
-    /* कॉम्पैक्ट हेडर - नीला बैकग्राउंड (कोई सफेद बॉक्स नहीं) */
+    /* नीली पट्टी का हेडर */
     .top-navbar { 
       background: #1e40af; 
       padding: 8px 10px; 
@@ -27,82 +17,68 @@
       align-items: center; 
       justify-content: space-between; 
       gap: 6px; 
-      width: 100%;
     }
     .nav-brand-left {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      background: transparent;
     }
-    /* लोगो: ब्लैक बॉर्डर */
     .nav-brand-left img {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 2px solid #000000;
       object-fit: cover;
-      display: block;
       background: #fff;
     }
-    /* ब्रांड नाम: ब्लैक */
     .nav-brand-title {
       color: #000000;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 900;
       line-height: 1.1;
       white-space: nowrap;
       text-shadow: 0 0 2px rgba(255,255,255,0.8);
     }
-
-    /* दाएँ साइड के बटन्स - बिना कटिंग के सुरक्षित */
     .nav-buttons-right { 
       display: flex; 
       flex-direction: column; 
       gap: 4px; 
       align-items: flex-end; 
-      flex-shrink: 1;
-      min-width: 0;
     }
     .nav-row {
       display: flex;
       gap: 4px;
       justify-content: flex-end;
-      width: 100%;
     }
     .nav-btn { 
-      background: rgba(255,255,255,0.22); 
+      background: rgba(255,255,255,0.25); 
       border: 1px solid rgba(255,255,255,0.4); 
-      color: #ffffff; 
-      padding: 4px 6px; 
+      color: white; 
+      padding: 4px 7px; 
       border-radius: 12px; 
-      font-size: 9.5px; 
+      font-size: 10px; 
       cursor: pointer; 
       font-weight: bold; 
       white-space: nowrap;
     }
-    .nav-btn.active { 
-      background: #ffffff; 
-      color: #1e40af; 
-      border-color: #ffffff; 
-    }
+    .nav-btn.active { background: #fff; color: #1e40af; }
 
-    .container { padding: 10px 12px; width: 100%; }
+    .container { padding: 12px; }
     .page-section { display: none; }
 
     /* कार रश बैनर */
-    .banner-wrapper { margin: 2px 0 10px 0; text-align: center; }
+    .banner-wrapper { margin: 2px 0 12px 0; text-align: center; }
     .race-banner-img { 
       width: 100%; 
       height: auto; 
       border-radius: 12px; 
       display: block; 
       cursor: pointer; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    .card { background: #fff; border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; width: 100%; }
+    .card { background: #fff; border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; }
     
     label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
     .id-group { display: flex; gap: 6px; margin-top: 5px; }
@@ -113,28 +89,21 @@
     .user-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; flex-shrink: 0; }
 
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 14px 0 10px 0; }
-    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; width: 100%; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     
-    /* कॉइन कार्ड्स */
     .coin-card { 
       border: 2px solid #e5e7eb; 
       border-radius: 12px; 
-      padding: 13px 4px; 
+      padding: 14px 6px; 
       background: #fafafa; 
       text-align: center; 
       cursor: pointer; 
-      user-select: none;
-      transition: all 0.12s ease;
     }
-    .coin-card.selected { 
-      border-color: #059669 !important; 
-      background: #f0fdf4 !important; 
-      box-shadow: 0 0 0 1.5px #059669;
-    }
-    .coin-number { font-size: 16.5px; font-weight: 800; color: #1e40af; pointer-events: none; }
-    .coin-label { font-size: 10px; color: #6b7280; font-weight: 600; text-transform: uppercase; pointer-events: none; }
-    .coin-divider { width: 30px; height: 2px; background: #e5e7eb; margin: 6px auto; pointer-events: none; }
-    .coin-price { font-size: 15px; font-weight: bold; color: #059669; pointer-events: none; }
+    .coin-card.selected { border-color: #059669; background: #f0fdf4; }
+    .coin-number { font-size: 17px; font-weight: 800; color: #1e40af; }
+    .coin-label { font-size: 10.5px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+    .coin-divider { width: 34px; height: 2px; background: #e5e7eb; margin: 6px auto; }
+    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
@@ -162,14 +131,11 @@
 <body>
 
   <div class="app-wrapper">
-    
-    <!-- नेविगेशन बार -->
     <div class="top-navbar">
       <div class="nav-brand-left">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
         <div class="nav-brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
       </div>
-
       <div class="nav-buttons-right">
         <div class="nav-row">
           <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
@@ -185,12 +151,10 @@
 
     <div class="container">
       
-      <!-- Coins Section -->
       <div id="p-coins" class="page-section" style="display: block;">
 
-        <!-- कार रश बैनर -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openCarRush()">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="window.open('https://www.doran.live/car-rush-ad', '_blank')">
         </div>
 
         <div class="card">
@@ -270,7 +234,7 @@
           <div class="terms-wrapper">
             <input type="checkbox" id="termsAgree" checked>
             <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
-              I accept all <span onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;cursor:pointer;">Terms & Conditions</span>
+              I accept all <a href="javascript:void(0)" onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;">Terms & Conditions</a>
             </label>
           </div>
 
@@ -278,7 +242,6 @@
         </div>
       </div>
 
-      <!-- Static Tabs -->
       <div id="p-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
         <p>Welcome to <strong>Ali Dreamwork</strong>. All coin packs are delivered automatically to verified User IDs.</p>
@@ -303,16 +266,7 @@
     </div>
   </div>
 
-  <!-- कार रश पॉपअप (वीडियो जैसा) -->
-  <div id="modalCarRush" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;">
-    <div style="position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);">
-      <button type="button" onclick="closeCarRush()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;border:2px solid #fff;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:bold;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;">✕</button>
-      <iframe id="carRushIframe" src="about:blank" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe>
-    </div>
-  </div>
-
-  <!-- 1. पेमेंट निर्देश पॉपअप -->
-  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
@@ -328,8 +282,7 @@
     </div>
   </div>
 
-  <!-- 2. बारकोड पॉपअप -->
-  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;box-sizing:border-box;">
+  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
@@ -351,52 +304,26 @@
     var pollObj = null;
     var leftTime = 120;
 
-    // कॉइन पैक चयन
-    window.setPack = function(el, coins, price) {
-      var all = document.getElementsByClassName('coin-card');
-      for (var i = 0; i < all.length; i++) {
-        all[i].classList.remove('selected');
-      }
-      el.classList.add('selected');
-      selectedPack = { coins: coins, price: price };
-      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
-      document.getElementById('sumPrice').innerText = "₹" + price;
-    };
-
-    // कार रश पॉपअप
-    window.openCarRush = function() {
-      var m = document.getElementById('modalCarRush');
-      var f = document.getElementById('carRushIframe');
-      f.src = 'https://www.doran.live/car-rush-ad';
-      m.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.closeCarRush = function() {
-      var m = document.getElementById('modalCarRush');
-      var f = document.getElementById('carRushIframe');
-      m.style.display = 'none';
-      f.src = 'about:blank';
-      document.body.style.overflow = 'auto';
-    };
-
-    // टैब नेविगेशन
-    window.tab = function(key) {
+    function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
       for (var i = 0; i < arr.length; i++) {
-        var p = document.getElementById('p-' + arr[i]);
-        var b = document.getElementById('b-' + arr[i]);
-        if (p) p.style.display = 'none';
-        if (b) b.classList.remove('active');
+        document.getElementById('p-' + arr[i]).style.display = 'none';
+        document.getElementById('b-' + arr[i]).classList.remove('active');
       }
-      var tp = document.getElementById('p-' + key);
-      var tb = document.getElementById('b-' + key);
-      if (tp) tp.style.display = 'block';
-      if (tb) tb.classList.add('active');
-    };
+      document.getElementById('p-' + key).style.display = 'block';
+      document.getElementById('b-' + key).classList.add('active');
+    }
 
-    // यूजर आईडी वेरिफिकेशन
-    window.verifyUID = function() {
+    function setPack(el, coins, price) {
+      var all = document.querySelectorAll('.coin-card');
+      for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+      el.classList.add('selected');
+      selectedPack = { coins: coins, price: price };
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
+    }
+
+    function verifyUID() {
       var uid = document.getElementById('userId').value.trim();
       var res = document.getElementById('verifyResult');
       if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
@@ -422,10 +349,9 @@
         isUidValid = true;
         res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
       });
-    };
+    }
 
-    // बाय नाउ
-    window.startBuy = function() {
+    function startBuy() {
       var uid = document.getElementById('userId').value.trim();
       var ph = document.getElementById('userPhone').value.trim();
       var termsChecked = document.getElementById('termsAgree').checked;
@@ -437,14 +363,61 @@
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
       document.getElementById('modalNotice').style.display = 'flex';
-    };
+    }
 
-    // बारकोड और टाइमर शुरू
-    window.showQR = function() {
+    function showQR() {
       document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
       leftTime = 120;
 
       fetch('/api/create-order', {
-        me
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        exactPayableAmount = data.exactAmount || selectedPack.price;
+        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
+        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
+        document.getElementById('timerText').innerText = "02:00";
+        document.getElementById('modalQR').style.display = 'flex';
+
+        clearInterval(timerObj);
+        timerObj = setInterval(function(){
+          leftTime--;
+          var m = Math.floor(leftTime / 60);
+          var s = leftTime % 60;
+          document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+          if (leftTime <= 0) {
+            hideAllModals();
+            alert("⏳ Time's up! The 2-minute time limit has expired. Please contact support via WhatsApp: 7776881407.");
+          }
+        }, 1000);
+
+        clearInterval(pollObj);
+        pollObj = setInterval(function(){
+          fetch('/api/check-order-status?orderId=' + orderId)
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if (d && d.status === 'PAID') {
+                hideAllModals();
+                alert("🎉 Congratulations Payment Verified! Coins successfully delivered.");
+                location.reload();
+              }
+            }).catch(function(){});
+        }, 2500);
+      });
+    }
+
+    function hideAllModals() {
+      clearInterval(timerObj);
+      clearInterval(pollObj);
+      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalQR').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
