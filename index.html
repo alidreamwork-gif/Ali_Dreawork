@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* पॉपअप बॉक्स और स्मार्ट ओवरले लेयर */
+    /* कार रश इवेंट पॉपअप */
     #raceCustomModal {
       display: none;
       position: fixed;
@@ -106,8 +106,6 @@
       box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       border: 2px solid #2563eb;
     }
-    
-    /* क्रॉस बटन */
     .custom-close-btn {
       position: absolute;
       top: 10px;
@@ -127,8 +125,6 @@
       z-index: 100000;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
-
-    /* पूरी ऊपर वाली नीली इंस्टॉल पट्टी के ऊपर सटीक बैठने वाला बड़ा ट्रांसपेरेंट क्लिक एरिया */
     .smart-install-overlay {
       position: absolute;
       top: 10px;
@@ -139,7 +135,6 @@
       z-index: 99999;
       cursor: pointer;
     }
-
     #iframeLoading {
       position: absolute;
       top: 0;
@@ -169,7 +164,6 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
     .popup-iframe {
       width: 100%;
       height: 100%;
@@ -368,9 +362,7 @@
   <div id="raceCustomModal">
     <div class="custom-popup-box">
       <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="smart-install-overlay"></a>
-      
       <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
-      
       <div id="iframeLoading">
         <div class="spinner"></div>
         <span>Loading Event Details...</span>
@@ -384,14 +376,25 @@
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
-        <ol style="margin:4px 0 0 18px;padding:0;">
-          <li>आगे 2 मिनट के टाइमर के साथ बारकोड खुलेगा।</li>
-          <li>उसका स्क्रीनशॉट लें और अपने UPI स्कैनर की गैलरी से पे करें।</li>
-          <li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>
+        <p style="margin-bottom:6px;font-weight:bold;">English:</p>
+        <ol style="margin:0 0 10px 18px;padding:0;">
+          <li>A <b>Barcode</b> will open with a 2-minute timer and the exact payable amount.</li>
+          <li>Take a <b>Screenshot</b> of the barcode.</li>
+          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
+          <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
+        </ol>
+        <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
+        <ol style="margin:0 0 0 18px;padding:0;">
+          <li>आगे 2 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
+          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
         </ol>
       </div>
-      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
@@ -399,12 +402,19 @@
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
+      <div style="font-size:11.5px;color:#dc2626;font-weight:bold;margin-bottom:8px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
       <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
       <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
-        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">02:00</span>
+        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">01:59</span>
       </div>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
+        📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in the GPay, PhonePe, or Paytm scanner, and make the payment.
+      </div>
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
+        🔄 <b>Auto-detection is on:</b> As soon as the payment is made, the system will automatically detect it and transfer the coins within 5 seconds
+      </div>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
@@ -525,7 +535,7 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            alert("⏳ Time's up! The 2-minute time limit has expired. Please contact support via WhatsApp: 7776881407.");
+            alert("⏳ Time's up! The 2-minute time limit has expired. Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 7776881407.");
           }
         }, 1000);
 
