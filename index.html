@@ -9,17 +9,71 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    .top-navbar { background: #1e40af; padding: 10px; text-align: center; }
-    .nav-buttons { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-    .nav-btn { background: rgba(255,255,255,0.25); border: none; color: white; padding: 7px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
-    .nav-btn.active { background: #fff; color: #1e40af; }
+    /* कॉम्पैक्ट नया हेडर: बाएँ लोगो, दाएँ दो लाइन में बटन्स */
+    .top-navbar { 
+      background: #1e40af; 
+      padding: 10px 12px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 10px; 
+    }
+    .nav-brand-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .nav-brand-left img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid #fbbf24;
+      object-fit: cover;
+    }
+    .nav-brand-title {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
 
-    .container { padding: 15px; }
+    .nav-buttons-right { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 5px; 
+      align-items: flex-end; 
+      width: 100%;
+    }
+    .nav-row {
+      display: flex;
+      gap: 5px;
+      justify-content: flex-end;
+      width: 100%;
+    }
+    .nav-btn { 
+      background: rgba(255,255,255,0.2); 
+      border: 1px solid rgba(255,255,255,0.3); 
+      color: white; 
+      padding: 5px 9px; 
+      border-radius: 14px; 
+      font-size: 10.5px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      white-space: nowrap;
+    }
+    .nav-btn.active { 
+      background: #fff; 
+      color: #1e40af; 
+      border-color: #fff; 
+    }
+
+    .container { padding: 12px 15px; }
     .page-section { display: none; }
 
-    /* Clickable Race Banner */
-    .banner-wrapper { margin: 10px 0 15px 0; text-align: center; }
-    .race-banner-link { display: block; text-decoration: none; border-radius: 12px; overflow: hidden; }
+    /* कार रश बैनर */
+    .banner-wrapper { margin: 2px 0 12px 0; text-align: center; }
     .race-banner-img { 
       width: 100%; 
       height: auto; 
@@ -29,9 +83,6 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
     }
 
-    .header { text-align: center; margin: 10px 0 15px 0; }
-    .logo-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #d97706; object-fit: cover; }
-    .brand-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-top: 5px; }
     .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 12px; }
     
     label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; color: #374151; }
@@ -81,36 +132,90 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+
+    /* कार रश इन-पेज पॉपअप (Zero-blocking when closed) */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 999999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .popup-box {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      height: 88vh;
+      background: #0f172a;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border: 1.5px solid #2563eb;
+    }
+    .popup-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      border: 2px solid #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .popup-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
   </style>
 </head>
 <body>
 
   <div class="app-wrapper">
+    
     <div class="top-navbar">
-      <div class="nav-buttons">
-        <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
-        <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
-        <button type="button" class="nav-btn" id="b-privacy" onclick="tab('privacy')">Privacy</button>
-        <button type="button" class="nav-btn" id="b-refund" onclick="tab('refund')">Refund</button>
-        <button type="button" class="nav-btn" id="b-contact" onclick="tab('contact')">Contact</button>
+      <div class="nav-brand-left">
+        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
+        <div class="nav-brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
+      </div>
+
+      <div class="nav-buttons-right">
+        <div class="nav-row">
+          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
+          <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="nav-btn" id="b-privacy" onclick="tab('privacy')">Privacy</button>
+          <button type="button" class="nav-btn" id="b-refund" onclick="tab('refund')">Refund</button>
+          <button type="button" class="nav-btn" id="b-contact" onclick="tab('contact')">Contact</button>
+        </div>
       </div>
     </div>
 
     <div class="container">
       
-      <!-- Coins Section -->
       <div id="p-coins" class="page-section" style="display: block;">
 
-        <!-- Clean Clickable Banner -->
         <div class="banner-wrapper">
-          <a href="https://www.doran.live/car-rush-ad" target="_blank" class="race-banner-link">
-            <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img">
-          </a>
-        </div>
-
-        <div class="header">
-          <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo" class="logo-img">
-          <div class="brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃᵐʷ®️k</div>
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openRacePopup()">
         </div>
 
         <div class="card">
@@ -198,7 +303,6 @@
         </div>
       </div>
 
-      <!-- Static Tabs -->
       <div id="p-terms" class="page-section static-page">
         <h2>📜 Terms & Conditions</h2>
         <p>Welcome to <strong>Ali Dreamwork</strong>. By accessing our platform, registering an account, or purchasing any digital coins and virtual credit packs, you agree to comply with and be bound by the following comprehensive terms and conditions.</p>
@@ -223,8 +327,14 @@
     </div>
   </div>
 
-  <!-- 1. विस्तृत निर्देश पॉपअप -->
-  <div id="modalNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+  <div id="racePopup" class="popup-overlay">
+    <div class="popup-box">
+      <button type="button" class="popup-close" onclick="closeRacePopup()">✕</button>
+      <iframe id="raceFrame" src="about:blank" class="popup-frame" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <div id="modalNotice" class="popup-overlay">
     <div style="background:#fff; width:100%; max-width:365px; border-radius:14px; padding:18px; text-align:center; max-height:92vh; overflow-y:auto;">
       <div style="font-size:26px; margin-bottom:2px;">⚠️</div>
       <b style="color:#1e40af; font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
@@ -240,8 +350,7 @@
     </div>
   </div>
 
-  <!-- 2. ऑटोमैटिक बारकोड और टाइमर पॉपअप -->
-  <div id="modalQR" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+  <div id="modalQR" class="popup-overlay">
     <div style="background:#fff; width:100%; max-width:370px; border-radius:16px; padding:18px; text-align:center; max-height:96vh; overflow-y:auto;">
       <b style="color:#1e40af; font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px; font-weight:bold; color:#059669; margin:4px 0;">₹0.00</div>
@@ -262,6 +371,23 @@
     var timerObj = null;
     var pollObj = null;
     var leftTime = 120;
+
+    /* कार रश इन-पेज पॉपअप लॉजिक */
+    function openRacePopup() {
+      var popup = document.getElementById('racePopup');
+      var frame = document.getElementById('raceFrame');
+      frame.src = "https://www.doran.live/car-rush-ad";
+      popup.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeRacePopup() {
+      var popup = document.getElementById('racePopup');
+      var frame = document.getElementById('raceFrame');
+      popup.style.display = 'none';
+      frame.src = "about:blank";
+      document.body.style.overflow = 'auto';
+    }
 
     function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
@@ -345,43 +471,4 @@
 
         var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
-        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-        document.getElementById('timerText').innerText = "02:00";
-        document.getElementById('modalQR').style.display = 'flex';
-
-        clearInterval(timerObj);
-        timerObj = setInterval(function(){
-          leftTime--;
-          var m = Math.floor(leftTime / 60);
-          var s = leftTime % 60;
-          document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-          if (leftTime <= 0) {
-            hideAllModals();
-            alert("⏳ Time's up! The 2-minute time limit has expired. Please contact support via WhatsApp: 7776881407.");
-          }
-        }, 1000);
-
-        clearInterval(pollObj);
-        pollObj = setInterval(function(){
-          fetch('/api/check-order-status?orderId=' + orderId)
-            .then(function(r){ return r.json(); })
-            .then(function(d){
-              if (d && d.status === 'PAID') {
-                hideAllModals();
-                alert("🎉 Congratulations Payment Verified! Coins successfully delivered.");
-                location.reload();
-              }
-            }).catch(function(){});
-        }, 2500);
-      });
-    }
-
-    function hideAllModals() {
-      clearInterval(timerObj);
-      clearInterval(pollObj);
-      document.getElementById('modalNotice').style.display = 'none';
-      document.getElementById('modalQR').style.display = 'none';
-    }
-  </script>
-</body>
-</html>
+        document.getElementById('qrImg').src = "https://api.qrserver.
