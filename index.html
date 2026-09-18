@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* पॉपअप बॉक्स और लोडिंग स्टाइल */
+    /* पॉपअप बॉक्स और कस्टम इंस्टॉल बार */
     #raceCustomModal {
       display: none;
       position: fixed;
@@ -106,33 +106,50 @@
       box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       border: 2px solid #2563eb;
     }
+
+    /* ऊपर की तरफ हमारा फिक्स किया हुआ इंस्टॉल बार */
+    .popup-top-bar {
+      background: #1e293b;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #334155;
+    }
+    .popup-install-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
     .custom-close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
       background: #ef4444;
       color: #ffffff;
-      border: 2px solid #ffffff;
-      width: 36px;
-      height: 36px;
+      border: none;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100000;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
     
-    /* लोडिंग टेक्स्ट और स्पिनर */
     #iframeLoading {
       position: absolute;
-      top: 0;
+      top: 50px;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: calc(100% - 50px);
       background: #0f172a;
       color: #fbbf24;
       display: flex;
@@ -141,7 +158,7 @@
       justify-content: center;
       font-size: 14px;
       font-weight: bold;
-      z-index: 99999;
+      z-index: 99;
       gap: 10px;
     }
     .spinner {
@@ -354,7 +371,10 @@
 
   <div id="raceCustomModal">
     <div class="custom-popup-box">
-      <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
+      <div class="popup-top-bar">
+        <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="popup-install-btn">Install App 🚀</a>
+        <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
+      </div>
       <div id="iframeLoading">
         <div class="spinner"></div>
         <span>Loading Event Details...</span>
@@ -410,27 +430,6 @@
       iframe.src = "https://www.doran.live/car-rush-ad";
       modal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
-
-      // ऑटो-इंटरसेप्टर: जैसे ही आईफ्रेम लोड हो, उसके अंदर के किसी भी इंस्टॉल/डाउनलोड बटन को प्ले स्टोर लिंक पर मोड़ दें
-      iframe.onload = function() {
-        loader.style.display = 'none';
-        try {
-          var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-          var clickableElements = innerDoc.querySelectorAll('a, button, div');
-          for(var i = 0; i < clickableElements.length; i++) {
-            var text = clickableElements[i].innerText ? clickableElements[i].innerText.toLowerCase() : '';
-            if(text.includes('install') || text.includes('download') || text.includes('get')) {
-              clickableElements[i].onclick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                window.location.href = "https://play.google.com/store/apps/details?id=live.doran.app";
-              };
-            }
-          }
-        } catch(err) {
-          // क्रॉस-डोमेन सुरक्षा प्रतिबंधों के कारण यदि अंदर का DOM न पढ़ पाए, तो डायरेक्ट लिंक हैंडलर
-        }
-      };
     }
 
     function closeCustomModal() {
