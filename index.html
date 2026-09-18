@@ -170,68 +170,68 @@
 
         <!-- कार रश बैनर -->
         <div class="banner-wrapper">
-          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" id="mainBannerImg">
+          <img src="carrushbanner.jpeg" alt="Play Race Share Luck" class="race-banner-img" onclick="openCarRushPopup()">
         </div>
 
         <div class="card">
           <label>DUOO & DORAN USER ID:</label>
           <div class="id-group">
             <input type="text" id="userId" placeholder="Enter User ID">
-            <button type="button" class="verify-btn" id="btnVerify">Verify</button>
+            <button type="button" class="verify-btn" onclick="verifyUID()">Verify</button>
           </div>
           <div id="verifyResult"></div>
 
           <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
           <div class="plans-grid">
-            <div class="coin-card" data-coins="11000" data-price="151">
+            <div class="coin-card" onclick="selectPlan(this, 11000, 151)">
               <div class="coin-number">11,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹151</div>
             </div>
-            <div class="coin-card" data-coins="16100" data-price="220">
+            <div class="coin-card" onclick="selectPlan(this, 16100, 220)">
               <div class="coin-number">16,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹220</div>
             </div>
-            <div class="coin-card" data-coins="24100" data-price="330">
+            <div class="coin-card" onclick="selectPlan(this, 24100, 330)">
               <div class="coin-number">24,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹330</div>
             </div>
-            <div class="coin-card" data-coins="32100" data-price="440">
+            <div class="coin-card" onclick="selectPlan(this, 32100, 440)">
               <div class="coin-number">32,100</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹440</div>
             </div>
-            <div class="coin-card" data-coins="50000" data-price="685">
+            <div class="coin-card" onclick="selectPlan(this, 50000, 685)">
               <div class="coin-number">50,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹685</div>
             </div>
-            <div class="coin-card" data-coins="100000" data-price="1370">
+            <div class="coin-card" onclick="selectPlan(this, 100000, 1370)">
               <div class="coin-number">100,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,370</div>
             </div>
-            <div class="coin-card" data-coins="146000" data-price="1999">
+            <div class="coin-card" onclick="selectPlan(this, 146000, 1999)">
               <div class="coin-number">146,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹1,999</div>
             </div>
-            <div class="coin-card" data-coins="219000" data-price="3000">
+            <div class="coin-card" onclick="selectPlan(this, 219000, 3000)">
               <div class="coin-number">219,000</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹3,000</div>
             </div>
-            <div class="coin-card" data-coins="328500" data-price="4500">
+            <div class="coin-card" onclick="selectPlan(this, 328500, 4500)">
               <div class="coin-number">328,500</div>
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
@@ -254,7 +254,7 @@
             </label>
           </div>
 
-          <button type="button" class="main-buy-btn" id="btnBuyNow">BUY NOW</button>
+          <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
         </div>
       </div>
 
@@ -295,7 +295,7 @@
           <li>सटीक रकम पे करने पर 5 सेकंड में कॉइन्स क्रेडिट हो जाएंगे।</li>
         </ol>
       </div>
-      <button type="button" id="btnNoticeOk" style="width:100%; background:#059669; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="showQR()" style="width:100%; background:#059669; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%; background:#f3f4f6; border:1px solid #d1d5db; color:#4b5563; padding:8px; border-radius:8px; margin-top:8px; cursor:pointer; font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
@@ -323,13 +323,13 @@
     var pollObj = null;
     var leftTime = 120;
 
-    // 100% सेफ कार रश पॉपअप (ऑन-डिमांड क्रिएशन)
-    function openCarRushModal() {
-      if (document.getElementById('activeCarRushModal')) return;
+    // वीडियो जैसा इन-पेज कार रश पॉपअप (बिना पेज को ब्लॉक किए)
+    function openCarRushPopup() {
+      if (document.getElementById('rushModalContainer')) return;
 
       var overlay = document.createElement('div');
-      overlay.id = 'activeCarRushModal';
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
+      overlay.id = 'rushModalContainer';
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;justify-content:center;align-items:center;padding:12px;box-sizing:border-box;';
 
       var box = document.createElement('div');
       box.style.cssText = 'position:relative;width:100%;max-width:440px;height:88vh;background:#0f172a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;border:1.5px solid #2563eb;box-shadow:0 12px 35px rgba(0,0,0,0.7);';
@@ -355,6 +355,19 @@
       document.body.style.overflow = 'hidden';
     }
 
+    // कॉइन पैक चयन
+    function selectPlan(el, coins, price) {
+      var cards = document.getElementsByClassName('coin-card');
+      for (var i = 0; i < cards.length; i++) {
+        cards[i].classList.remove('selected');
+      }
+      el.classList.add('selected');
+      selectedPack = { coins: coins, price: price };
+      document.getElementById('sumPlan').innerText = Number(coins).toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
+    }
+
+    // टैब स्विचिंग
     function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
       for (var i = 0; i < arr.length; i++) {
@@ -369,6 +382,7 @@
       if (tBtn) tBtn.classList.add('active');
     }
 
+    // यूजर आईडी वेरिफिकेशन
     function verifyUID() {
       var uid = document.getElementById('userId').value.trim();
       var res = document.getElementById('verifyResult');
@@ -397,6 +411,7 @@
       });
     }
 
+    // बाय नाउ
     function startBuy() {
       var uid = document.getElementById('userId').value.trim();
       var ph = document.getElementById('userPhone').value.trim();
@@ -411,6 +426,7 @@
       document.getElementById('modalNotice').style.display = 'flex';
     }
 
+    // बारकोड दिखाना
     function showQR() {
       document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
@@ -419,13 +435,3 @@
 
       fetch('/api/create-order', {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
-      })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        exactPayableAmount = data.exactAmount || selectedPack.price;
-
-        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
-        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" +
