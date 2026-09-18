@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* इन-पेज पॉपअप मॉडल स्टाइल्स (वीडियो जैसी डिमांड के अनुसार) */
+    /* सेफ पॉपअप मॉडल (ब्लैंक एरर फ्री) */
     #racePopupModal {
       display: none;
       position: fixed;
@@ -87,7 +87,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       z-index: 999999;
       justify-content: center;
       align-items: center;
@@ -97,12 +97,10 @@
       position: relative;
       width: 100%;
       max-width: 420px;
-      height: 85vh;
-      background: #0f172a;
+      background: #ffffff;
       border-radius: 14px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      padding: 25px 20px;
+      text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       border: 1.5px solid #2563eb;
     }
@@ -111,4 +109,9 @@
       top: 10px;
       right: 10px;
       background: rgba(0, 0, 0, 0.7);
-      color: #ffffff
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 15
