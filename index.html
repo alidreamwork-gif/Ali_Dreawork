@@ -79,7 +79,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* रियल-टाइम जैसी पूरी डिटेल्स वाला पॉपअप बॉक्स */
+    /* फुल इवेंट डिटेल्स वाला पॉपअप बॉक्स (स्क्रीनशॉट 676517.jpg जैसा) */
     #raceCustomModal {
       display: none;
       position: fixed;
@@ -91,39 +91,38 @@
       z-index: 999999;
       justify-content: center;
       align-items: center;
-      padding: 12px;
+      padding: 10px;
     }
     .custom-popup-box {
       position: relative;
       width: 100%;
-      max-width: 420px;
-      height: 88vh;
+      max-width: 440px;
+      height: 90vh;
       background: #0f172a;
       border-radius: 16px;
-      padding: 16px;
-      text-align: center;
+      padding: 10px;
+      overflow-y: auto;
       box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       border: 2px solid #2563eb;
-      overflow-y: auto;
     }
     .custom-close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      position: fixed;
+      top: 15px;
+      right: 15px;
       background: #ef4444;
       color: #ffffff;
       border: 2px solid #ffffff;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 100000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
 
     .card { background: #fff; border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; }
@@ -317,22 +316,7 @@
   <div id="raceCustomModal">
     <div class="custom-popup-box">
       <button type="button" class="custom-close-btn" onclick="closeCustomModal()">✕</button>
-      <img src="carrushbanner.jpeg" alt="Race Banner" style="width:100%; border-radius:10px; margin-bottom:10px;">
-      <h3 style="color: #fbbf24; font-size: 16px; margin-bottom: 6px;">Play Race, Share Luck 🏎️</h3>
-      <div style="background: rgba(255,255,255,0.08); padding: 8px; border-radius: 8px; margin-bottom: 10px; font-size: 12px; color: #93c5fd;">
-        Prize Pool: <b>3,000,000 Coins</b> 🪙
-      </div>
-      <div style="text-align: left; font-size: 11.5px; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 12px; max-height: 160px; overflow-y: auto;">
-        <b style="color: #60a5fa;">🏆 TOP REWARDS:</b><br>
-        • <b>Top 1:</b> Race King Frame + Champion Badge + Race King Ride<br>
-        • <b>Top 2-3:</b> Race Star Frame + Race Star Ride<br>
-        • <b>Top 4-10:</b> Speed Frame, Racing Frame & Badge<br>
-        <br>
-        <b style="color: #60a5fa;">🎁 LUCKY REWARDS:</b><br>
-        • 18th, 28th, 38th, 48th: Coins + Racing Badges<br>
-        • <b>88th Special Reward:</b> 8,888 Coins + Special Rewards
-      </div>
-      <button type="button" onclick="closeCustomModal()" style="width:100%; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Got It, Close 🚀</button>
+      <img src="https://i.ibb.co/3ykG4L5R/676517.jpg" alt="Race Event Details" style="width:100%; border-radius:10px; display:block;">
     </div>
   </div>
 
