@@ -150,22 +150,22 @@ async function deliverCoinsToUser(uid, coins, orderId) {
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
-        const text = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        console.log("Notification Content:", text);
+        
+        // MacroDroid से आने वाले title और message दोनों को पकड़ना
+        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        const titleText = req.body.title || req.body.not_title || "";
 
-        if (!text) return res.status(200).json({ status: false });
+        console.log("Notification Message:", messageText);
+        console.log("Notification Title:", titleText);
 
-        // Google Pay के फालतू/स्टैटिक स्टेटस नोटिफिकेशन को इग्नोर करने के लिए
-        if (text.includes("See live notifications")) {
-            console.log("[IGNORED] GPay static status notification skipped.");
-            return res.status(200).json({ status: true, message: "Ignored static notification" });
-        }
+        const combinedText = `${titleText} ${messageText}`;
+        if (!combinedText.trim()) return res.status(200).json({ status: false });
 
-        // दोनों ऐप्स (BharatPe और GPay) के नोटिफिकेशन से सटीक अमाउंट निकालने के लिए Regex
+        // दोनों ऐप्स के नोटिफिकेशन से सटीक अमाउंट निकालने के लिए Regex
         let detectedAmount = 0;
         
-        const amtMatch = text.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
-                      || text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
+        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
+                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
                       
         if (amtMatch) {
             detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
