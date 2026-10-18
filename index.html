@@ -1,211 +1,532 @@
-const express = require('express');
-const axios = require('axios');
-const path = require('path');
-const crypto = require('crypto');
-
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
-
-const SELLER_ID = "4851724";
-const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
-
-// अधिकृत 9 प्लान्स की सख्त मैपिंग (Amount -> Coins)
-const COIN_PLANS = {
-    151: 11000,
-    220: 16100,
-    330: 24100,
-    440: 32100,
-    685: 50000,
-    1370: 100000,
-    1999: 146000,
-    3000: 219000,
-    4500: 328500
-};
-
-// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt, gateway }
-const activeOrders = new Map();
-
-// यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
-let paiseCounter = 1;
-
-// 3:1 सर्कुलेशन काउंटर (3 BharatPe के बाद 1 Google Pay)
-let paymentCounter = 0;
-
-// ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
-const ORDER_VALIDITY_MS = 120 * 1000;
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// 1. User Verification
-app.post('/api/verify-user', async (req, res) => {
-    try {
-        const { uid } = req.body;
-        if (!uid) return res.status(400).json({ status: 400, message: "UID is missing!" });
-        
-        const cleanUid = uid.toString().trim();
-        const signString = `sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-        const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
-
-        const payload = {
-            sellerId: Number(SELLER_ID),
-            uid: Number(cleanUid),
-            sign: sign
-        };
-
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/getUserInfo', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        return res.json(response.data);
-    } catch (error) {
-        if (error.response && error.response.data) return res.status(200).json(error.response.data);
-        return res.status(500).json({ status: 400, message: "User not found or invalid ID!" });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ali Dreamwork Store</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
+    
+    /* नीली पट्टी का हेडर */
+    .top-navbar { 
+      background: #1e40af; 
+      padding: 8px 10px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 6px; 
     }
-});
-
-// 2. Order Create (3:1 सर्कुलेशन और सख्त वैलिडेशन के साथ)
-app.post('/api/create-order', (req, res) => {
-    try {
-        const { uid, amount, orderId } = req.body;
-        if (!uid || !amount || !orderId) {
-            return res.status(400).json({ success: false, message: "Missing required fields" });
-        }
-
-        const baseAmt = Math.round(Number(amount));
-
-        // सुरक्षा ताला: अगर अमाउंट इन 9 प्लान्स में नहीं है, तो तुरंत ब्लॉक करें
-        if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
-            return res.status(400).json({ 
-                success: false, 
-                message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
-            });
-        }
-
-        // सही कॉइन संख्या सीधे सर्वर मैपिंग से ली जाएगी
-        const coins = COIN_PLANS[baseAmt];
-        
-        // 1 से 90 पैसे तक डायनामिक असाइनमेंट
-        const paise = paiseCounter;
-        paiseCounter = (paiseCounter % 90) + 1;
-
-        // सटीक फ्लोटिंग अमाउंट (जैसे 151.01)
-        const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
-
-        // 3:1 सर्कुलेशन तय करना (0, 1, 2 = BharatPe | 3 = Google Pay)
-        paymentCounter = (paymentCounter + 1) % 4;
-        const assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
-
-        activeOrders.set(orderId, {
-            uid: uid.toString().trim(),
-            baseAmount: baseAmt,
-            exactAmount: exactAmount,
-            coins: coins,
-            status: 'PENDING',
-            createdAt: Date.now(),
-            gateway: assignedGateway
-        });
-
-        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: "Server error" });
+    .nav-brand-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
     }
-});
-
-// 3. Helper: कॉइन डिलीवरी
-async function deliverCoinsToUser(uid, coins, orderId) {
-    const cleanUid = Number(uid);
-    const numCoins = Number(coins);
-
-    const signString = `coins=${numCoins}&orderId=${orderId}&sellerId=${SELLER_ID}&uid=${cleanUid}&key=${API_KEY}`;
-    const sign = crypto.createHash('md5').update(signString).digest('hex').toUpperCase();
-
-    const payload = {
-        sellerId: Number(SELLER_ID),
-        uid: cleanUid,
-        coins: numCoins,
-        orderId: orderId,
-        sign: sign
-    };
-
-    try {
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        console.log("Coins Delivered Successfully:", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Coin delivery failed:", error.response ? error.response.data : error.message);
-        return error.response ? error.response.data : { status: 400, message: "Delivery failed" };
+    .nav-brand-left img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #000000;
+      object-fit: cover;
+      background: #fff;
     }
-}
-
-// 4. Unified Webhook (BharatPe और Google Pay दोनों के लिए)
-app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
-    try {
-        console.log("================== PAYMENT WEBHOOK HIT ==================");
-        
-        // MacroDroid से आने वाले title और message दोनों को पकड़ना
-        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        const titleText = req.body.title || req.body.not_title || "";
-
-        console.log("Notification Message:", messageText);
-        console.log("Notification Title:", titleText);
-
-        const combinedText = `${titleText} ${messageText}`;
-        if (!combinedText.trim()) return res.status(200).json({ status: false });
-
-        // दोनों ऐप्स के नोटिफिकेशन से सटीक अमाउंट निकालने के लिए Regex
-        let detectedAmount = 0;
-        
-        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
-                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
-                      
-        if (amtMatch) {
-            detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
-        }
-
-        console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
-        const now = Date.now();
-
-        if (detectedAmount > 0) {
-            for (let [ordId, ordData] of activeOrders.entries()) {
-                if (ordData.status === 'PENDING') {
-                    if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
-                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
-                            console.log(`[MATCH FOUND] Order: ${ordId} verified with ₹${detectedAmount}`);
-                            ordData.status = 'PAID';
-                            
-                            // तुरंत ऑटोमैटिक कॉइन डिलीवर
-                            await deliverCoinsToUser(ordData.uid, ordData.coins, ordId);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return res.status(200).json({ status: true, amount: detectedAmount });
-    } catch (err) {
-        console.error("Webhook processing error:", err);
-        return res.status(500).json({ status: false });
+    /* ब्रांड नेम - गोल्डन कलर */
+    .nav-brand-title {
+      color: #fbbf24;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.1;
+      white-space: nowrap;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
-});
+    .nav-buttons-right { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 4px; 
+      align-items: flex-end; 
+    }
+    .nav-row {
+      display: flex;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+    .nav-btn { 
+      background: rgba(255,255,255,0.25); 
+      border: 1px solid rgba(255,255,255,0.4); 
+      color: white; 
+      padding: 4px 7px; 
+      border-radius: 12px; 
+      font-size: 10px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      white-space: nowrap;
+    }
+    .nav-btn.active { background: #fff; color: #1e40af; }
 
-// 5. Polling Endpoint (फ्रंटएंड हर 2 सेकंड में चेक करेगा)
-app.get('/api/check-order-status', (req, res) => {
-    const { orderId } = req.query;
-    if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
-    return res.json({ status: activeOrders.get(orderId).status });
-});
+    .container { padding: 12px; }
+    .page-section { display: none; }
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+    /* डुओ और डोरन बैनर */
+    .banner-wrapper { margin: 2px 0 12px 0; text-align: center; }
+    .promo-banner-img { 
+      width: 100%; 
+      height: auto; 
+      border-radius: 12px; 
+      display: block; 
+      cursor: pointer; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
+    }
+
+    /* ऐप्स लिंक पॉपअप मॉडल */
+    #appLinksModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 999999;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .popup-content-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border: 2px solid #2563eb;
+      position: relative;
+    }
+    .popup-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 6px;
+    }
+    .popup-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+    .app-link-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: transform 0.1s ease;
+    }
+    .app-link-btn:active { transform: scale(0.98); }
+    .btn-duoo { background: #2563eb; }
+    .btn-doran { background: #059669; }
+    .popup-close-btn {
+      width: 100%;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      color: #4b5563;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .card { background: #fff; border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; }
+    
+    label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #374151; }
+    .id-group { display: flex; gap: 6px; margin-top: 5px; }
+    input[type="text"], input[type="tel"] { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
+    
+    .verify-btn { background: #059669; color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
+    #verifyResult { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; display: none; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #10b981; }
+    .user-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; flex-shrink: 0; }
+
+    .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 14px 0 10px 0; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    
+    .coin-card { 
+      border: 2px solid #e5e7eb; 
+      border-radius: 12px; 
+      padding: 14px 6px; 
+      background: #fafafa; 
+      text-align: center; 
+      cursor: pointer; 
+    }
+    .coin-card.selected { border-color: #059669; background: #f0fdf4; }
+    .coin-number { font-size: 17px; font-weight: 800; color: #1e40af; }
+    .coin-label { font-size: 10.5px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+    .coin-divider { width: 34px; height: 2px; background: #e5e7eb; margin: 6px auto; }
+    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
+
+    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
+    
+    .terms-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 12px; color: #374151; }
+    .terms-wrapper input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: #2563eb; }
+
+    .main-buy-btn { 
+      width: 100%; 
+      background: #2563eb; 
+      color: #fff; 
+      border: none; 
+      padding: 13px; 
+      font-size: 15px; 
+      font-weight: bold; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin-top: 14px; 
+    }
+
+    .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
+    .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <div class="top-navbar">
+      <div class="nav-brand-left">
+        <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
+        <div class="nav-brand-title">✮⃝𝗔𝐋ɪᴰʳᵉᵃʷ®️k</div>
+      </div>
+      <div class="nav-buttons-right">
+        <div class="nav-row">
+          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
+          <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="nav-btn" id="b-privacy" onclick="tab('privacy')">Privacy</button>
+          <button type="button" class="nav-btn" id="b-refund" onclick="tab('refund')">Refund</button>
+          <button type="button" class="nav-btn" id="b-contact" onclick="tab('contact')">Contact</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      
+      <div id="p-coins" class="page-section" style="display: block;">
+
+        <!-- डुओ और डोरन का नया बैनर -->
+        <div class="banner-wrapper">
+          <img src="duoodoranbanner.jpeg" alt="Duoo & Doran Apps" class="promo-banner-img" onclick="openAppLinksModal()">
+        </div>
+
+        <div class="card">
+          <label>DUOO & DORAN USER ID:</label>
+          <div class="id-group">
+            <input type="text" id="userId" placeholder="Enter User ID">
+            <button type="button" class="verify-btn" onclick="verifyUID()">Verify</button>
+          </div>
+          <div id="verifyResult"></div>
+
+          <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
+          <div class="plans-grid">
+            <div class="coin-card" onclick="setPack(this, 11000, 151)">
+              <div class="coin-number">11,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹151</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 16100, 220)">
+              <div class="coin-number">16,100</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹220</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 24100, 330)">
+              <div class="coin-number">24,100</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹330</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 32100, 440)">
+              <div class="coin-number">32,100</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹440</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 50000, 685)">
+              <div class="coin-number">50,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹685</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 100000, 1370)">
+              <div class="coin-number">100,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹1,370</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 146000, 1999)">
+              <div class="coin-number">146,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹1,999</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 219000, 3000)">
+              <div class="coin-number">219,000</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹3,000</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 328500, 4500)">
+              <div class="coin-number">328,500</div>
+              <div class="coin-label">Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹4,500</div>
+            </div>
+          </div>
+
+          <label>WhatsApp Number:</label>
+          <input type="tel" id="userPhone" placeholder="Enter WhatsApp Number">
+
+          <div class="summary-box">
+            <div class="summary-row"><span>Selected Plan:</span> <b id="sumPlan" style="color:#1e40af;">None</b></div>
+            <div class="summary-row"><span>Total Amount:</span> <b id="sumPrice" style="color:#059669;">₹0</b></div>
+          </div>
+
+          <div class="terms-wrapper">
+            <input type="checkbox" id="termsAgree" checked>
+            <label for="termsAgree" style="margin-top:0;font-weight:normal;cursor:pointer;">
+              I accept all <a href="javascript:void(0)" onclick="tab('terms')" style="color:#2563eb;text-decoration:underline;">Terms & Conditions</a>
+            </label>
+          </div>
+
+          <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
+        </div>
+      </div>
+
+      <div id="p-terms" class="page-section static-page">
+        <h2>📜 Terms & Conditions</h2>
+        <p>Welcome to <strong>Ali Dreamwork</strong>. All coin packs are delivered automatically to verified User IDs.</p>
+      </div>
+
+      <div id="p-privacy" class="page-section static-page">
+        <h2>🔒 Privacy Policy</h2>
+        <p>Your privacy and data security are strictly protected. We never share customer data.</p>
+      </div>
+
+      <div id="p-refund" class="page-section static-page">
+        <h2>🔄 Refund & Cancellation Policy</h2>
+        <p>Digital coins once delivered cannot be reversed. For any issue, contact support.</p>
+      </div>
+
+      <div id="p-contact" class="page-section static-page">
+        <h2>🎧 Contact Us</h2>
+        <p>WhatsApp: +919690118011</p>
+        <p>Email: alidreamwork@gmail.com</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- डुओ और डोरन लिंक्स पॉपअप बॉक्स -->
+  <div id="appLinksModal">
+    <div class="popup-content-box">
+      <div class="popup-title">🚀 Duoo & Doran Apps</div>
+      <div class="popup-subtitle">नीचे दिए गए लिंक से एप्लीकेशन ओपन करें</div>
+      
+      <a href="https://www.duoo.live" target="_blank" class="app-link-btn btn-duoo">🌐 Open Duoo Website</a>
+      <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="app-link-btn btn-doran">📱 Download Doran App (Play Store)</a>
+      
+      <button type="button" class="popup-close-btn" onclick="closeAppLinksModal()">Close / बंद करें</button>
+    </div>
+  </div>
+
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
+      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
+      <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
+      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
+        <p style="margin-bottom:6px;font-weight:bold;">English:</p>
+        <ol style="margin:0 0 10px 18px;padding:0;">
+          <li>A <b>Barcode</b> will open with a 2-minute timer and the exact payable amount.</li>
+          <li>Take a <b>Screenshot</b> of the barcode.</li>
+          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
+          <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
+        </ol>
+        <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
+        <ol style="margin:0 0 0 18px;padding:0;">
+          <li>आगे 2 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
+          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
+        </ol>
+      </div>
+      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
+      <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
+      <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
+      <div style="font-size:11.5px;color:#dc2626;font-weight:bold;margin-bottom:8px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
+      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
+        <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
+        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">01:59</span>
+      </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
+        📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in the GPay, PhonePe, or Paytm scanner, and make the payment.
+      </div>
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
+        🔄 <b>Auto-detection is on:</b> As soon as the payment is made, the system will automatically detect it and transfer the coins within 5 seconds
+      </div>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <script>
+    var selectedPack = null;
+    var isUidValid = false;
+    var orderId = "";
+    var exactPayableAmount = 0;
+    var timerObj = null;
+    var pollObj = null;
+    var leftTime = 120;
+
+    // नए बैनर के लिए पॉपअप ओपन/क्लोज फंक्शंस
+    function openAppLinksModal() {
+      document.getElementById('appLinksModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAppLinksModal() {
+      document.getElementById('appLinksModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function tab(key) {
+      var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
+      for (var i = 0; i < arr.length; i++) {
+        document.getElementById('p-' + arr[i]).style.display = 'none';
+        document.getElementById('b-' + arr[i]).classList.remove('active');
+      }
+      document.getElementById('p-' + key).style.display = 'block';
+      document.getElementById('b-' + key).classList.add('active');
+    }
+
+    function setPack(el, coins, price) {
+      var all = document.querySelectorAll('.coin-card');
+      for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+      el.classList.add('selected');
+      selectedPack = { coins: coins, price: price };
+      document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
+      document.getElementById('sumPrice').innerText = "₹" + price;
+    }
+
+    function verifyUID() {
+      var uid = document.getElementById('userId').value.trim();
+      var res = document.getElementById('verifyResult');
+      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+      res.style.display = "flex";
+      res.innerHTML = "Verifying...";
+
+      fetch('/api/verify-user', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.code === 200 || d.status === 200 || d.success === true || d.nick) {
+          isUidValid = true;
+          var info = d.data || d;
+          var name = info.nick || info.nickName || info.name || "Verified User";
+          var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
+          res.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+        } else {
+          isUidValid = false;
+          res.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
+        }
+      }).catch(function(){
+        isUidValid = true;
+        res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
+      });
+    }
+
+    function startBuy() {
+      var uid = document.getElementById('userId').value.trim();
+      var ph = document.getElementById('userPhone').value.trim();
+      var termsChecked = document.getElementById('termsAgree').checked;
+
+      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+      if (!selectedPack) { alert('Please select a coin pack / कृपया कॉइन पैक चुनें'); return; }
+      if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number / सही WhatsApp नंबर दर्ज करें'); return; }
+      if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
+      if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
+
+      document.getElementById('modalNotice').style.display = 'flex';
+    }
+
+    function showQR() {
+      document.getElementById('modalNotice').style.display = 'none';
+      var uid = document.getElementById('userId').value.trim();
+      orderId = "ORD" + Date.now();
+      leftTime = 120;
+
+      fetch('/api/create-order', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        exactPayableAmount = data.exactAmount || selectedPack.price;
+        var upi = "upi://pay?pa=BHARATPE2Z0P0L0B8I71717@unitype&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
+        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
+        document.getElementById('timerText').innerText = "02:00";
+        document.getElementById('modalQR').style.display = 'flex';
+
+        clearInterval(timerObj);
+        timerObj = setInterval(function(){
+          leftTime--;
+          var m = Math.floor(leftTime / 60);
+          var s = leftTime % 60;
+          document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+          if (leftTime <= 0) {
+            hideAllModals();
+            alert("⏳ Time's up! The 2-minute time limit has expired. Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 9690118011.");
+          }
+        }, 1000);
+
+        clearInterval(pollObj);
+        pollObj = setInterval(function(){
+          fetch('/api/check-order-status?orderId=' + orderId)
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if (d && d.status === 'PAID') {
+                hideAllModals();
+                alert("🎉 🎉 Congratulations Payment Verified! Coins successfully delivered to your Duoo & Doran ID Check Balance Section And Lets Enjoye Your Time \n\n🎉 बधाई हो, पेमेंट वेरिफ़ाई हो गया है! कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं। अपना बैलेंस चेक करें और मज़े करें।");
+                location.reload();
+              }
+            }).catch(function(){});
+        }, 2500);
+      });
+    }
+
+    function hideAllModals() {
+      clearInterval(timerObj);
+      clearInterval(pollObj);
+      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalQR').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
