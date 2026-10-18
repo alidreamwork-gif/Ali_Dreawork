@@ -155,10 +155,15 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
 
         if (!text) return res.status(200).json({ status: false });
 
+        // Google Pay के फालतू/स्टैटिक स्टेटस नोटिफिकेशन को इग्नोर करने के लिए
+        if (text.includes("See live notifications")) {
+            console.log("[IGNORED] GPay static status notification skipped.");
+            return res.status(200).json({ status: true, message: "Ignored static notification" });
+        }
+
         // दोनों ऐप्स (BharatPe और GPay) के नोटिफिकेशन से सटीक अमाउंट निकालने के लिए Regex
         let detectedAmount = 0;
         
-        // GPay फॉर्मेट: "₹9 received from..." या BharatPe फॉर्मेट: "Received 1.00 Rupees..."
         const amtMatch = text.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
                       || text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
                       
