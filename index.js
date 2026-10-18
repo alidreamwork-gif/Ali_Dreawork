@@ -25,11 +25,14 @@ const COIN_PLANS = {
     4500: 328500
 };
 
-// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
+// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt, gateway }
 const activeOrders = new Map();
 
 // यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
 let paiseCounter = 1;
+
+// 3:1 सर्कुलेशन काउंटर (3 BharatPe के बाद 1 Google Pay)
+let paymentCounter = 0;
 
 // ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
 const ORDER_VALIDITY_MS = 120 * 1000;
@@ -65,7 +68,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (छेड़छाड़-सुरक्षित सख्त वैलिडेशन)
+// 2. Order Create (3:1 सर्कुलेशन और सख्त वैलिडेशन के साथ)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -94,17 +97,22 @@ app.post('/api/create-order', (req, res) => {
         // सटीक फ्लोटिंग अमाउंट (जैसे 151.01)
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
+        // 3:1 सर्कुलेशन तय करना (0, 1, 2 = BharatPe | 3 = Google Pay)
+        paymentCounter = (paymentCounter + 1) % 4;
+        const assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
+
         activeOrders.set(orderId, {
             uid: uid.toString().trim(),
             baseAmount: baseAmt,
             exactAmount: exactAmount,
             coins: coins,
             status: 'PENDING',
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            gateway: assignedGateway
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount });
+        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
     }
@@ -138,19 +146,27 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. BharatPe Notification Webhook (सटीक पैसे मैचिंग)
+// 4. Unified Webhook (BharatPe और Google Pay दोनों के लिए)
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
-        console.log("================== BHARATPE WEBHOOK HIT ==================");
-        const text = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        console.log("Notification Content:", text);
+        console.log("================== PAYMENT WEBHOOK HIT ==================");
+        
+        // MacroDroid से आने वाले title और message दोनों को पकड़ना
+        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        const titleText = req.body.title || req.body.not_title || "";
 
-        if (!text) return res.status(200).json({ status: false });
+        console.log("Notification Message:", messageText);
+        console.log("Notification Title:", titleText);
 
-        // BharatPe नोटिफिकेशन से सटीक फ्लोट अमाउंट निकालना
+        const combinedText = `${titleText} ${messageText}`;
+        if (!combinedText.trim()) return res.status(200).json({ status: false });
+
+        // दोनों ऐप्स के नोटिफिकेशन से सटीक अमाउंट निकालने के लिए Regex
         let detectedAmount = 0;
-        const amtMatch = text.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i) 
-                      || text.match(/(?:rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i);
+        
+        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
+                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
+                      
         if (amtMatch) {
             detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
         }
