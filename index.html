@@ -393,14 +393,15 @@
     </div>
   </div>
 
-  <!-- पेमेंट सफलता या टाइमआउट के लिए रुकने वाला नया पॉपअप बॉक्स -->
+  <!-- पेमेंट सफलता या टाइमआउट के लिए रुकने वाला पॉपअप बॉक्स -->
   <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:360px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+    <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;">
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
       <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
-      <p id="successDesc" style="font-size:13px;color:#4b5563;margin:12px 0;line-height:1.5;">
-        बधाई हो! पेमेंट वेरिफ़ाई हो गया है और कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं।
-      </p>
+      <div id="successDesc" style="font-size:12px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;">
+        <!-- यहाँ डायनामिक मैसेज आएगा -->
+      </div>
+      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received.%20Here%20is%20my%20payment%20screenshot%20and%20ID." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 Chat on WhatsApp / व्हाट्सएप पर संपर्क करें</a>
       <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Go Back to Home / होम पेज पर जाएं</button>
     </div>
   </div>
@@ -520,8 +521,14 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            // समय समाप्त होने पर भी पक्का पॉपअप रोककर रखेगा
-            showCompletionModal('⏳ Time Expired / समय समाप्त', 'क्षमा करें! 5 मिनट का समय समाप्त हो गया है। यदि आपका पैसा कट गया है, तो तुरंत WhatsApp (9690118011) पर संपर्क करें।', '#dc2626', '⚠️');
+            // टाइम आउट होने पर तसल्ली देने वाला मैसेज और WhatsApp लिंक
+            var timeoutHtml = `
+              <p style="margin-bottom:8px;font-weight:bold;color:#dc2626;">⏳ Time Expired / समय समाप्त</p>
+              <p style="margin-bottom:8px;">क्षमा करें! 5 मिनट का समय समाप्त हो गया है। यदि आपका पेमेंट आपके तरफ से सफलतापूर्वक कट गया है और हमें रिसीव होने में देरी हुई है, तो घबराएं नहीं। आपका पेमेंट पूरी तरह सुरक्षित है।</p>
+              <p style="margin-bottom:8px;">आपको कोई भी डिस्प्यूट (Dispute) रेज करने की जरूरत नहीं है। टीम मेंबर जैसे ही एक्टिव होगा, आपको कॉइन मिल जाएगा। आप तुरंत नीचे दिए गए बटन पर क्लिक करके WhatsApp पर पेमेंट का स्क्रीनशॉट और अपनी ID भेज सकते हैं।</p>
+              <p style="font-weight:bold;color:#059669;">WhatsApp: +91 9690118011</p>
+            `;
+            showCompletionModal('Time Out / समय सीमा समाप्त', timeoutHtml, '#dc2626', '⏳', true);
           }
         }, 1000);
 
@@ -532,8 +539,13 @@
             .then(function(d){
               if (d && d.status === 'PAID') {
                 hideAllModals();
-                // पेमेंट सफल होने पर रुकने वाला पॉपअप दिखाएगा (ऑटोमैटिक रिफ्रेश नहीं होगा)
-                showCompletionModal('🎉 Payment Verified & Coins Delivered!', 'बधाई हो, पेमेंट वेरिफ़ाई हो गया है! कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं। अपना बैलेंस चेक करें।', '#059669', '🎉');
+                // पेमेंट सक्सेस होने का मैसेज (बिना ऑटो-रिफ्रेश)
+                var successHtml = `
+                  <p style="margin-bottom:8px;font-weight:bold;color:#059669;">🎉 Payment Verified & Coins Delivered!</p>
+                  <p style="margin-bottom:8px;">बधाई हो! आपका पेमेंट सफलताપूर्वक वेरिफ़ाई हो गया है और कॉइन्स आपकी Duoo & Doran ID पर भेज दिए गए हैं।</p>
+                  <p>कृपया अपना बैलेंस चेक करें। किसी भी सहायता के लिए संपर्क कर सकते हैं।</p>
+                `;
+                showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
               }
             }).catch(function(){});
         }, 2500);
@@ -541,7 +553,7 @@
     }
 
     // यूजर के क्लिक करने तक रुकने वाला सक्सेस/एरर पॉपअप फंक्शन
-    function showCompletionModal(title, desc, color, icon) {
+    function showCompletionModal(title, descHtml, color, icon, showWaBtn) {
       clearInterval(timerObj);
       clearInterval(pollObj);
       document.getElementById('modalNotice').style.display = 'none';
@@ -550,7 +562,13 @@
       document.getElementById('successIcon').innerText = icon;
       document.getElementById('successTitle').innerText = title;
       document.getElementById('successTitle').style.color = color;
-      document.getElementById('successDesc').innerText = desc;
+      document.getElementById('successDesc').innerHTML = descHtml;
+      
+      if (showWaBtn) {
+        document.getElementById('whatsappBtn').style.display = 'block';
+      } else {
+        document.getElementById('whatsappBtn').style.display = 'none';
+      }
       
       document.getElementById('modalSuccess').style.display = 'flex';
     }
