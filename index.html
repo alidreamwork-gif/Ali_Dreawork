@@ -521,12 +521,17 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            // टाइम आउट होने पर तसल्ली देने वाला मैसेज और WhatsApp लिंक
+            // टाइम आउट होने पर पहले अंग्रेजी, फिर हिंदी में तसल्ली देने वाला मैसेज और WhatsApp लिंक
             var timeoutHtml = `
-              <p style="margin-bottom:8px;font-weight:bold;color:#dc2626;">⏳ Time Expired / समय समाप्त</p>
-              <p style="margin-bottom:8px;">क्षमा करें! 5 मिनट का समय समाप्त हो गया है। यदि आपका पेमेंट आपके तरफ से सफलतापूर्वक कट गया है और हमें रिसीव होने में देरी हुई है, तो घबराएं नहीं। आपका पेमेंट पूरी तरह सुरक्षित है।</p>
-              <p style="margin-bottom:8px;">आपको कोई भी डिस्प्यूट (Dispute) रेज करने की जरूरत नहीं है। टीम मेंबर जैसे ही एक्टिव होगा, आपको कॉइन मिल जाएगा। आप तुरंत नीचे दिए गए बटन पर क्लिक करके WhatsApp पर पेमेंट का स्क्रीनशॉट और अपनी ID भेज सकते हैं।</p>
-              <p style="font-weight:bold;color:#059669;">WhatsApp: +91 9690118011</p>
+              <p style="margin-bottom:6px;font-weight:bold;color:#dc2626;">⏳ Time Expired / समय समाप्त</p>
+              
+              <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">English:</p>
+              <p style="margin-bottom:8px;">Sorry, the 5-minute time limit has expired. If your payment has been successfully deducted from your side and there is a delay in receiving confirmation, please do not worry. Your payment is completely safe. There is no need to raise any dispute or complaint. As soon as our team member is active, you will receive your coins. You can click the WhatsApp button below to send your payment screenshot and ID.</p>
+              
+              <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">हिंदी:</p>
+              <p style="margin-bottom:6px;">क्षमा करें! 5 मिनट का समय समाप्त हो गया है। यदि आपका पेमेंट आपके तरफ से सफलतापूर्वक कट गया है और हमें रिसीव होने में देरी हुई है, तो घबराएं नहीं। आपका पेमेंट पूरी तरह सुरक्षित है। आपको किसी भी तरह का डिस्प्यूट या कंप्लेंट रेज करने की जरूरत नहीं है। जैसे ही हमारा टीम मेंबर आपका मैसेज देखेगा, आपका पेमेंट चेक करके आपको कॉइन मिल जाएंगे। आप नीचे दिए गए WhatsApp बटन पर क्लिक करके पेमेंट का स्क्रीनशॉट और अपनी ID भेज सकते हैं।</p>
+              
+              <p style="font-weight:bold;color:#059669;text-align:center;">WhatsApp: +91 9690118011</p>
             `;
             showCompletionModal('Time Out / समय सीमा समाप्त', timeoutHtml, '#dc2626', '⏳', true);
           }
@@ -539,11 +544,15 @@
             .then(function(d){
               if (d && d.status === 'PAID') {
                 hideAllModals();
-                // पेमेंट सक्सेस होने का मैसेज (बिना ऑटो-रिफ्रेश)
+                // पेमेंट सक्सेस होने का मैसेज (पहले अंग्रेजी, फिर हिंदी)
                 var successHtml = `
-                  <p style="margin-bottom:8px;font-weight:bold;color:#059669;">🎉 Payment Verified & Coins Delivered!</p>
-                  <p style="margin-bottom:8px;">बधाई हो! आपका पेमेंट सफलताપूर्वक वेरिफ़ाई हो गया है और कॉइन्स आपकी Duoo & Doran ID पर भेज दिए गए हैं।</p>
-                  <p>कृपया अपना बैलेंस चेक करें। किसी भी सहायता के लिए संपर्क कर सकते हैं।</p>
+                  <p style="margin-bottom:6px;font-weight:bold;color:#059669;">🎉 Payment Verified & Coins Delivered!</p>
+                  
+                  <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">English:</p>
+                  <p style="margin-bottom:8px;">Congratulations! Your payment has been successfully verified and coins have been delivered to your Duoo & Doran ID. Enjoy your time!</p>
+                  
+                  <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">हिंदी:</p>
+                  <p>बधाई हो! आपका पेमेंट सफलतापूर्वक वेरिफ़ाई हो गया है और कॉइन्स आपकी Duoo & Doran ID पर भेज दिए गए हैं। अपना बैलेंस चेक करें और मज़े करें।</p>
                 `;
                 showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
               }
