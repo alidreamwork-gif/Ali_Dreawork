@@ -34,8 +34,8 @@ let paiseCounter = 1;
 // 3:1 सर्कुलेशन काउंटर (3 BharatPe के बाद 1 Google Pay)
 let paymentCounter = 0;
 
-// ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
-const ORDER_VALIDITY_MS = 120 * 1000;
+// ऑर्डर की लाइफ: 5 मिनट (300 सेकंड) ताकि नेटवर्क या डिले होने पर भी ऑर्डर एक्सपायर न हो
+const ORDER_VALIDITY_MS = 300 * 1000;
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -101,8 +101,10 @@ app.post('/api/create-order', (req, res) => {
         paymentCounter = (paymentCounter + 1) % 4;
         const assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
 
+        const cleanUid = uid.toString().trim();
+
         activeOrders.set(orderId, {
-            uid: uid.toString().trim(),
+            uid: cleanUid,
             baseAmount: baseAmt,
             exactAmount: exactAmount,
             coins: coins,
@@ -111,7 +113,8 @@ app.post('/api/create-order', (req, res) => {
             gateway: assignedGateway
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        // अब लॉग्स में आर्डर आईडी और अमाउंट के साथ यूजर की UID भी दिखेगी
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
@@ -179,7 +182,7 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
                 if (ordData.status === 'PENDING') {
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
                         if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
-                            console.log(`[MATCH FOUND] Order: ${ordId} verified with ₹${detectedAmount}`);
+                            console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
                             
                             // तुरंत ऑटोमैटिक कॉइन डिलीवर
