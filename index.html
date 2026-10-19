@@ -393,6 +393,18 @@
     </div>
   </div>
 
+  <!-- पेमेंट सफलता या टाइमआउट के लिए रुकने वाला नया पॉपअप बॉक्स -->
+  <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:360px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+      <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
+      <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
+      <p id="successDesc" style="font-size:13px;color:#4b5563;margin:12px 0;line-height:1.5;">
+        बधाई हो! पेमेंट वेरिफ़ाई हो गया है और कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं।
+      </p>
+      <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Go Back to Home / होम पेज पर जाएं</button>
+    </div>
+  </div>
+
   <script>
     var selectedPack = null;
     var isUidValid = false;
@@ -400,7 +412,7 @@
     var exactPayableAmount = 0;
     var timerObj = null;
     var pollObj = null;
-    var leftTime = 300; // <--- यहाँ टाइमर 5 मिनट (300 सेकंड) सेट कर दिया गया है
+    var leftTime = 300;
 
     // नए बैनर के लिए पॉपअप ओपन/क्लोज फंक्शंस
     function openAppLinksModal() {
@@ -478,7 +490,7 @@
       document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
-      leftTime = 300; // <--- यहाँ भी 5 मिनट सेट किया गया है
+      leftTime = 300;
 
       fetch('/api/create-order', {
         method: "POST",
@@ -489,15 +501,10 @@
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
-        // ==========================================
-        // आपकी दोनों UPI ID (यहाँ सेट हैं):
-        // ==========================================
         var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
         var gpayUpi = "gpay-12208814600@okbizaxis";        
 
-        // बैकएंड द्वारा 3:1 रेश्यो के हिसाब से तय किया गया गेटवे (GPAY या BHARATPE)
         var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
-
         var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
         
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
@@ -513,7 +520,8 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            alert("⏳ Time's up! The 5-minute time limit has expired. Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 9690118011.");
+            // समय समाप्त होने पर भी पक्का पॉपअप रोककर रखेगा
+            showCompletionModal('⏳ Time Expired / समय समाप्त', 'क्षमा करें! 5 मिनट का समय समाप्त हो गया है। यदि आपका पैसा कट गया है, तो तुरंत WhatsApp (9690118011) पर संपर्क करें।', '#dc2626', '⚠️');
           }
         }, 1000);
 
@@ -524,12 +532,27 @@
             .then(function(d){
               if (d && d.status === 'PAID') {
                 hideAllModals();
-                alert("🎉 🎉 Congratulations Payment Verified! Coins successfully delivered to your Duoo & Doran ID Check Balance Section And Lets Enjoye Your Time \n\n🎉 बधाई हो, पेमेंट वेरिफ़ाई हो गया है! कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं। अपना बैलेंस चेक करें और मज़े करें।");
-                location.reload();
+                // पेमेंट सफल होने पर रुकने वाला पॉपअप दिखाएगा (ऑटोमैटिक रिफ्रेश नहीं होगा)
+                showCompletionModal('🎉 Payment Verified & Coins Delivered!', 'बधाई हो, पेमेंट वेरिफ़ाई हो गया है! कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं। अपना बैलेंस चेक करें।', '#059669', '🎉');
               }
             }).catch(function(){});
         }, 2500);
       });
+    }
+
+    // यूजर के क्लिक करने तक रुकने वाला सक्सेस/एरर पॉपअप फंक्शन
+    function showCompletionModal(title, desc, color, icon) {
+      clearInterval(timerObj);
+      clearInterval(pollObj);
+      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalQR').style.display = 'none';
+      
+      document.getElementById('successIcon').innerText = icon;
+      document.getElementById('successTitle').innerText = title;
+      document.getElementById('successTitle').style.color = color;
+      document.getElementById('successDesc').innerText = desc;
+      
+      document.getElementById('modalSuccess').style.display = 'flex';
     }
 
     function hideAllModals() {
