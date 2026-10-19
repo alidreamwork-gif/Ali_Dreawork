@@ -353,7 +353,7 @@
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
         <p style="margin-bottom:6px;font-weight:bold;">English:</p>
         <ol style="margin:0 0 10px 18px;padding:0;">
-          <li>A <b>Barcode</b> will open with a 4-minute timer and the exact payable amount.</li>
+          <li>A <b>Barcode</b> will open with a 5-minute timer and the exact payable amount.</li>
           <li>Take a <b>Screenshot</b> of the barcode.</li>
           <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
           <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
@@ -361,7 +361,7 @@
         </ol>
         <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
         <ol style="margin:0 0 0 18px;padding:0;">
-          <li>आगे 4 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>आगे 5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
           <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
           <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
           <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
@@ -381,7 +381,7 @@
       <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
       <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
-        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">04:00</span>
+        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
       </div>
       <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
         📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in the GPay, PhonePe, or Paytm scanner, and make the payment.
@@ -400,7 +400,7 @@
     var exactPayableAmount = 0;
     var timerObj = null;
     var pollObj = null;
-    var leftTime = 240; // <--- यहाँ टाइमर 4 मिनट (240 सेकंड) सेट कर दिया गया है
+    var leftTime = 300; // <--- यहाँ टाइमर 5 मिनट (300 सेकंड) सेट कर दिया गया है
 
     // नए बैनर के लिए पॉपअप ओपन/क्लोज फंक्शंस
     function openAppLinksModal() {
@@ -478,7 +478,7 @@
       document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
-      leftTime = 240; // <--- यहाँ भी 4 मिनट सेट किया गया है
+      leftTime = 300; // <--- यहाँ भी 5 मिनट सेट किया गया है
 
       fetch('/api/create-order', {
         method: "POST",
@@ -490,10 +490,10 @@
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
         // ==========================================
-        // यहाँ अपनी दोनों UPI ID डाल दें:
+        // आपकी दोनों UPI ID (यहाँ सेट हैं):
         // ==========================================
-        var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  // <--- Bharat Pay की UPI ID यहाँ लिखें
-        var gpayUpi = "gpay-12208814600@okbizaxis";        // <--- Google Pay की UPI ID यहाँ लिखें
+        var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
+        var gpayUpi = "gpay-12208814600@okbizaxis";        
 
         // बैकएंड द्वारा 3:1 रेश्यो के हिसाब से तय किया गया गेटवे (GPAY या BHARATPE)
         var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
@@ -502,7 +502,7 @@
         
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
         document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-        document.getElementById('timerText').innerText = "04:00";
+        document.getElementById('timerText').innerText = "05:00";
         document.getElementById('modalQR').style.display = 'flex';
 
         clearInterval(timerObj);
@@ -513,7 +513,7 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            alert("⏳ Time's up! The 4-minute time limit has expired. Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 9690118011.");
+            alert("⏳ Time's up! The 5-minute time limit has expired. Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 9690118011.");
           }
         }, 1000);
 
