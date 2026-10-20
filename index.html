@@ -9,7 +9,6 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    /* नीली पट्टी का हेडर */
     .top-navbar { 
       background: #1e40af; 
       padding: 8px 10px; 
@@ -32,7 +31,6 @@
       object-fit: cover;
       background: #fff;
     }
-    /* ब्रांड नेम - गोल्डन कलर */
     .nav-brand-title {
       color: #fbbf24;
       font-size: 13px;
@@ -68,7 +66,6 @@
     .container { padding: 12px; }
     .page-section { display: none; }
 
-    /* डुओ और डोरन बैनर */
     .banner-wrapper { margin: 2px 0 12px 0; text-align: center; }
     .promo-banner-img { 
       width: 100%; 
@@ -79,7 +76,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12); 
     }
 
-    /* ऐप्स लिंक पॉपअप मॉडल */
     #appLinksModal {
       display: none;
       position: fixed;
@@ -104,17 +100,8 @@
       border: 2px solid #2563eb;
       position: relative;
     }
-    .popup-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #1e40af;
-      margin-bottom: 6px;
-    }
-    .popup-subtitle {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 20px;
-    }
+    .popup-title { font-size: 18px; font-weight: 800; color: #1e40af; margin-bottom: 6px; }
+    .popup-subtitle { font-size: 12px; color: #6b7280; margin-bottom: 20px; }
     .app-link-btn {
       display: block;
       width: 100%;
@@ -126,9 +113,7 @@
       text-decoration: none;
       color: #ffffff;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      transition: transform 0.1s ease;
     }
-    .app-link-btn:active { transform: scale(0.98); }
     .btn-duoo { background: #2563eb; }
     .btn-doran { background: #059669; }
     .popup-close-btn {
@@ -155,21 +140,21 @@
     .user-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; flex-shrink: 0; }
 
     .section-title { font-size: 13px; font-weight: bold; color: #d97706; margin: 14px 0 10px 0; }
-    .plans-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     
     .coin-card { 
       border: 2px solid #e5e7eb; 
       border-radius: 12px; 
-      padding: 14px 8px; 
+      padding: 12px 4px; 
       background: #fafafa; 
       text-align: center; 
       cursor: pointer; 
     }
     .coin-card.selected { border-color: #059669; background: #f0fdf4; }
-    .coin-number { font-size: 16px; font-weight: 800; color: #1e40af; }
-    .coin-label { font-size: 10px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
-    .coin-divider { width: 34px; height: 2px; background: #e5e7eb; margin: 6px auto; }
-    .coin-price { font-size: 15px; font-weight: bold; color: #059669; }
+    .coin-number { font-size: 15px; font-weight: 800; color: #1e40af; }
+    .coin-label { font-size: 9.5px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+    .coin-divider { width: 28px; height: 2px; background: #e5e7eb; margin: 4px auto; }
+    .coin-price { font-size: 14px; font-weight: bold; color: #059669; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
@@ -204,7 +189,7 @@
       </div>
       <div class="nav-buttons-right">
         <div class="nav-row">
-          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">High Value Packs</button>
+          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
           <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
         </div>
         <div class="nav-row">
@@ -219,7 +204,6 @@
       
       <div id="p-coins" class="page-section" style="display: block;">
 
-        <!-- डुओ और डोरन का बैनर -->
         <div class="banner-wrapper">
           <img src="duoodoranbanner.jpeg" alt="Duoo & Doran Apps" class="promo-banner-img" onclick="openAppLinksModal()">
         </div>
@@ -232,49 +216,52 @@
           </div>
           <div id="verifyResult"></div>
 
-          <div class="section-title">SELECT HIGH VALUE COIN PLANS</div>
+          <div class="section-title">SELECT COIN PLANS (₹151 to ₹15,000)</div>
           <div class="plans-grid">
+            <!-- छोटे प्लान्स (₹151 - ₹1999) -->
+            <div class="coin-card" onclick="setPack(this, 11000, 151)">
+              <div class="coin-number">11,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹151</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 16100, 220)">
+              <div class="coin-number">16,100</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹220</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 24100, 330)">
+              <div class="coin-number">24,100</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹330</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 32100, 440)">
+              <div class="coin-number">32,100</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹440</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 50000, 685)">
+              <div class="coin-number">50,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹685</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 100000, 1370)">
+              <div class="coin-number">100,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹1,370</div>
+            </div>
+            <div class="coin-card" onclick="setPack(this, 146000, 1999)">
+              <div class="coin-number">146,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹1,999</div>
+            </div>
+
+            <!-- नए बड़े प्लान्स (₹2500 - ₹15000) -->
             <div class="coin-card" onclick="setPack(this, 182500, 2500)">
-              <div class="coin-number">182,500</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹2,500</div>
+              <div class="coin-number">182,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹2,500</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 255500, 3500)">
-              <div class="coin-number">255,500</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹3,500</div>
+              <div class="coin-number">255,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹3,500</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 328500, 4500)">
-              <div class="coin-number">328,500</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹4,500</div>
+              <div class="coin-number">328,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹4,500</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 438000, 6000)">
-              <div class="coin-number">438,000</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹6,000</div>
+              <div class="coin-number">438,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹6,000</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 584000, 8000)">
-              <div class="coin-number">584,000</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹8,000</div>
+              <div class="coin-number">584,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹8,000</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 876000, 12000)">
-              <div class="coin-number">876,000</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹12,000</div>
+              <div class="coin-number">876,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹12,000</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 1095000, 15000)" style="grid-column: span 2;">
-              <div class="coin-number">1,095,000</div>
-              <div class="coin-label">Coins (Mega Pack)</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹15,000</div>
+              <div class="coin-number">1,095,000</div><div class="coin-label">Coins (Mega Pack)</div><div class="coin-divider"></div><div class="coin-price">₹15,000</div>
             </div>
           </div>
 
@@ -301,82 +288,74 @@
         <h2>📜 Terms & Conditions</h2>
         <p>Welcome to <strong>Ali Dreamwork</strong>. All coin packs are delivered automatically to verified User IDs.</p>
       </div>
-
       <div id="p-privacy" class="page-section static-page">
         <h2>🔒 Privacy Policy</h2>
         <p>Your privacy and data security are strictly protected. We never share customer data.</p>
       </div>
-
       <div id="p-refund" class="page-section static-page">
         <h2>🔄 Refund & Cancellation Policy</h2>
         <p>Digital coins once delivered cannot be reversed. For any issue, contact support.</p>
       </div>
-
       <div id="p-contact" class="page-section static-page">
         <h2>🎧 Contact Us</h2>
         <p>WhatsApp: +919690118011</p>
         <p>Email: alidreamwork@gmail.com</p>
       </div>
-
     </div>
   </div>
 
-  <!-- डुओ और डोरन लिंक्स पॉपअप बॉक्स -->
   <div id="appLinksModal">
     <div class="popup-content-box">
       <div class="popup-title">🚀 Duoo & Doran Apps</div>
       <div class="popup-subtitle">नीचे दिए गए लिंक से एप्लीकेशन ओपन करें</div>
-      
       <a href="https://www.duoo.live" target="_blank" class="app-link-btn btn-duoo">🌐 Download Duoo app</a>
-      <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="app-link-btn btn-doran">📱 Download Doran App </a>
-      
+      <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="app-link-btn btn-doran">📱 Download Doran App</a>
       <button type="button" class="popup-close-btn" onclick="closeAppLinksModal()">Close / बंद करें</button>
     </div>
   </div>
 
-  <!-- शानदार रिमाइंडर पॉपअप (सटीक अमाउंट याद दिलाने के लिए) -->
-  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
-      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
-      <b style="color:#1e40af;font-size:16px;">Payment Instructions / महत्वपूर्ण निर्देश</b>
-      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
-        <p style="margin-bottom:6px;font-weight:bold;">English / विशेष ध्यान दें:</p>
-        <ol style="margin:0 0 10px 18px;padding:0;">
-          <li>A <b>Barcode</b> will open with the <b>exact decimal amount</b> (e.g., ₹2500.01).</li>
-          <li>You <b>MUST pay the exact amount</b> including the paise. Do not round it off!</li>
-          <li>Take a screenshot, open GPay/PhonePe/Paytm scanner, select Gallery and pay.</li>
-          <li>Coins will be credited <b>automatically within 5 seconds</b> after payment!</li>
-        </ol>
-        <p style="margin-bottom:6px;font-weight:bold;">हिंदी / निर्देश:</p>
-        <ol style="margin:0 0 0 18px;padding:0;">
-          <li>आगे बारकोड के साथ <b>सटीक पैसे (पॉइंट के बाद की संख्या जैसे .01)</b> दिखाई देंगे।</li>
-          <li>आपको हमेशा <b>पूरे पैसे और पॉइंट वाले पैसे मिलाकर ही भेजने हैं</b> (इसे बदलें या हटाएं नहीं)।</li>
-          <li>गैलरी से स्कैनर में QR चुनकर भुगतान पूरा करें।</li>
-          <li>पेमेंट के बाद <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
-        </ol>
-      </div>
-      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
-    </div>
-  </div>
-
+  <!-- छोटे प्लान्स के लिए QR कोड Modal (₹151 - ₹1999) -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
-      <b style="color:#1e40af;font-size:16px;">Scan & Pay via Super Money UPI</b>
-      <div id="payAmt" style="font-size:28px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
-      <div style="background:#fef3c7;border:1px solid #f59e0b;padding:6px;border-radius:6px;margin-bottom:8px;">
-        <span style="font-size:11.5px;color:#92400e;font-weight:bold;">⚠️ कृपया पॉइंट सहित सटीक रकम ही पे करें (Pay Exact Amount)!</span>
-      </div>
-      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      <b style="color:#1e40af;font-size:16px;">Scan & Pay</b>
+      <div id="payAmtQR" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
+      <div style="font-size:11px;color:#dc2626;font-weight:bold;margin-bottom:8px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
+      <img id="qrImg" src="" alt="Payment Barcode" style="width:215px;height:215px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
       <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
         <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
       </div>
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
-        📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in your UPI app, and pay the <b>exact amount</b>.
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <!-- बड़े प्लान्स के लिए Super Money UPI ID Copy Modal (₹2500 - ₹15000) -->
+  <div id="modalSuperMoney" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:20px;text-align:center;max-height:96vh;overflow-y:auto;">
+      <div style="font-size:24px;margin-bottom:2px;">⚡</div>
+      <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
+      <div id="payAmtSuper" style="font-size:28px;font-weight:bold;color:#059669;margin:6px 0;">₹0.00</div>
+      
+      <!-- छोटा और साफ रिमाइंडर पॉपअप संदेश -->
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;margin-bottom:12px;text-align:left;font-size:11.5px;color:#1e3a8a;line-height:1.4;">
+        <b>⚠️ महत्वपूर्ण निर्देश / Important:</b><br>
+        कृपया अपने Google Pay, PhonePe या Paytm से <b>पॉइंट सहित ठीक उतना ही अमाउंट (जैसे .01, .02 पैसे जोड़कर)</b> पे करें जितना ऊपर दिया गया है। शार्ट पेमेंट या बिना पैसे के पेमेंट करने पर कॉइन ऑटोमैटिक डिलीवर नहीं हो पाएंगे!<br><br>
+        <i>Please pay the exact amount including paise. Short payments will not be detected automatically.</i>
       </div>
+
+      <label style="text-align:left;margin-bottom:4px;font-size:12px;">Super Money UPI ID:</label>
+      <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <input type="text" id="superMoneyIdBox" readonly style="background:#f3f4f6;font-weight:bold;text-align:center;color:#374151;" value="supermoney@okicici">
+        <button type="button" onclick="copySuperMoneyUpi()" style="background:#059669;color:#white;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy UPI</button>
+      </div>
+
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin-bottom:10px;">
+        <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
+        <span id="timerTextSuper" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
+      </div>
+
       <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
-        🔄 <b>Auto-detection is on:</b> As soon as the payment is made, coins will be credited within 5 seconds!
+        🔄 <b>Auto-detection:</b> Payment करने के बाद 5 सेकंड में कॉइन्स आपकी आईडी में आ जाएंगे!
       </div>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
@@ -387,8 +366,8 @@
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
       <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
       <div id="successDesc" style="font-size:12px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;"></div>
-      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received.%20Here%20is%20my%20payment%20screenshot%20and%20ID." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 Chat on WhatsApp / व्हाट्सएप पर संपर्क करें</a>
-      <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Go Back to Home / होम पेज पर जाएं</button>
+      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 Chat on WhatsApp</a>
+      <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Go Back to Home</button>
     </div>
   </div>
 
@@ -405,12 +384,10 @@
       document.getElementById('appLinksModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }
-
     function closeAppLinksModal() {
       document.getElementById('appLinksModal').style.display = 'none';
       document.body.style.overflow = 'auto';
     }
-
     function tab(key) {
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
       for (var i = 0; i < arr.length; i++) {
@@ -420,7 +397,6 @@
       document.getElementById('p-' + key).style.display = 'block';
       document.getElementById('b-' + key).classList.add('active');
     }
-
     function setPack(el, coins, price) {
       var all = document.querySelectorAll('.coin-card');
       for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
@@ -429,11 +405,10 @@
       document.getElementById('sumPlan').innerText = coins.toLocaleString() + " Coins";
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
-
     function verifyUID() {
       var uid = document.getElementById('userId').value.trim();
       var res = document.getElementById('verifyResult');
-      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
+      if (!uid) { alert('Please enter User ID'); return; }
       res.style.display = "flex";
       res.innerHTML = "Verifying...";
 
@@ -463,18 +438,12 @@
       var ph = document.getElementById('userPhone').value.trim();
       var termsChecked = document.getElementById('termsAgree').checked;
 
-      if (!uid) { alert('Please enter User ID / कृपया User ID दर्ज करें'); return; }
-      if (!selectedPack) { alert('Please select a coin pack / कृपया कॉइन पैक चुनें'); return; }
-      if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number / सही WhatsApp नंबर दर्ज करें'); return; }
-      if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
-      if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
+      if (!uid) { alert('Please enter User ID'); return; }
+      if (!selectedPack) { alert('Please select a coin pack'); return; }
+      if (!ph || ph.length < 10) { alert('Enter valid WhatsApp Number'); return; }
+      if (!isUidValid) { alert('Please verify User ID first'); return; }
+      if (!termsChecked) { alert('Please accept Terms & Conditions'); return; }
 
-      document.getElementById('modalNotice').style.display = 'flex';
-    }
-
-    function showQR() {
-      document.getElementById('modalNotice').style.display = 'none';
-      var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
       leftTime = 300;
 
@@ -487,81 +456,89 @@
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
-        // सुपर मनी की यूपीआई आईडी
-        var superMoneyUpi = "supermoney@okicici";  
-        var upi = "upi://pay?pa=" + superMoneyUpi + "&pn=ALI%20DREAMWORK&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-        
-        document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
-        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-        document.getElementById('timerText').innerText = "05:00";
-        document.getElementById('modalQR').style.display = 'flex';
+        // चेक करें कि प्लान छोटा है या ₹2500 से बड़ा नया प्लान है
+        if (selectedPack.price >= 2500) {
+          // --- सुपर मनी यूपीआई (डायरेक्ट कॉपी ऑप्शन वाला मॉडल) ---
+          document.getElementById('payAmtSuper').innerText = '₹' + exactPayableAmount.toFixed(2);
+          document.getElementById('timerTextSuper').innerText = "05:00";
+          document.getElementById('modalSuperMoney').style.display = 'flex';
+          startTimer('timerTextSuper');
+        } else {
+          // --- छोटे प्लान्स के लिए पुराना QR कोड सिस्टम (BharatPe/GPay 3:1) ---
+          var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
+          var gpayUpi = "gpay-12208814600@okbizaxis";        
+          var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
+          var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+          
+          document.getElementById('payAmtQR').innerText = '₹' + exactPayableAmount.toFixed(2);
+          document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(upi);
+          document.getElementById('timerText').innerText = "05:00";
+          document.getElementById('modalQR').style.display = 'flex';
+          startTimer('timerText');
+        }
 
-        clearInterval(timerObj);
-        timerObj = setInterval(function(){
-          leftTime--;
-          var m = Math.floor(leftTime / 60);
-          var s = leftTime % 60;
-          document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-          if (leftTime <= 0) {
-            hideAllModals();
-            var timeoutHtml = `
-              <p style="margin-bottom:6px;font-weight:bold;color:#dc2626;">⏳ Time Expired / समय समाप्त</p>
-              <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">English:</p>
-              <p style="margin-bottom:8px;">Sorry, the 5-minute time limit has expired. If your payment was deducted, your money is safe. Contact us via WhatsApp below.</p>
-              <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">हिंदी:</p>
-              <p style="margin-bottom:6px;">क्षमा करें! 5 मिनट का समय समाप्त हो गया है। यदि आपका पेमेंट कट गया है, तो घबराएं नहीं। व्हाट्सएप पर संपर्क करें।</p>
-              <p style="font-weight:bold;color:#059669;text-align:center;">WhatsApp: +91 9690118011</p>
-            `;
-            showCompletionModal('Time Out / समय सीमा समाप्त', timeoutHtml, '#dc2626', '⏳', true);
-          }
-        }, 1000);
-
-        clearInterval(pollObj);
-        pollObj = setInterval(function(){
-          fetch('/api/check-order-status?orderId=' + orderId)
-            .then(function(r){ return r.json(); })
-            .then(function(d){
-              if (d && d.status === 'PAID') {
-                hideAllModals();
-                var successHtml = `
-                  <p style="margin-bottom:6px;font-weight:bold;color:#059669;">🎉 Payment Verified & Coins Delivered!</p>
-                  <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">English:</p>
-                  <p style="margin-bottom:8px;">Congratulations! Your payment has been successfully verified and coins have been delivered.</p>
-                  <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">हिंदी:</p>
-                  <p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स भेज दिए गए हैं।</p>
-                `;
-                showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
-              }
-            }).catch(function(){});
-        }, 2500);
+        startPolling();
       });
+    }
+
+    function copySuperMoneyUpi() {
+      var copyText = document.getElementById("superMoneyIdBox");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+      alert("Super Money UPI ID Copied: " + copyText.value);
+    }
+
+    function startTimer(elemId) {
+      clearInterval(timerObj);
+      timerObj = setInterval(function(){
+        leftTime--;
+        var m = Math.floor(leftTime / 60);
+        var s = leftTime % 60;
+        document.getElementById(elemId).innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        if (leftTime <= 0) {
+          hideAllModals();
+          var timeoutHtml = `<p style="color:#dc2626;font-weight:bold;">Time Expired / समय समाप्त</p><p>यदि आपका पेमेंट कट गया है तो घबराएं नहीं, व्हाट्सएप पर संपर्क करें।</p><p style="color:#059669;font-weight:bold;">WhatsApp: +91 9690118011</p>`;
+          showCompletionModal('Time Out', timeoutHtml, '#dc2626', '⏳', true);
+        }
+      }, 1000);
+    }
+
+    function startPolling() {
+      clearInterval(pollObj);
+      pollObj = setInterval(function(){
+        fetch('/api/check-order-status?orderId=' + orderId)
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (d && d.status === 'PAID') {
+              hideAllModals();
+              var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स भेज दिए गए हैं।</p>`;
+              showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
+            }
+          }).catch(function(){});
+      }, 2500);
     }
 
     function showCompletionModal(title, descHtml, color, icon, showWaBtn) {
       clearInterval(timerObj);
       clearInterval(pollObj);
-      document.getElementById('modalNotice').style.display = 'none';
       document.getElementById('modalQR').style.display = 'none';
+      document.getElementById('modalSuperMoney').style.display = 'none';
       
       document.getElementById('successIcon').innerText = icon;
       document.getElementById('successTitle').innerText = title;
       document.getElementById('successTitle').style.color = color;
       document.getElementById('successDesc').innerHTML = descHtml;
       
-      if (showWaBtn) {
-        document.getElementById('whatsappBtn').style.display = 'block';
-      } else {
-        document.getElementById('whatsappBtn').style.display = 'none';
-      }
-      
+      document.getElementById('whatsappBtn').style.display = showWaBtn ? 'block' : 'none';
       document.getElementById('modalSuccess').style.display = 'flex';
     }
 
     function hideAllModals() {
       clearInterval(timerObj);
       clearInterval(pollObj);
-      document.getElementById('modalNotice').style.display = 'none';
       document.getElementById('modalQR').style.display = 'none';
+      document.getElementById('modalSuperMoney').style.display = 'none';
     }
   </script>
 </body>
