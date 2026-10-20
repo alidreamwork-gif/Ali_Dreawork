@@ -354,7 +354,7 @@
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
         <p style="margin-bottom:6px;font-weight:bold;">English:</p>
         <ol style="margin:0 0 10px 18px;padding:0;" id="instEng">
-          <!-- डायनामिक निर्देश (छोटे और बड़े अमाउंट के लिए अलग) -->
+          <!-- डायनामिक निर्देश -->
         </ol>
         <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
         <ol style="margin:0 0 0 18px;padding:0;" id="instHin">
@@ -366,7 +366,7 @@
     </div>
   </div>
 
-  <!-- पेमेंट गेटवे पॉपअप (छोटे अमाउंट के लिए QR और बड़े अमाउंट के लिए डायरेक्ट UPI / Intent Buttons) -->
+  <!-- पेमेंट गेटवे पॉपअप -->
   <div id="modalPayment" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b id="payGatewayTitle" style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
@@ -381,7 +381,7 @@
         </div>
       </div>
 
-      <!-- Direct UPI & App Intent Section (बड़े अमाउंट ₹2000 से ऊपर के लिए) -->
+      <!-- Direct UPI & App Intent Section (बड़े अमाउंट और ₹20 टेस्ट प्लान के लिए) -->
       <div id="directPaySection" style="display:none; margin: 10px 0;">
         <div style="background:#f0fdf4;border:1px solid #10b981;padding:10px;border-radius:8px;margin-bottom:10px;">
           <p style="font-size:11.5px;color:#065f46;margin-bottom:4px;font-weight:bold;">Super Money UPI ID:</p>
@@ -409,7 +409,7 @@
     </div>
   </div>
 
-  <!-- पेमेंट सफलता या टाइमआउट के लिए रुकने वाला पॉपअप बॉक्स -->
+  <!-- पेमेंट सफलता या टाइमआउट पॉपअप बॉक्स -->
   <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;">
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
@@ -497,10 +497,9 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
-      // निर्देश सेट करना (छोटे और बड़े अमाउंट के लिए अलग)
       var engList = "";
       var hinList = "";
-      if (selectedPack.price >= 2000) {
+      if (selectedPack.price <= 100 || selectedPack.price >= 2000) {
         engList = `<li>A Direct Payment window will open with the exact amount.</li><li>Click on your preferred UPI app button (GPay/PhonePe/Paytm) or copy the Super Money UPI ID.</li><li>Pay the <b>exact amount</b>.</li><li>Coins will be credited <b>automatically within 5 seconds</b>!</li>`;
         hinList = `<li>सटीक रकम के साथ डायरेक्ट पेमेंट विंडो खुलेगी।</li><li>अपनी पसंद के यूपीआई ऐप बटन पर क्लिक करें या Super Money UPI ID कॉपी करें।</li><li><b>सटीक रकम</b> पे करें।</li><li><b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>`;
       } else {
@@ -529,19 +528,17 @@
         exactPayableAmount = data.exactAmount || selectedPack.price;
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
         
-        // चेक करें कि यह बड़ा अमाउंट है (₹2000+) या छोटा अमाउंट
         if (data.gateway === 'SUPER_MONEY') {
           document.getElementById('payGatewayTitle').innerText = "Direct Pay via Super Money UPI";
           document.getElementById('qrSection').style.display = 'none';
           document.getElementById('directPaySection').style.display = 'block';
 
           // ==========================================
-          // 💡 यहाँ अपनी Super Money UPI ID डालें:
+          // 💡 यहाँ अपनी असली Super Money UPI ID डालें:
           // ==========================================
           var superMoneyUpi = "ali.vasim@superyes"; 
           document.getElementById('upiIdBox').value = superMoneyUpi;
 
-          // ऐप इंटेंट लिंक सेट करना
           var upiIntent = "upi://pay?pa=" + superMoneyUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase_" + orderId;
           document.getElementById('intentGpay').href = "tez://upi/pay?" + upiIntent.split('?')[1];
           document.getElementById('intentPhonepe').href = "phonepe://pay?" + upiIntent.split('?')[1];
