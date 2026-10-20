@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// अधिकृत प्लान्स की सख्त मैपिंग (Amount -> Coins) - इसमें ₹20 का टेस्ट प्लान भी शामिल है
+// अधिकृत प्लान्स की सख्त मैपिंग (Amount -> Coins)
 const COIN_PLANS = {
     20: 1400,     // टेस्टिंग प्लान
     151: 11000,
@@ -69,7 +69,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (छोटे अमाउंट के लिए QR और ₹2000+ बड़े अमाउंट के लिए Super Money)
+// 2. Order Create
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -94,9 +94,9 @@ app.post('/api/create-order', (req, res) => {
 
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // गेटवे चयन लॉजिक: ₹2000 या उससे अधिक के लिए 'SUPER_MONEY', बाकी के लिए 3:1 (BHARATPE / GPAY)
+        // गेटवे चयन लॉजिक: ₹100 से कम (₹20 टेस्ट प्लान) और ₹2000+ के लिए 'SUPER_MONEY', बीच वालों के लिए BharatPe/GPay
         let assignedGateway = 'BHARATPE';
-        if (baseAmt >= 2000) {
+        if (baseAmt <= 100 || baseAmt >= 2000) {
             assignedGateway = 'SUPER_MONEY';
         } else {
             paymentCounter = (paymentCounter + 1) % 4;
@@ -150,7 +150,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook (सभी गेटवे के लिए)
+// 4. Unified Webhook
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
