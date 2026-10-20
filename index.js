@@ -16,9 +16,9 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // 💡 KwikUPI (KwikGateway) की असली डिटेल्स:
 // ==========================================
 const KWIK_GATEWAY = {
-    apiKey: "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       // Public API Key (पुराने कोड के अनुसार सही केस)
-    apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", // Secret Private Key
-    apiUrl: "https://kwikupi.com/api/create-payment"   // सही और आधिकारिक API Endpoint URL
+    apiKey: "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       
+    apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", 
+    apiUrl: "https://kwikupi.com/api/create-payment"   
 };
 
 // केवल बड़े प्लान्स और ₹20 टेस्ट प्लान की सख्त मैपिंग (Amount -> Coins)
@@ -114,7 +114,6 @@ app.post('/api/create-order', async (req, res) => {
 
             console.log("KwikUPI Response Data:", kwikResponse.data);
 
-            // पुराने और नए दोनों तरीकों से लिंक कैच करना
             paymentUrl = kwikResponse.data.payment_url || 
                          kwikResponse.data.payment_link || 
                          kwikResponse.data.url || 
