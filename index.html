@@ -363,16 +363,22 @@
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स के लिए सुधारे गए और स्पष्ट निर्देशों वाला पॉपअप (₹2500 - ₹15000) -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए सुधारे गए निर्देशों वाला पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - डार्क और साफ़) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #1e40af;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
       <b style="color:#1e40af;font-size:17px;text-transform:uppercase;letter-spacing:0.5px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
       
-      <div style="text-align:left;font-size:12px;margin:14px 0;line-height:1.5;background:#eff6ff;border:2px solid #3b82f6;padding:14px;border-radius:10px;color:#1e3a8a;">
-        <p style="margin-bottom:6px;font-weight:bold;color:#1d4ed8;">📌 Instruction / निर्देश:</p>
-        <p style="margin-bottom:8px;">कृपया नीचे दिया गया पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें और अपने गूगल पे, फोन पे, पेटीएम या फिर अन्य किसी ऐप में पेस्ट करके एग्जैक्ट अमाउंट सही यूपीआई आईडी पर पे करें। यदि आपका अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा।</p>
-        <p style="font-size:11px;color:#475569;font-style:italic;">Please copy the exact amount with paise and UPI ID, then pay via GPay, PhonePe, Paytm, or any other app. If your amount does not match, coins will not be delivered automatically.</p>
+      <div style="text-align:left;font-size:13px;margin:14px 0;line-height:1.5;background:#eff6ff;border:2px solid #3b82f6;padding:14px;border-radius:10px;color:#1e3a8a;">
+        <!-- इंग्लिश ऊपर -->
+        <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">English:</p>
+        <p style="margin-bottom:12px;font-weight:bold;color:#1e293b;font-size:12.5px;">Please copy the exact amount with paise and UPI ID, then pay via GPay, PhonePe, Paytm, or any other app. If your amount does not match, coins will not be delivered automatically.</p>
+        
+        <hr style="border:0; border-top:1px solid #cbd5e1; margin:10px 0;">
+
+        <!-- हिंदी नीचे -->
+        <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">हिंदी:</p>
+        <p style="font-weight:bold;color:#1e293b;font-size:12.5px;">कृपया आगे आने वाले पेज से पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें, और अपने गूगल पे, फोन पे, पेटीएम या अन्य किसी ऐप में पेस्ट करके एग्जैक्ट अमाउंट सही यूपीआई आईडी पर पे करें।</p>
       </div>
 
       <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(5,150,105,0.3);">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
@@ -380,16 +386,17 @@
     </div>
   </div>
 
-  <!-- स्टेप 2: बड़े प्लान्स के लिए UPI ID & Amount Copy वाला स्क्रीन (Verify Button के साथ) -->
+  <!-- स्टेप 2: बड़े प्लान्स के लिए UPI ID & Amount Copy वाला स्क्रीन (यहाँ जोड़ी गई है मैच न होने की चेतावनी) -->
   <div id="modalSuperMoney" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:18px;padding:20px;text-align:center;max-height:96vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
       
-      <!-- साफ-सुथरी और सुंदर सूचना पट्टी -->
-      <div style="background:#fefce8;border:1px solid #facc15;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:11.5px;color:#854d0e;line-height:1.4;">
-        <b>⚠️ ध्यान दें / Note:</b> कृपया नीचे दिया गया पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें और अपने गूगल पे, फोन पे, पेटीएम या अन्य ऐप में पे करें।<br>
-        <i>Copy exact amount with paise & UPI ID below.</i>
+      <!-- यहां जोड़ी गई है मैच न होने पर कॉइन न मिलने की महत्वपूर्ण चेतावनी -->
+      <div style="background:#fef2f2;border:2px solid #f87171;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#991b1b;line-height:1.4;font-weight:bold;">
+        ⚠️ <b>महत्वपूर्ण चेतावनी / Important Warning:</b><br>
+        यदि आपका पेमेंट किया गया अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा!<br>
+        <span style="font-size:11px; font-weight:normal; color:#7f1d1d;">If your paid amount does not match the exact amount given here, coins will not be delivered automatically.</span>
       </div>
 
       <!-- अमाउंट कॉपी करने का बॉक्स -->
@@ -575,7 +582,7 @@
       alert("Super Money UPI ID Copied: " + copyText.value);
     }
 
-    // मैन्युअल वेरीफाई बटन क्लिक करने पर कस्टम पॉपअप और व्हाट्सएप सपोर्ट निर्देश के साथ
+    // मैन्युअल वेरीफाई बटन क्लिक करने पर व्हाट्सएप संपर्क निर्देश और आईडी के साथ पॉपअप
     function manualCheckStatus() {
       fetch('/api/check-order-status?orderId=' + orderId)
         .then(function(r){ return r.json(); })
@@ -588,7 +595,7 @@
             document.getElementById('statusCheckIcon').innerText = "⏳";
             document.getElementById('statusCheckTitle').innerText = "Payment Not Detected / पेमेंट डिटेक्ट नहीं हुआ";
             document.getElementById('statusCheckDesc').innerHTML = `
-              <b>English:</b> Payment not detected yet. If your payment has been cut and the time limit has also expired, please contact us via WhatsApp below with your payment screenshot and ID number.<br><br>
+              <b>English:</b> Payment not detected yet. If your payment has been cut and the time limit has expired, please contact us via WhatsApp below, sharing your payment screenshot and ID number.<br><br>
               <b>हिंदी:</b> आपका पेमेंट अभी डिटेक्ट नहीं हुआ है। यदि आपका पैसा कट गया है और समय सीमा भी समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें। (Order ID: ${orderId})
             `;
             document.getElementById('statusWhatsappBtn').style.display = 'block';
@@ -609,7 +616,7 @@
         document.getElementById(elemId).innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
         if (leftTime <= 0) {
           hideAllModals();
-          var timeoutHtml = `<p style="color:#dc2626;font-weight:bold;">⏳ Time Expired / समय समाप्त</p><p>5 मिनट का समय समाप्त हो गया है। यदि आपका पैसा कट गया है और समय सीमा समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें।</p><p style="color:#059669;font-weight:bold;">WhatsApp: +91 9690118011</p>`;
+          var timeoutHtml = `<p style="color:#dc2626;font-weight:bold;">⏳ Time Expired / समय समाप्त</p><p>5 मिनट का समय समाप्त हो गया है। यदि आपका पैसा कट गया है और समय सीमा समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें। (Order ID: ${orderId})</p>`;
           showCompletionModal('Time Out / समय समाप्त', timeoutHtml, '#dc2626', '⏳', true);
         }
       }, 1000);
