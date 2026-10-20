@@ -216,7 +216,7 @@
           </div>
           <div id="verifyResult"></div>
 
-          <div class="section-title">SELECT COIN PLANS (₹151 to ₹15,000)</div>
+          <div class="section-title">SELECT COIN PLANS (Test & High Value)</div>
           <div class="plans-grid">
             <!-- छोटे प्लान्स (₹151 - ₹1999) -->
             <div class="coin-card" onclick="setPack(this, 11000, 151)">
@@ -239,6 +239,11 @@
             </div>
             <div class="coin-card" onclick="setPack(this, 146000, 1999)">
               <div class="coin-number">146,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹1,999</div>
+            </div>
+
+            <!-- टेस्ट प्लान (₹20 - सुपर मनी टेस्टिंग के लिए) -->
+            <div class="coin-card" onclick="setPack(this, 1400, 20)" style="border-color: #2563eb; background: #eff6ff;">
+              <div class="coin-number" style="color: #2563eb;">1,400</div><div class="coin-label" style="color: #1d4ed8;">Test Pack</div><div class="coin-divider" style="background: #bfdbfe;"></div><div class="coin-price">₹20</div>
             </div>
 
             <!-- नए बड़े प्लान्स (₹2500 - ₹15000) -->
@@ -342,7 +347,7 @@
     </div>
   </div>
 
-  <!-- छोटे प्लान्स के लिए QR कोड स्कैनर स्क्रीन (₹151 - ₹1999) -->
+  <!-- छोटे प्लान्स के लिए QR कोड स्कैनर स्क्रीन -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
       <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
@@ -363,22 +368,22 @@
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स के लिए सुधारे गए निर्देशों वाला पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - डार्क और साफ़) -->
+  <!-- स्टेप 1: बड़े प्लान्स / टेस्ट प्लान के लिए पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - डार्क, बोल्ड और हाईलाइटेड) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #1e40af;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
       <b style="color:#1e40af;font-size:17px;text-transform:uppercase;letter-spacing:0.5px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
       
       <div style="text-align:left;font-size:13px;margin:14px 0;line-height:1.5;background:#eff6ff;border:2px solid #3b82f6;padding:14px;border-radius:10px;color:#1e3a8a;">
-        <!-- इंग्लिश ऊपर -->
+        <!-- इंग्लिश ऊपर (बोल्ड और डार्क) -->
         <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">English:</p>
-        <p style="margin-bottom:12px;font-weight:bold;color:#1e293b;font-size:12.5px;">Please copy the exact amount with paise and UPI ID, then pay via GPay, PhonePe, Paytm, or any other app. If your amount does not match, coins will not be delivered automatically.</p>
+        <p style="margin-bottom:12px;font-weight:900;color:#0f172a;font-size:13px;">Please pay the exact amount including paise and UPI ID as shown on the next page. If your amount does not match, coins will not be delivered automatically.</p>
         
         <hr style="border:0; border-top:1px solid #cbd5e1; margin:10px 0;">
 
-        <!-- हिंदी नीचे -->
+        <!-- हिंदी नीचे (बोल्ड और डार्क) -->
         <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">हिंदी:</p>
-        <p style="font-weight:bold;color:#1e293b;font-size:12.5px;">कृपया आगे आने वाले पेज से पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें, और अपने गूगल पे, फोन पे, पेटीएम या अन्य किसी ऐप में पेस्ट करके एग्जैक्ट अमाउंट सही यूपीआई आईडी पर पे करें।</p>
+        <p style="font-weight:900;color:#0f172a;font-size:13px;">कृपया आगे आने वाले पेज से पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें, और अपने गूगल पे, फोन पे, पेटीएम या अन्य किसी ऐप में पेस्ट करके एग्जैक्ट अमाउंट सही यूपीआई आईडी पर पे करें।</p>
       </div>
 
       <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(5,150,105,0.3);">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
@@ -386,13 +391,13 @@
     </div>
   </div>
 
-  <!-- स्टेप 2: बड़े प्लान्स के लिए UPI ID & Amount Copy वाला स्क्रीन (यहाँ जोड़ी गई है मैच न होने की चेतावनी) -->
+  <!-- स्टेप 2: सुपर मनी डायरेक्ट पेमेंट स्क्रीन (अमाउंट और यूपीआई कॉपी करने का ऑप्शन) -->
   <div id="modalSuperMoney" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:18px;padding:20px;text-align:center;max-height:96vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
       
-      <!-- यहां जोड़ी गई है मैच न होने पर कॉइन न मिलने की महत्वपूर्ण चेतावनी -->
+      <!-- मैच न होने पर कॉइन न मिलने की महत्वपूर्ण चेतावनी -->
       <div style="background:#fef2f2;border:2px solid #f87171;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#991b1b;line-height:1.4;font-weight:bold;">
         ⚠️ <b>महत्वपूर्ण चेतावनी / Important Warning:</b><br>
         यदि आपका पेमेंट किया गया अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा!<br>
@@ -536,7 +541,8 @@
         backendData = data;
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
-        if (selectedPack.price >= 2500) {
+        // ₹20 (टेस्ट प्लान) या ₹2500+ बड़े प्लान्स के लिए Super Money फ्लो
+        if (selectedPack.price >= 2500 || selectedPack.price === 20) {
           document.getElementById('modalSuperMoneyNotice').style.display = 'flex';
         } else {
           document.getElementById('modalNotice').style.display = 'flex';
@@ -582,7 +588,6 @@
       alert("Super Money UPI ID Copied: " + copyText.value);
     }
 
-    // मैन्युअल वेरीफाई बटन क्लिक करने पर व्हाट्सएप संपर्क निर्देश और आईडी के साथ पॉपअप
     function manualCheckStatus() {
       fetch('/api/check-order-status?orderId=' + orderId)
         .then(function(r){ return r.json(); })
