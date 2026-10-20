@@ -12,8 +12,17 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// नए 7 प्लान्स की सख्त मैपिंग (Amount -> Coins, 1 = 73 के हिसाब से)
+// सभी प्लान्स की सख्त मैपिंग (छोटे प्लान्स + नए बड़े प्लान्स)
 const COIN_PLANS = {
+    // छोटे प्लान्स (BharatPe / GPay)
+    151: 11000,
+    220: 16100,
+    330: 24100,
+    440: 32100,
+    685: 50000,
+    1370: 100000,
+    1999: 146000,
+    // नए बड़े प्लान्स (Super Money UPI)
     2500: 182500,
     3500: 255500,
     4500: 328500,
@@ -23,11 +32,14 @@ const COIN_PLANS = {
     15000: 1095000
 };
 
-// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
+// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt, gateway }
 const activeOrders = new Map();
 
 // यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
 let paiseCounter = 1;
+
+// 3:1 सर्कुलेशन काउंटर (छोटे प्लान्स के लिए)
+let paymentCounter = 0;
 
 // ऑर्डर की लाइफ: 5 मिनट (300 सेकंड)
 const ORDER_VALIDITY_MS = 300 * 1000;
@@ -63,7 +75,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (नए प्लान्स और सुपर मनी UPI के साथ)
+// 2. Order Create
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -73,23 +85,21 @@ app.post('/api/create-order', (req, res) => {
 
         const baseAmt = Math.round(Number(amount));
 
-        // सुरक्षा ताला: अमाउंट वैलिडेशन
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
-            return res.status(400).json({ 
-                success: false, 
-                message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
-            });
+            console.warn(`[SECURITY ALERT] अमान्य प्लान: ₹${amount} | UID: ${uid}`);
+            return res.status(400).json({ success: false, message: "अमान्य प्लान!" });
         }
 
         const coins = COIN_PLANS[baseAmt];
         
-        // 1 से 90 पैसे तक डायनामिक असाइनमेंट
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
-
-        // सटीक फ्लोटिंग अमाउंट (जैसे 2500.01)
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
+
+        // छोटे प्लान्स के लिए रोटेशन, बड़े प्लान्स के लिए सुपर मनी गेटवे असाइन करना
+        paymentCounter = (paymentCounter + 1) % 4;
+        const assignedGateway = baseAmt >= 2500 ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
+
         const cleanUid = uid.toString().trim();
 
         activeOrders.set(orderId, {
@@ -98,11 +108,12 @@ app.post('/api/create-order', (req, res) => {
             exactAmount: exactAmount,
             coins: coins,
             status: 'PENDING',
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            gateway: assignedGateway
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount });
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
     }
@@ -136,7 +147,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Webhook (सुपर मनी या SMS ऑटोमेशन से आने वाले नोटिफिकेशन के लिए)
+// 4. Unified Webhook (Super Money, SMS, BharatPe और Google Pay सभी के लिए)
 app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
