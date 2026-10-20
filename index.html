@@ -9,7 +9,6 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
     
-    /* टॉप नेविगेशन - प्रीमियम गोल्डन/डार्क थीम */
     .top-navbar { 
       background: linear-gradient(135deg, #1e293b, #0f172a); 
       padding: 8px 10px; 
@@ -153,10 +152,10 @@
       cursor: pointer; 
     }
     .coin-card.selected { border-color: #b45309; background: #fffbeb; }
-    .coin-number { font-size: 15px; font-weight: 800; color: #78350f; } /* कॉइन का नया प्रीमियम कलर */
+    .coin-number { font-size: 15px; font-weight: 800; color: #78350f; }
     .coin-label { font-size: 9.5px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
     .coin-divider { width: 28px; height: 2px; background: #e5e7eb; margin: 4px auto; }
-    .coin-price { font-size: 14px; font-weight: bold; color: #b45309; } /* रुपए अमाउंट का नया कलर */
+    .coin-price { font-size: 14px; font-weight: bold; color: #b45309; }
 
     .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #4b5563; }
@@ -357,7 +356,7 @@
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स के लिए प्रोफेशनल नोटिस पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - बिना रेड कलर के) -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए प्रोफेशनल नोटिस पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - डार्क और साफ़) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #b45309;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
@@ -386,7 +385,7 @@
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#b45309;font-size:16px;">Super Money Direct Payment</b>
       
-      <!-- चेतावनी बॉक्स -->
+      <!-- महत्वपूर्ण चेतावनी -->
       <div style="background:#fffbeb;border:2px solid #fbbf24;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#78350f;line-height:1.4;font-weight:bold;">
         ⚠️ <b>महत्वपूर्ण सूचना / Important Note:</b><br>
         यदि आपका पेमेंट किया गया अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा!<br>
@@ -526,7 +525,6 @@
         backendData = data;
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
-        // ₹3000 या उससे अधिक के प्लान्स के लिए Super Money फ्लो
         if (selectedPack.price >= 3000) {
           document.getElementById('modalSuperMoneyNotice').style.display = 'flex';
         } else {
