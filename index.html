@@ -363,21 +363,19 @@
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स के लिए आकर्षक, ट्रस्टेड और प्रीमियम वार्निंग पॉपअप (₹2500 - ₹15000) -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए सुधारे गए और स्पष्ट निर्देशों वाला पॉपअप (₹2500 - ₹15000) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #2563eb;">
+    <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #1e40af;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
       <b style="color:#1e40af;font-size:17px;text-transform:uppercase;letter-spacing:0.5px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
       
       <div style="text-align:left;font-size:12px;margin:14px 0;line-height:1.5;background:#eff6ff;border:2px solid #3b82f6;padding:14px;border-radius:10px;color:#1e3a8a;">
-        <p style="margin-bottom:6px;font-weight:bold;color:#1d4ed8;">⚠️ English Rule:</p>
-        <p style="margin-bottom:10px;">You <b>MUST pay the exact amount including paise</b> (e.g. ₹2500.03). If you pay only the round amount and skip the paise, <b>coins will NOT be delivered automatically!</b></p>
-        
-        <p style="margin-bottom:6px;font-weight:bold;color:#1d4ed8;">⚠️ हिंदी नियम:</p>
-        <p>आपको <b>पॉइंट के बाद के पैसे जोड़कर बिल्कुल सटीक रकम</b> ही भेजनी है! यदि आपने सिर्फ पूरा अमाउंट (जैसे ₹2500) भेजा और पैसे (जैसे .03) छोड़ दिए, तो <b>सिस्टम पेमेंट डिटेक्ट नहीं कर पाएगा और कॉइन नहीं मिलेंगे!</b></p>
+        <p style="margin-bottom:6px;font-weight:bold;color:#1d4ed8;">📌 Instruction / निर्देश:</p>
+        <p style="margin-bottom:8px;">कृपया नीचे दिया गया पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें और अपने गूगल पे, फोन पे, पेटीएम या फिर अन्य किसी ऐप में पेस्ट करके एग्जैक्ट अमाउंट सही यूपीआई आईडी पर पे करें। यदि आपका अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा।</p>
+        <p style="font-size:11px;color:#475569;font-style:italic;">Please copy the exact amount with paise and UPI ID, then pay via GPay, PhonePe, Paytm, or any other app. If your amount does not match, coins will not be delivered automatically.</p>
       </div>
 
-      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(5,150,105,0.3);">✅ I Understand, Proceed / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(5,150,105,0.3);">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:9px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
@@ -388,9 +386,9 @@
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
       
-      <!-- साफ-सुथरी और सुंदर चेतावनी पट्टी (बिना डरावने रंग के) -->
+      <!-- साफ-सुथरी और सुंदर सूचना पट्टी -->
       <div style="background:#fefce8;border:1px solid #facc15;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:11.5px;color:#854d0e;line-height:1.4;">
-        <b>⚠️ ध्यान दें / Note:</b> कृपया नीचे से <b>पूरा अमाउंट (पॉइंट सहित) और यूपीआई आईडी कॉपी करें</b>। बिना पॉइंट के पेमेंट करने पर कॉइन नहीं मिलेंगे!<br>
+        <b>⚠️ ध्यान दें / Note:</b> कृपया नीचे दिया गया पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें और अपने गूगल पे, फोन पे, पेटीएम या अन्य ऐप में पे करें।<br>
         <i>Copy exact amount with paise & UPI ID below.</i>
       </div>
 
@@ -420,7 +418,7 @@
     </div>
   </div>
 
-  <!-- कस्टम स्टेटस चेक रिजल्ट पॉपअप (WhatsApp सपोर्ट लिंक के साथ) -->
+  <!-- कस्टम स्टेटस चेक रिजल्ट पॉपअप (WhatsApp संपर्क निर्देश के साथ) -->
   <div id="modalStatusCheck" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);">
       <div style="font-size:32px;margin-bottom:6px;" id="statusCheckIcon">⏳</div>
@@ -428,7 +426,7 @@
       <div style="font-size:12.5px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;" id="statusCheckDesc">
         <!-- डायनामिक मैसेज -->
       </div>
-      <a id="statusWhatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received.%20Order%20ID:" target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 Chat on WhatsApp (+91 9690118011)</a>
+      <a id="statusWhatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20and%20time%20is%20over.%20Here%20is%20my%20payment%20screenshot%20and%20ID.%20Order%20ID:" target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 WhatsApp पर संपर्क करें (+91 9690118011)</a>
       <button type="button" onclick="document.getElementById('modalStatusCheck').style.display='none'" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">OK / बंद करें</button>
     </div>
   </div>
@@ -439,7 +437,7 @@
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
       <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
       <div id="successDesc" style="font-size:12px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;"></div>
-      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 Chat on WhatsApp (+91 9690118011)</a>
+      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 WhatsApp पर संपर्क करें (+91 9690118011)</a>
       <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Go Back to Home</button>
     </div>
   </div>
@@ -577,7 +575,7 @@
       alert("Super Money UPI ID Copied: " + copyText.value);
     }
 
-    // मैन्युअल वेरीफाई बटन क्लिक करने पर सुंदर पॉपअप और WhatsApp लिंक के साथ
+    // मैन्युअल वेरीफाई बटन क्लिक करने पर कस्टम पॉपअप और व्हाट्सएप सपोर्ट निर्देश के साथ
     function manualCheckStatus() {
       fetch('/api/check-order-status?orderId=' + orderId)
         .then(function(r){ return r.json(); })
@@ -587,12 +585,11 @@
             var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स भेज दिए गए हैं।</p>`;
             showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
           } else {
-            // ब्राउज़र अलर्ट के बजाय सुंदर कस्टम पॉपअप जिसमें व्हाट्सएप सपोर्ट लिंक हो
             document.getElementById('statusCheckIcon').innerText = "⏳";
-            document.getElementById('statusCheckTitle').innerText = "Payment Not Detected Yet";
+            document.getElementById('statusCheckTitle').innerText = "Payment Not Detected / पेमेंट डिटेक्ट नहीं हुआ";
             document.getElementById('statusCheckDesc').innerHTML = `
-              <b>English:</b> Payment not detected yet. If your payment has been deducted or time is expiring, please contact us on WhatsApp with your Order ID: <code>${orderId}</code>.<br><br>
-              <b>हिंदी:</b> आपका पेमेंट अभी डिटेक्ट नहीं हुआ है। यदि आपका पैसा कट गया है या समय समाप्त हो रहा है, तो कृपया नीचे दिए गए WhatsApp बटन पर क्लिक करके संपर्क करें।
+              <b>English:</b> Payment not detected yet. If your payment has been cut and the time limit has also expired, please contact us via WhatsApp below with your payment screenshot and ID number.<br><br>
+              <b>हिंदी:</b> आपका पेमेंट अभी डिटेक्ट नहीं हुआ है। यदि आपका पैसा कट गया है और समय सीमा भी समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें। (Order ID: ${orderId})
             `;
             document.getElementById('statusWhatsappBtn').style.display = 'block';
             document.getElementById('statusCheckTitle').style.color = '#d97706';
@@ -612,7 +609,7 @@
         document.getElementById(elemId).innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
         if (leftTime <= 0) {
           hideAllModals();
-          var timeoutHtml = `<p style="color:#dc2626;font-weight:bold;">⏳ Time Expired / समय समाप्त</p><p>5 मिनट का समय समाप्त हो गया है। यदि आपका पेमेंट कट गया है, तो कृपया नीचे दिए गए WhatsApp बटन से संपर्क करें।</p><p style="color:#059669;font-weight:bold;">WhatsApp: +91 9690118011</p>`;
+          var timeoutHtml = `<p style="color:#dc2626;font-weight:bold;">⏳ Time Expired / समय समाप्त</p><p>5 मिनट का समय समाप्त हो गया है। यदि आपका पैसा कट गया है और समय सीमा समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें।</p><p style="color:#059669;font-weight:bold;">WhatsApp: +91 9690118011</p>`;
           showCompletionModal('Time Out / समय समाप्त', timeoutHtml, '#dc2626', '⏳', true);
         }
       }, 1000);
