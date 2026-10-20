@@ -234,6 +234,13 @@
 
           <div class="section-title">SELECT DUOO & DORAN COIN PLANS</div>
           <div class="plans-grid">
+            <!-- टेस्टिंग प्लान (₹20) -->
+            <div class="coin-card" onclick="setPack(this, 1400, 20)">
+              <div class="coin-number">1,400</div>
+              <div class="coin-label">Test Coins</div>
+              <div class="coin-divider"></div>
+              <div class="coin-price">₹20</div>
+            </div>
             <div class="coin-card" onclick="setPack(this, 11000, 151)">
               <div class="coin-number">11,000</div>
               <div class="coin-label">Coins</div>
@@ -281,12 +288,6 @@
               <div class="coin-label">Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹3,000</div>
-            </div>
-            <div class="coin-card" onclick="setPack(this, 328500, 4500)">
-              <div class="coin-number">328,500</div>
-              <div class="coin-label">Coins</div>
-              <div class="coin-divider"></div>
-              <div class="coin-price">₹4,500</div>
             </div>
           </div>
 
@@ -339,8 +340,8 @@
       <div class="popup-title">🚀 Duoo & Doran Apps</div>
       <div class="popup-subtitle">नीचे दिए गए लिंक से एप्लीकेशन ओपन करें</div>
       
-      <a href="https://www.duoo.live" target="_blank" class="app-link-btn btn-duoo">🌐 Open Duoo Website</a>
-      <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="app-link-btn btn-doran">📱 Download Doran App (Play Store)</a>
+      <a href="https://www.duoo.live" target="_blank" class="app-link-btn btn-duoo">🌐 Download Duoo app</a>
+      <a href="https://play.google.com/store/apps/details?id=live.doran.app" target="_blank" class="app-link-btn btn-doran">📱 Download Doran App </a>
       
       <button type="button" class="popup-close-btn" onclick="closeAppLinksModal()">Close / बंद करें</button>
     </div>
@@ -352,44 +353,70 @@
       <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
         <p style="margin-bottom:6px;font-weight:bold;">English:</p>
-        <ol style="margin:0 0 10px 18px;padding:0;">
-          <li>A <b>Barcode</b> will open with a 2-minute timer and the exact payable amount.</li>
-          <li>Take a <b>Screenshot</b> of the barcode.</li>
-          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
-          <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
-          <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
+        <ol style="margin:0 0 10px 18px;padding:0;" id="instEng">
+          <!-- डायनामिक निर्देश (छोटे और बड़े अमाउंट के लिए अलग) -->
         </ol>
         <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
-        <ol style="margin:0 0 0 18px;padding:0;">
-          <li>आगे 2 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
-          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
-          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
-          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
-          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
+        <ol style="margin:0 0 0 18px;padding:0;" id="instHin">
+          <!-- डायनामिक निर्देश -->
         </ol>
       </div>
-      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="showPaymentModal()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
-  <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+  <!-- पेमेंट गेटवे पॉपअप (छोटे अमाउंट के लिए QR और बड़े अमाउंट के लिए डायरेक्ट UPI / Intent Buttons) -->
+  <div id="modalPayment" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
-      <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
+      <b id="payGatewayTitle" style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
       <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
       <div style="font-size:11.5px;color:#dc2626;font-weight:bold;margin-bottom:8px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
-      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      
+      <!-- QR Section (छोटे अमाउंट के लिए) -->
+      <div id="qrSection">
+        <img id="qrImg" src="" alt="Payment Barcode" style="width:210px;height:210px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:6px;border-radius:6px;margin:6px 0;text-align:left;font-size:10.5px;color:#1e3a8a;">
+          📸 Take a screenshot of this barcode, select it from the 'Gallery' in GPay/PhonePe scanner, and pay.
+        </div>
+      </div>
+
+      <!-- Direct UPI & App Intent Section (बड़े अमाउंट ₹2000 से ऊपर के लिए) -->
+      <div id="directPaySection" style="display:none; margin: 10px 0;">
+        <div style="background:#f0fdf4;border:1px solid #10b981;padding:10px;border-radius:8px;margin-bottom:10px;">
+          <p style="font-size:11.5px;color:#065f46;margin-bottom:4px;font-weight:bold;">Super Money UPI ID:</p>
+          <div style="display:flex;gap:6px;justify-content:center;align-items:center;">
+            <input type="text" id="upiIdBox" readonly style="background:#fff;text-align:center;font-weight:bold;font-size:13px;padding:6px;" />
+            <button type="button" onclick="copyUpiId()" style="background:#059669;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer;">Copy</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a id="intentGpay" href="#" class="app-link-btn" style="background:#2563eb;padding:10px;font-size:13px;margin-bottom:0;">🔵 Pay via Google Pay</a>
+          <a id="intentPhonepe" href="#" class="app-link-btn" style="background:#7c3aed;padding:10px;font-size:13px;margin-bottom:0;">🟣 Pay via PhonePe</a>
+          <a id="intentPaytm" href="#" class="app-link-btn" style="background:#0284c7;padding:10px;font-size:13px;margin-bottom:0;">🔷 Pay via Paytm</a>
+        </div>
+      </div>
+
       <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
-        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">01:59</span>
+        <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
       </div>
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
-        📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in the GPay, PhonePe, or Paytm scanner, and make the payment.
-      </div>
+      
       <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
-        🔄 <b>Auto-detection is on:</b> As soon as the payment is made, the system will automatically detect it and transfer the coins within 5 seconds
+        🔄 <b>Auto-detection is on:</b> As soon as the payment is made, coins will be credited within 5 seconds!
       </div>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <!-- पेमेंट सफलता या टाइमआउट के लिए रुकने वाला पॉपअप बॉक्स -->
+  <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;">
+      <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
+      <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
+      <div id="successDesc" style="font-size:12px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;"></div>
+      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received.%20Here%20is%20my%20payment%20screenshot%20and%20ID." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 Chat on WhatsApp / व्हाट्सएप पर संपर्क करें</a>
+      <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Go Back to Home / होम पेज पर जाएं</button>
     </div>
   </div>
 
@@ -400,9 +427,8 @@
     var exactPayableAmount = 0;
     var timerObj = null;
     var pollObj = null;
-    var leftTime = 120;
+    var leftTime = 300;
 
-    // नए बैनर के लिए पॉपअप ओपन/क्लोज फंक्शंस
     function openAppLinksModal() {
       document.getElementById('appLinksModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
@@ -471,14 +497,27 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
+      // निर्देश सेट करना (छोटे और बड़े अमाउंट के लिए अलग)
+      var engList = "";
+      var hinList = "";
+      if (selectedPack.price >= 2000) {
+        engList = `<li>A Direct Payment window will open with the exact amount.</li><li>Click on your preferred UPI app button (GPay/PhonePe/Paytm) or copy the Super Money UPI ID.</li><li>Pay the <b>exact amount</b>.</li><li>Coins will be credited <b>automatically within 5 seconds</b>!</li>`;
+        hinList = `<li>सटीक रकम के साथ डायरेक्ट पेमेंट विंडो खुलेगी।</li><li>अपनी पसंद के यूपीआई ऐप बटन पर क्लिक करें या Super Money UPI ID कॉपी करें।</li><li><b>सटीक रकम</b> पे करें।</li><li><b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>`;
+      } else {
+        engList = `<li>A <b>Barcode</b> will open with a 5-minute timer and the exact payable amount.</li><li>Take a <b>Screenshot</b> of the barcode.</li><li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li><li>Choose the screenshot and pay the <b>exact amount</b>.</li><li>Return here—coins credited <b>automatically within 5 seconds</b>!</li>`;
+        hinList = `<li>5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li><li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li><li><b>Google Pay, PhonePe या Paytm</b> का स्कैनर खोलकर <b>गैलरी</b> विकल्प चुनें।</li><li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> पे करें।</li><li><b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>`;
+      }
+      document.getElementById('instEng').innerHTML = engList;
+      document.getElementById('instHin').innerHTML = hinList;
+
       document.getElementById('modalNotice').style.display = 'flex';
     }
 
-    function showQR() {
+    function showPaymentModal() {
       document.getElementById('modalNotice').style.display = 'none';
       var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
-      leftTime = 120;
+      leftTime = 300;
 
       fetch('/api/create-order', {
         method: "POST",
@@ -488,22 +527,41 @@
       .then(function(res){ return res.json(); })
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
-        
-        // ==========================================
-        // यहाँ अपनी UPI ID डालें (यहाँ से सेट होगा)
-        // ==========================================
-        var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  // <--- Bharat Pay की UPI ID यहाँ लिखें
-        var gpayUpi = "gpay-12208814600@okbizaxis";        // <--- Google Pay की UPI ID यहाँ लिखें
-
-        // बैकएंड द्वारा 3:1 रेश्यो के हिसाब से तय किया गया गेटवे (GPAY या BHARATPE)
-        var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
-
-        var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-        
         document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
-        document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
-        document.getElementById('timerText').innerText = "02:00";
-        document.getElementById('modalQR').style.display = 'flex';
+        
+        // चेक करें कि यह बड़ा अमाउंट है (₹2000+) या छोटा अमाउंट
+        if (data.gateway === 'SUPER_MONEY') {
+          document.getElementById('payGatewayTitle').innerText = "Direct Pay via Super Money UPI";
+          document.getElementById('qrSection').style.display = 'none';
+          document.getElementById('directPaySection').style.display = 'block';
+
+          // ==========================================
+          // 💡 यहाँ अपनी Super Money UPI ID डालें:
+          // ==========================================
+          var superMoneyUpi = "ali.vasim@superyes"; 
+          document.getElementById('upiIdBox').value = superMoneyUpi;
+
+          // ऐप इंटेंट लिंक सेट करना
+          var upiIntent = "upi://pay?pa=" + superMoneyUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase_" + orderId;
+          document.getElementById('intentGpay').href = "tez://upi/pay?" + upiIntent.split('?')[1];
+          document.getElementById('intentPhonepe').href = "phonepe://pay?" + upiIntent.split('?')[1];
+          document.getElementById('intentPaytm').href = "paytmmp://pay?" + upiIntent.split('?')[1];
+
+        } else {
+          document.getElementById('payGatewayTitle').innerText = "Scan & Pay via Any UPI";
+          document.getElementById('qrSection').style.display = 'block';
+          document.getElementById('directPaySection').style.display = 'none';
+
+          var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
+          var gpayUpi = "gpay-12208814600@okbizaxis";        
+          var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
+          var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+          
+          document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(upi);
+        }
+
+        document.getElementById('timerText').innerText = "05:00";
+        document.getElementById('modalPayment').style.display = 'flex';
 
         clearInterval(timerObj);
         timerObj = setInterval(function(){
@@ -513,7 +571,14 @@
           document.getElementById('timerText').innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
           if (leftTime <= 0) {
             hideAllModals();
-            alert("⏳ Time's up! The 2-minute time limit has expired. Payment has been deducted, but you did not receive the coin due to the timeout. Please contact our support team immediately via WhatsApp: 9690118011.");
+            var timeoutHtml = `
+              <p style="margin-bottom:6px;font-weight:bold;color:#dc2626;">⏳ Time Expired / समय समाप्त</p>
+              <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">English:</p>
+              <p style="margin-bottom:8px;">Sorry, the 5-minute time limit has expired. If your payment has been successfully deducted, please do not worry. Your payment is safe. Click WhatsApp below to send your screenshot.</p>
+              <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">हिंदी:</p>
+              <p style="margin-bottom:6px;">समय समाप्त हो गया है। यदि आपका पेमेंट कट गया है, तो घबराएं नहीं। पेमेंट सुरक्षित है। नीचे WhatsApp बटन पर क्लिक करके स्क्रीनशॉट भेजें।</p>
+            `;
+            showCompletionModal('Time Out / समय सीमा समाप्त', timeoutHtml, '#dc2626', '⏳', true);
           }
         }, 1000);
 
@@ -524,19 +589,53 @@
             .then(function(d){
               if (d && d.status === 'PAID') {
                 hideAllModals();
-                alert("🎉 🎉 Congratulations Payment Verified! Coins successfully delivered to your Duoo & Doran ID Check Balance Section And Lets Enjoye Your Time \n\n🎉 बधाई हो, पेमेंट वेरिफ़ाई हो गया है! कॉइन्स आपकी Duoo & Doran ID पर सफलतापूर्वक भेज दिए गए हैं। अपना बैलेंस चेक करें और मज़े करें।");
-                location.reload();
+                var successHtml = `
+                  <p style="margin-bottom:6px;font-weight:bold;color:#059669;">🎉 Payment Verified & Coins Delivered!</p>
+                  <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">English:</p>
+                  <p style="margin-bottom:8px;">Congratulations! Your payment has been verified and coins delivered to your ID.</p>
+                  <p style="margin-bottom:4px;font-weight:bold;color:#1e40af;">हिंदी:</p>
+                  <p>बधाई हो! पेमेंट वेरिफ़ाई हो गया है और कॉइन्स आपकी आईडी पर भेज दिए गए हैं।</p>
+                `;
+                showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
               }
             }).catch(function(){});
         }, 2500);
       });
     }
 
+    function copyUpiId() {
+      var copyText = document.getElementById("upiIdBox");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+      alert("UPI ID Copied: " + copyText.value);
+    }
+
+    function showCompletionModal(title, descHtml, color, icon, showWaBtn) {
+      clearInterval(timerObj);
+      clearInterval(pollObj);
+      document.getElementById('modalNotice').style.display = 'none';
+      document.getElementById('modalPayment').style.display = 'none';
+      
+      document.getElementById('successIcon').innerText = icon;
+      document.getElementById('successTitle').innerText = title;
+      document.getElementById('successTitle').style.color = color;
+      document.getElementById('successDesc').innerHTML = descHtml;
+      
+      if (showWaBtn) {
+        document.getElementById('whatsappBtn').style.display = 'block';
+      } else {
+        document.getElementById('whatsappBtn').style.display = 'none';
+      }
+      
+      document.getElementById('modalSuccess').style.display = 'flex';
+    }
+
     function hideAllModals() {
       clearInterval(timerObj);
       clearInterval(pollObj);
       document.getElementById('modalNotice').style.display = 'none';
-      document.getElementById('modalQR').style.display = 'none';
+      document.getElementById('modalPayment').style.display = 'none';
     }
   </script>
 </body>
