@@ -314,7 +314,7 @@
     </div>
   </div>
 
-  <!-- छोटे प्लान्स के लिए पुराना जैसा हूबहू Payment Instructions पॉपअप (₹151 - ₹1999) -->
+  <!-- छोटे प्लान्स के लिए पुराना हूबहू Payment Instructions पॉपअप (₹151 - ₹1999) -->
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
@@ -363,19 +363,21 @@
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स के लिए आकर्षक रिमाइंडर पॉपअप (₹2500 - ₹15000) -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए अत्यधिक आकर्षक और बोल्ड वार्निंग पॉपअप (₹2500 - ₹15000) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:370px;border-radius:18px;padding:22px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
-      <div style="font-size:32px;margin-bottom:6px;">💡</div>
-      <b style="color:#1e40af;font-size:17px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
-      <div style="text-align:left;font-size:12px;margin:14px 0;line-height:1.5;background:#f8fafc;border:1px solid #cbd5e1;padding:14px;border-radius:10px;color:#334155;">
-        <p style="margin-bottom:6px;font-weight:bold;color:#2563eb;">English:</p>
-        <p style="margin-bottom:10px;">Please pay the <b>exact amount including paise</b> (e.g. decimal points). If you pay only the base amount without paise, the system will not detect it automatically and coins will not be delivered.</p>
+    <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.4);border:3px solid #dc2626;">
+      <div style="font-size:36px;margin-bottom:4px;animation: bounce 1s infinite;">🚨</div>
+      <b style="color:#dc2626;font-size:18px;text-transform:uppercase;letter-spacing:0.5px;">अति महत्वपूर्ण चेतावनी / IMPORTANT NOTICE</b>
+      
+      <div style="text-align:left;font-size:12px;margin:14px 0;line-height:1.5;background:#fef2f2;border:2px dashed #f87171;padding:12px;border-radius:10px;color:#7f1d1d;">
+        <p style="margin-bottom:6px;font-weight:bold;color:#b91c1c;">⚠️ English Warning:</p>
+        <p style="margin-bottom:10px;">You <b>MUST pay the exact amount including paise</b> (e.g. ₹2500.03). If you pay only the round amount and skip the paise, <b>our automated system will reject it and coins will NOT be delivered!</b></p>
         
-        <p style="margin-bottom:6px;font-weight:bold;color:#2563eb;">हिंदी:</p>
-        <p>कृपया ध्यान दें: आपको <b>पॉइंट सहित सटीक रकम (पैसे जोड़कर)</b> ही पे करनी है। यदि आप सिर्फ मुख्य अमाउंट पे करते हैं और पैसे (पॉइंट) छोड़ देते हैं, तो सिस्टम पेमेंट डिटेक्ट नहीं कर पाएगा और कॉइन डिलीवर नहीं होंगे।</p>
+        <p style="margin-bottom:6px;font-weight:bold;color:#b91c1c;">⚠️ हिंदी चेतावनी:</p>
+        <p>आपको <b>पॉइंट के बाद के पैसे जोड़कर बिल्कुल सटीक रकम</b> ही भेजनी है! यदि आपने सिर्फ पूरा अमाउंट (जैसे ₹2500) भेजा और पैसे (जैसे .03) छोड़ दिए, तो <b>सिस्टम पेमेंट को डिटेक्ट नहीं करेगा और कॉइन नहीं मिलेंगे!</b></p>
       </div>
-      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+
+      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#dc2626;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(220,38,38,0.3);">✅ I Understand, Show UPI Details / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:9px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
@@ -386,10 +388,10 @@
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
       
-      <!-- निर्देश हिंदी और अंग्रेजी में -->
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:11.5px;color:#1e3a8a;line-height:1.4;">
-        <b>English:</b> Please copy the exact amount and UPI ID below, then pay via GPay, PhonePe, or Paytm.<br>
-        <b>हिंदी:</b> कृपया नीचे से <b>पूरा अमाउंट और यूपीआई आईडी कॉपी करें</b>, फिर गूगल पे, फोनपे या पेटीएम से भुगतान करें।
+      <!-- लाल रंग की हाईलाइटेड चेतावनी पट्टी -->
+      <div style="background:#fef2f2;border:1px solid #f87171;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:11.5px;color:#991b1b;line-height:1.4;">
+        <b>⚠️ ध्यान दें / Note:</b> कृपया नीचे से <b>पूرا अमाउंट (पॉइंट सहित) और यूपीआई आईडी कॉपी करें</b>। बिना पॉइंट के पेमेंट करने पर कॉइन नहीं मिलेंगे!<br>
+        <i>Copy exact amount with paise & UPI ID below.</i>
       </div>
 
       <!-- अमाउंट कॉपी करने का बॉक्स -->
@@ -517,7 +519,7 @@
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
         if (selectedPack.price >= 2500) {
-          // --- नए बड़े प्लान्स: पहले सुंदर रिमाइंडर पॉपअप दिखाएं ---
+          // --- नए बड़े प्लान्स: आकर्षक चेतावनी पॉपअप दिखाएं ---
           document.getElementById('modalSuperMoneyNotice').style.display = 'flex';
         } else {
           // --- छोटे प्लान्स: पुराना हूबहू Payment Instructions पॉपअप दिखाएं ---
@@ -560,7 +562,6 @@
     }
 
     function copyAmount() {
-      var copyText = document.getElementById("payAmtSuperBox");
       navigator.clipboard.writeText(exactPayableAmount.toFixed(2));
       alert("Exact Amount Copied: ₹" + exactPayableAmount.toFixed(2));
     }
