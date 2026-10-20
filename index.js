@@ -12,8 +12,9 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// अधिकृत 9 प्लान्स की सख्त मैपिंग (Amount -> Coins)
+// अधिकृत प्लान्स की सख्त मैपिंग (Amount -> Coins) - इसमें ₹20 का टेस्ट प्लान भी शामिल है
 const COIN_PLANS = {
+    20: 1400,     // टेस्टिंग प्लान
     151: 11000,
     220: 16100,
     330: 24100,
@@ -31,11 +32,11 @@ const activeOrders = new Map();
 // यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
 let paiseCounter = 1;
 
-// 3:1 सर्कुलेशन काउंटर (3 BharatPe के बाद 1 Google Pay)
+// 3:1 सर्कुलेशन काउंटर (छोटे अमाउंट्स के लिए BharatPe और Google Pay)
 let paymentCounter = 0;
 
-// ऑर्डर की लाइफ: 2 मिनट (120 सेकंड)
-const ORDER_VALIDITY_MS = 120 * 1000;
+// ऑर्डर की लाइफ: 5 मिनट (300 सेकंड)
+const ORDER_VALIDITY_MS = 300 * 1000;
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -68,7 +69,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (3:1 सर्कुलेशन और सख्त वैलिडेशन के साथ)
+// 2. Order Create (छोटे अमाउंट के लिए QR और ₹2000+ बड़े अमाउंट के लिए Super Money)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -78,7 +79,6 @@ app.post('/api/create-order', (req, res) => {
 
         const baseAmt = Math.round(Number(amount));
 
-        // सुरक्षा ताला: अगर अमाउंट इन 9 प्लान्स में नहीं है, तो तुरंत ब्लॉक करें
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
             console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
             return res.status(400).json({ 
@@ -87,22 +87,26 @@ app.post('/api/create-order', (req, res) => {
             });
         }
 
-        // सही कॉइन संख्या सीधे सर्वर मैपिंग से ली जाएगी
         const coins = COIN_PLANS[baseAmt];
         
-        // 1 से 90 पैसे तक डायनामिक असाइनमेंट
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
 
-        // सटीक फ्लोटिंग अमाउंट (जैसे 151.01)
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // 3:1 सर्कुलेशन तय करना (0, 1, 2 = BharatPe | 3 = Google Pay)
-        paymentCounter = (paymentCounter + 1) % 4;
-        const assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
+        // गेटवे चयन लॉजिक: ₹2000 या उससे अधिक के लिए 'SUPER_MONEY', बाकी के लिए 3:1 (BHARATPE / GPAY)
+        let assignedGateway = 'BHARATPE';
+        if (baseAmt >= 2000) {
+            assignedGateway = 'SUPER_MONEY';
+        } else {
+            paymentCounter = (paymentCounter + 1) % 4;
+            assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
+        }
+
+        const cleanUid = uid.toString().trim();
 
         activeOrders.set(orderId, {
-            uid: uid.toString().trim(),
+            uid: cleanUid,
             baseAmount: baseAmt,
             exactAmount: exactAmount,
             coins: coins,
@@ -111,7 +115,7 @@ app.post('/api/create-order', (req, res) => {
             gateway: assignedGateway
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
@@ -146,12 +150,11 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook (BharatPe और Google Pay दोनों के लिए)
+// 4. Unified Webhook (सभी गेटवे के लिए)
 app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
         
-        // MacroDroid से आने वाले title और message दोनों को पकड़ना
         const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
         const titleText = req.body.title || req.body.not_title || "";
 
@@ -161,9 +164,7 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
         const combinedText = `${titleText} ${messageText}`;
         if (!combinedText.trim()) return res.status(200).json({ status: false });
 
-        // दोनों ऐप्स के नोटिफिकेशन से सटीक अमाउंट निकालने के लिए Regex
         let detectedAmount = 0;
-        
         const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
                       || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
                       
@@ -179,10 +180,9 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
                 if (ordData.status === 'PENDING') {
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
                         if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
-                            console.log(`[MATCH FOUND] Order: ${ordId} verified with ₹${detectedAmount}`);
+                            console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
                             
-                            // तुरंत ऑटोमैटिक कॉइन डिलीवर
                             await deliverCoinsToUser(ordData.uid, ordData.coins, ordId);
                             break;
                         }
@@ -191,14 +191,14 @@ app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
             }
         }
 
-        return res.status(200).json({ status: true, amount: detectedAmount });
+        return res.json({ status: true, amount: detectedAmount });
     } catch (err) {
         console.error("Webhook processing error:", err);
         return res.status(500).json({ status: false });
     }
 });
 
-// 5. Polling Endpoint (फ्रंटएंड हर 2 सेकंड में चेक करेगा)
+// 5. Polling Endpoint
 app.get('/api/check-order-status', (req, res) => {
     const { orderId } = req.query;
     if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
