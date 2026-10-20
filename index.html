@@ -216,7 +216,7 @@
           </div>
           <div id="verifyResult"></div>
 
-          <div class="section-title">SELECT COIN PLANS (Test & High Value)</div>
+          <div class="section-title">SELECT COIN PLANS</div>
           <div class="plans-grid">
             <!-- छोटे प्लान्स (₹151 - ₹1999) -->
             <div class="coin-card" onclick="setPack(this, 11000, 151)">
@@ -234,6 +234,9 @@
             <div class="coin-card" onclick="setPack(this, 50000, 685)">
               <div class="coin-number">50,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹685</div>
             </div>
+            <div class="coin-card" onclick="setPack(this, 62000, 850)">
+              <div class="coin-number">62,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹850</div>
+            </div>
             <div class="coin-card" onclick="setPack(this, 100000, 1370)">
               <div class="coin-number">100,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹1,370</div>
             </div>
@@ -241,32 +244,21 @@
               <div class="coin-number">146,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹1,999</div>
             </div>
 
-            <!-- टेस्ट प्लान (₹20 - सुपर मनी टेस्टिंग के लिए) -->
-            <div class="coin-card" onclick="setPack(this, 1400, 20)" style="border-color: #2563eb; background: #eff6ff;">
-              <div class="coin-number" style="color: #2563eb;">1,400</div><div class="coin-label" style="color: #1d4ed8;">Test Pack</div><div class="coin-divider" style="background: #bfdbfe;"></div><div class="coin-price">₹20</div>
-            </div>
-
-            <!-- नए बड़े प्लान्स (₹2500 - ₹15000) -->
-            <div class="coin-card" onclick="setPack(this, 182500, 2500)">
-              <div class="coin-number">182,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹2,500</div>
-            </div>
-            <div class="coin-card" onclick="setPack(this, 255500, 3500)">
-              <div class="coin-number">255,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹3,500</div>
+            <!-- नए बड़े प्लान्स (Super Money UPI वाले) -->
+            <div class="coin-card" onclick="setPack(this, 219000, 3000)">
+              <div class="coin-number">219,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹3,000</div>
             </div>
             <div class="coin-card" onclick="setPack(this, 328500, 4500)">
               <div class="coin-number">328,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹4,500</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 438000, 6000)">
-              <div class="coin-number">438,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹6,000</div>
+            <div class="coin-card" onclick="setPack(this, 474500, 6500)">
+              <div class="coin-number">474,500</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹6,500</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 584000, 8000)">
-              <div class="coin-number">584,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹8,000</div>
+            <div class="coin-card" onclick="setPack(this, 657000, 9000)">
+              <div class="coin-number">657,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹9,000</div>
             </div>
-            <div class="coin-card" onclick="setPack(this, 876000, 12000)">
-              <div class="coin-number">876,000</div><div class="coin-label">Coins</div><div class="coin-divider"></div><div class="coin-price">₹12,000</div>
-            </div>
-            <div class="coin-card" onclick="setPack(this, 1095000, 15000)" style="grid-column: span 2;">
-              <div class="coin-number">1,095,000</div><div class="coin-label">Coins (Mega Pack)</div><div class="coin-divider"></div><div class="coin-price">₹15,000</div>
+            <div class="coin-card" onclick="setPack(this, 949000, 13000)" style="grid-column: span 2;">
+              <div class="coin-number">949,000</div><div class="coin-label">Coins (Mega Pack)</div><div class="coin-divider"></div><div class="coin-price">₹13,000</div>
             </div>
           </div>
 
@@ -319,7 +311,7 @@
     </div>
   </div>
 
-  <!-- छोटे प्लान्स के लिए पुराना हूबहू Payment Instructions पॉपअप (₹151 - ₹1999) -->
+  <!-- छोटे प्लान्स के लिए Payment Instructions पॉपअप (₹151 - ₹1999) -->
   <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
@@ -368,7 +360,7 @@
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स / टेस्ट प्लान के लिए पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - डार्क, बोल्ड और हाईलाइटेड) -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए प्रोफेशनल नोटिस पॉपअप (इंग्लिश ऊपर, हिंदी नीचे - बिना रेड कलर के) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #1e40af;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
@@ -377,13 +369,13 @@
       <div style="text-align:left;font-size:13px;margin:14px 0;line-height:1.5;background:#eff6ff;border:2px solid #3b82f6;padding:14px;border-radius:10px;color:#1e3a8a;">
         <!-- इंग्लिश ऊपर (बोल्ड और डार्क) -->
         <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">English:</p>
-        <p style="margin-bottom:12px;font-weight:900;color:#0f172a;font-size:13px;">Please pay the exact amount including paise and UPI ID as shown on the next page. If your amount does not match, coins will not be delivered automatically.</p>
+        <p style="margin-bottom:12px;font-weight:900;color:#0f172a;font-size:13px;">Please copy the exact amount with paise and UPI ID as shown on the next page, then pay via GPay, PhonePe, Paytm, or any other app. If you pay the correct amount, coins will be delivered automatically.</p>
         
         <hr style="border:0; border-top:1px solid #cbd5e1; margin:10px 0;">
 
         <!-- हिंदी नीचे (बोल्ड और डार्क) -->
         <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">हिंदी:</p>
-        <p style="font-weight:900;color:#0f172a;font-size:13px;">कृपया आगे आने वाले पेज से पूरा अमाउंट पैसे सहित और यूपीआई आईडी को कॉपी करें, और अपने गूगल पे, फोन पे, पेटीएम या अन्य किसी ऐप में पेस्ट करके एग्जैक्ट अमाउंट सही यूपीआई आईडी पर पे करें।</p>
+        <p style="font-weight:900;color:#0f172a;font-size:13px;">आपको जो अमाउंट आगे शो होगा, वही सटीक अमाउंट आप कॉपी किए गए यूपीआई आईडी पर पे करें, तभी कॉइन डिलीवर्ड होगा।</p>
       </div>
 
       <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(5,150,105,0.3);">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
@@ -397,11 +389,11 @@
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
       
-      <!-- मैच न होने पर कॉइन न मिलने की महत्वपूर्ण चेतावनी -->
-      <div style="background:#fef2f2;border:2px solid #f87171;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#991b1b;line-height:1.4;font-weight:bold;">
-        ⚠️ <b>महत्वपूर्ण चेतावनी / Important Warning:</b><br>
+      <!-- चेतावनी बॉक्स (बिना रेड कलर के - प्रोफेशनल ब्लू/येलो स्टाइल) -->
+      <div style="background:#eff6ff;border:2px solid #3b82f6;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#1e3a8a;line-height:1.4;font-weight:bold;">
+        ⚠️ <b>महत्वपूर्ण सूचना / Important Note:</b><br>
         यदि आपका पेमेंट किया गया अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा!<br>
-        <span style="font-size:11px; font-weight:normal; color:#7f1d1d;">If your paid amount does not match the exact amount given here, coins will not be delivered automatically.</span>
+        <span style="font-size:11px; font-weight:normal; color:#1e293b;">If your paid amount does not match the exact amount given here, coins will not be delivered automatically.</span>
       </div>
 
       <!-- अमाउंट कॉपी करने का बॉक्स -->
@@ -541,8 +533,8 @@
         backendData = data;
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
-        // ₹20 (टेस्ट प्लान) या ₹2500+ बड़े प्लान्स के लिए Super Money फ्लो
-        if (selectedPack.price >= 2500 || selectedPack.price === 20) {
+        // सभी बड़े प्लान्स (3000+) और ₹850 वाले नए प्लान के लिए सुपर मनी फ्लो
+        if (selectedPack.price >= 3000 || selectedPack.price === 850) {
           document.getElementById('modalSuperMoneyNotice').style.display = 'flex';
         } else {
           document.getElementById('modalNotice').style.display = 'flex';
