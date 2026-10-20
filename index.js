@@ -107,22 +107,29 @@ app.post('/api/create-order', async (req, res) => {
                 redirect_url: `https://${req.get('host')}/`
             };
 
-            console.log("Sending to KwikUPI:", kwikPayload);
+            console.log("Sending to KwikUPI URL:", KWIK_GATEWAY.apiUrl);
+            console.log("Sending Payload:", kwikPayload);
 
             const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
                 headers: { 
-                    'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),        // यहाँ Public API Key जाएगी
-                    'X-API-SECRET': KWIK_GATEWAY.apiSecret.trim(), // यहाँ Secret Private Key जाएगी
+                    'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),        // यहाँ ऊपर दी गई Public API Key अपने आप आ जाएगी
+                    'X-API-SECRET': KWIK_GATEWAY.apiSecret.trim(), // यहाँ ऊपर दी गई Secret Private Key अपने आप आ जाएगी
                     'Content-Type': 'application/json'
                 }
             });
 
-            console.log("KwikUPI Response:", kwikResponse.data);
+            console.log("FULL KwikUPI Response Data:", JSON.stringify(kwikResponse.data, null, 2));
 
             // KwikUPI API रिस्पॉन्स से पेमेंट पेज का लिंक निकालना
-            paymentUrl = kwikResponse.data.payment_page || kwikResponse.data.payment_url || kwikResponse.data.link || (kwikResponse.data.data && kwikResponse.data.data.payment_page);
+            paymentUrl = kwikResponse.data.payment_page || 
+                         kwikResponse.data.payment_url || 
+                         kwikResponse.data.link || 
+                         kwikResponse.data.url ||
+                         (kwikResponse.data.data && (kwikResponse.data.data.payment_page || kwikResponse.data.data.payment_url || kwikResponse.data.data.link || kwikResponse.data.data.url));
+
         } catch (kwikErr) {
-            console.error("Kwik API Error Details:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
+            console.error("🔴 Kwik API Error Status:", kwikErr.response ? kwikErr.response.status : "No Response");
+            console.error("🔴 Kwik API Error Full Data:", kwikErr.response ? JSON.stringify(kwikErr.response.data, null, 2) : kwikErr.message);
         }
 
         if (!paymentUrl) {
