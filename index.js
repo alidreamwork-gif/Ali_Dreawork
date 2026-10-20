@@ -12,9 +12,16 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-const SUPER_MONEY_UPI = "ali.vasim@superyes";
+// ==========================================
+// 💡 सुपर मनी की दो यूपीआई आईडी (1:1 रोटेशन के लिए)
+// ==========================================
+const SUPER_MONEY_UPIS = [
+    "ali.vasim@superyes", // पहली यूपीआई आईडी
+    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी (इसे अपनी जरूरत के अनुसार बदल लें)
+];
+let superMoneyIndex = 0;
 
-// अपडेटेड प्लान्स की सख्त मैपिंग
+// सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
     // छोटे प्लान्स (BharatPe / GPay - 3:1 रोटेशन)
     151: 11000,
@@ -25,7 +32,7 @@ const COIN_PLANS = {
     1370: 100000,
     1999: 146000,
     
-    // नए बड़े प्लान्स (Super Money UPI) - ₹3000 से शुरू
+    // नए बड़े प्लान्स (Super Money UPI - 1:1 रोटेशन)
     3000: 219000,
     4500: 328500,
     6500: 474500,
@@ -90,9 +97,18 @@ app.post('/api/create-order', (req, res) => {
         paiseCounter = (paiseCounter % 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // ₹3000 या उससे अधिक के लिए सुपर मनी गेटवे, बाकी के लिए 3:1 रोटेशन
-        paymentCounter = (paymentCounter + 1) % 4;
-        const assignedGateway = baseAmt >= 3000 ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
+        let assignedGateway = 'BHARATPE';
+        let selectedSuperMoneyUpi = '';
+
+        if (baseAmt >= 3000) {
+            assignedGateway = 'SUPER_MONEY';
+            // 1:1 रोटेशन (बारी-बारी से दोनों सुपर मनी यूपीआई चुनना)
+            selectedSuperMoneyUpi = SUPER_MONEY_UPIS[superMoneyIndex];
+            superMoneyIndex = (superMoneyIndex + 1) % SUPER_MONEY_UPIS.length;
+        } else {
+            paymentCounter = (paymentCounter + 1) % 4;
+            assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
+        }
 
         const cleanUid = uid.toString().trim();
 
@@ -103,16 +119,17 @@ app.post('/api/create-order', (req, res) => {
             coins: coins,
             status: 'PENDING',
             createdAt: Date.now(),
-            gateway: assignedGateway
+            gateway: assignedGateway,
+            upiUsed: selectedSuperMoneyUpi
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedSuperMoneyUpi || 'GPay/BharatPe'} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ 
             success: true, 
             orderId: orderId, 
             exactAmount: exactAmount, 
             gateway: assignedGateway,
-            superMoneyUpi: SUPER_MONEY_UPI 
+            superMoneyUpi: selectedSuperMoneyUpi || SUPER_MONEY_UPIS[0]
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
