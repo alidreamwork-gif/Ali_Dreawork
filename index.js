@@ -12,16 +12,12 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// ==========================================
-// 💡 KwikUPI (KwikGateway) की असली डिटेल्स:
-// ==========================================
 const KWIK_GATEWAY = {
     apiKey: "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       
     apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", 
     apiUrl: "https://kwikupi.com/api/create-payment"   
 };
 
-// केवल बड़े प्लान्स और ₹20 टेस्ट प्लान की सख्त मैपिंग (Amount -> Coins)
 const COIN_PLANS = {
     20: 1400,         // टेस्टिंग प्लान
     3000: 219000,
@@ -31,10 +27,7 @@ const COIN_PLANS = {
     12000: 876000
 };
 
-// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
 const activeOrders = new Map();
-
-// 1 से 90 पैसे तक डायनामिक असाइनमेंट
 let paiseCounter = 1;
 
 app.get('/', (req, res) => {
@@ -92,6 +85,9 @@ app.post('/api/create-order', async (req, res) => {
         const cleanUid = uid.toString().trim();
 
         let paymentUrl = "";
+        let upiVpa = "";
+        let upiIntent = "";
+
         try {
             const kwikPayload = {
                 amount: exactAmount,
@@ -101,9 +97,6 @@ app.post('/api/create-order', async (req, res) => {
                 redirect_url: `https://${req.get('host')}/`
             };
 
-            console.log("Sending to KwikUPI URL:", KWIK_GATEWAY.apiUrl);
-            console.log("Payload:", kwikPayload);
-
             const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
                 headers: { 
                     'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),
@@ -112,19 +105,19 @@ app.post('/api/create-order', async (req, res) => {
                 }
             });
 
-            console.log("KwikUPI Response Data:", kwikResponse.data);
+            console.log("KwikUPI Full Response:", kwikResponse.data);
 
-            paymentUrl = kwikResponse.data.payment_url || 
-                         kwikResponse.data.payment_link || 
-                         kwikResponse.data.url || 
-                         kwikResponse.data.payment_page ||
-                         (kwikResponse.data.data && (kwikResponse.data.data.payment_url || kwikResponse.data.data.payment_link || kwikResponse.data.data.url));
+            const resData = kwikResponse.data.data || kwikResponse.data;
+
+            paymentUrl = resData.payment_url || resData.payment_link || resData.url || resData.payment_page;
+            upiVpa = resData.vpa || resData.upi_id || resData.upi || "merchant.upi@icici";
+            upiIntent = resData.intent_url || resData.upi_intent || resData.deeplink || `upi://pay?pa=${upiVpa}&pn=AliDreamwork&am=${exactAmount}&tr=${orderId}&cu=INR`;
 
         } catch (kwikErr) {
             console.error("Kwik API Error:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
         }
 
-        if (!paymentUrl) {
+        if (!paymentUrl && !upiIntent) {
             return res.status(500).json({ success: false, message: "Payment gateway connection failed. Check API keys." });
         }
 
@@ -138,7 +131,15 @@ app.post('/api/create-order', async (req, res) => {
         });
 
         console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, paymentUrl: paymentUrl });
+        return res.json({ 
+            success: true, 
+            orderId: orderId, 
+            exactAmount: exactAmount, 
+            paymentUrl: paymentUrl,
+            upiIntent: upiIntent,
+            upiVpa: upiVpa,
+            upiName: "Ali Dreamwork"
+        });
     } catch (error) {
         console.error("Order creation error:", error);
         return res.status(500).json({ success: false, message: "Server error" });
