@@ -314,38 +314,96 @@
     </div>
   </div>
 
-  <!-- छोटे प्लान्स के लिए QR कोड Modal (₹151 - ₹1999) -->
+  <!-- छोटे प्लान्स के लिए पुराना जैसा हूबहू Payment Instructions पॉपअप (₹151 - ₹1999) -->
+  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
+      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
+      <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
+      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
+        <p style="margin-bottom:6px;font-weight:bold;">English:</p>
+        <ol style="margin:0 0 10px 18px;padding:0;">
+          <li>A <b>Barcode</b> will open with a 5-minute timer and the exact payable amount.</li>
+          <li>Take a <b>Screenshot</b> of the barcode.</li>
+          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
+          <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
+        </ol>
+        <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
+        <ol style="margin:0 0 0 18px;padding:0;">
+          <li>आगे 5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
+          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
+        </ol>
+      </div>
+      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <!-- छोटे प्लान्स के लिए QR कोड स्कैनर स्क्रीन (₹151 - ₹1999) -->
   <div id="modalQR" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:18px;text-align:center;max-height:96vh;overflow-y:auto;">
-      <b style="color:#1e40af;font-size:16px;">Scan & Pay</b>
-      <div id="payAmtQR" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
-      <div style="font-size:11px;color:#dc2626;font-weight:bold;margin-bottom:8px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
-      <img id="qrImg" src="" alt="Payment Barcode" style="width:215px;height:215px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
+      <b style="color:#1e40af;font-size:16px;">Scan & Pay via Any UPI</b>
+      <div id="payAmt" style="font-size:26px;font-weight:bold;color:#059669;margin:4px 0;">₹0.00</div>
+      <div style="font-size:11.5px;color:#dc2626;font-weight:bold;margin-bottom:8px;">(कृपया सटीक पैसे ही पे करें / Pay Exact Amount)</div>
+      <img id="qrImg" src="" alt="Payment Barcode" style="width:225px;height:225px;margin:6px auto;display:block;border:1px solid #e5e7eb;border-radius:8px;padding:4px;background:#fff;">
       <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin:8px 0;">
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
         <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
+      </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
+        📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in your UPI app, and pay the <b>exact amount</b>.
+      </div>
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
+        🔄 <b>Auto-detection is on:</b> As soon as payment is made, coins will be credited within 5 seconds!
       </div>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
-  <!-- बड़े प्लान्स के लिए Super Money UPI ID Copy Modal (₹2500 - ₹15000) -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए आकर्षक रिमाइंडर पॉपअप (₹2500 - ₹15000) -->
+  <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:370px;border-radius:18px;padding:22px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+      <div style="font-size:32px;margin-bottom:6px;">💡</div>
+      <b style="color:#1e40af;font-size:17px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
+      <div style="text-align:left;font-size:12px;margin:14px 0;line-height:1.5;background:#f8fafc;border:1px solid #cbd5e1;padding:14px;border-radius:10px;color:#334155;">
+        <p style="margin-bottom:6px;font-weight:bold;color:#2563eb;">English:</p>
+        <p style="margin-bottom:10px;">Please pay the <b>exact amount including paise</b> (e.g. decimal points). If you pay only the base amount without paise, the system will not detect it automatically and coins will not be delivered.</p>
+        
+        <p style="margin-bottom:6px;font-weight:bold;color:#2563eb;">हिंदी:</p>
+        <p>कृपया ध्यान दें: आपको <b>पॉइंट सहित सटीक रकम (पैसे जोड़कर)</b> ही पे करनी है। यदि आप सिर्फ मुख्य अमाउंट पे करते हैं और पैसे (पॉइंट) छोड़ देते हैं, तो सिस्टम पेमेंट डिटेक्ट नहीं कर पाएगा और कॉइन डिलीवर नहीं होंगे।</p>
+      </div>
+      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:9px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+    </div>
+  </div>
+
+  <!-- स्टेप 2: बड़े प्लान्स के लिए UPI ID & Amount Copy वाला स्क्रीन (Verify Button के साथ) -->
   <div id="modalSuperMoney" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:370px;border-radius:16px;padding:20px;text-align:center;max-height:96vh;overflow-y:auto;">
-      <div style="font-size:24px;margin-bottom:2px;">⚡</div>
+    <div style="background:#fff;width:100%;max-width:370px;border-radius:18px;padding:20px;text-align:center;max-height:96vh;overflow-y:auto;">
+      <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
-      <div id="payAmtSuper" style="font-size:28px;font-weight:bold;color:#059669;margin:6px 0;">₹0.00</div>
       
-      <!-- छोटा और साफ रिमाइंडर पॉपअप संदेश -->
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;margin-bottom:12px;text-align:left;font-size:11.5px;color:#1e3a8a;line-height:1.4;">
-        <b>⚠️ महत्वपूर्ण निर्देश / Important:</b><br>
-        कृपया अपने Google Pay, PhonePe या Paytm से <b>पॉइंट सहित ठीक उतना ही अमाउंट (जैसे .01, .02 पैसे जोड़कर)</b> पे करें जितना ऊपर दिया गया है। शार्ट पेमेंट या बिना पैसे के पेमेंट करने पर कॉइन ऑटोमैटिक डिलीवर नहीं हो पाएंगे!
+      <!-- निर्देश हिंदी और अंग्रेजी में -->
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:11.5px;color:#1e3a8a;line-height:1.4;">
+        <b>English:</b> Please copy the exact amount and UPI ID below, then pay via GPay, PhonePe, or Paytm.<br>
+        <b>हिंदी:</b> कृपया नीचे से <b>पूरा अमाउंट और यूपीआई आईडी कॉपी करें</b>, फिर गूगल पे, फोनपे या पेटीएम से भुगतान करें।
       </div>
 
-      <label style="text-align:left;margin-bottom:4px;font-size:12px;">Super Money UPI ID:</label>
-      <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <!-- अमाउंट कॉपी करने का बॉक्स -->
+      <label style="text-align:left;margin-bottom:3px;font-size:12px;color:#374151;font-weight:bold;">Exact Payable Amount (सटीक रकम):</label>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <input type="text" id="payAmtSuperBox" readonly style="background:#f0fdf4;font-weight:bold;text-align:center;color:#059669;font-size:18px;" value="₹0.00">
+        <button type="button" onclick="copyAmount()" style="background:#2563eb;color:#fff;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy Amount</button>
+      </div>
+
+      <!-- सुपर मनी यूपीआई आईडी कॉपी करने का बॉक्स -->
+      <label style="text-align:left;margin-bottom:3px;font-size:12px;color:#374151;font-weight:bold;">Super Money UPI ID:</label>
+      <div style="display:flex;gap:6px;margin-bottom:14px;">
         <input type="text" id="superMoneyIdBox" readonly style="background:#f3f4f6;font-weight:bold;text-align:center;color:#374151;" value="ali.vasim@superyes">
-        <button type="button" onclick="copySuperMoneyUpi()" style="background:#059669;color:#white;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy UPI</button>
+        <button type="button" onclick="copySuperMoneyUpi()" style="background:#059669;color:#fff;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy UPI</button>
       </div>
 
       <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin-bottom:10px;">
@@ -353,13 +411,14 @@
         <span id="timerTextSuper" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
       </div>
 
-      <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
-        🔄 <b>Auto-detection:</b> Payment करने के बाद 5 सेकंड में कॉइन्स आपकी आईडी में आ जाएंगे!
-      </div>
+      <!-- Verify Button -->
+      <button type="button" onclick="manualCheckStatus()" style="width:100%;background:#f59e0b;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);">🔄 Check Payment Status / पेमेंट वेरीफाई करें</button>
+
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
+  <!-- सफलता या टाइमआउट का पॉपअप -->
   <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;">
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
@@ -378,6 +437,7 @@
     var timerObj = null;
     var pollObj = null;
     var leftTime = 300;
+    var backendData = null;
 
     function openAppLinksModal() {
       document.getElementById('appLinksModal').style.display = 'flex';
@@ -453,39 +513,79 @@
       })
       .then(function(res){ return res.json(); })
       .then(function(data){
+        backendData = data;
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
         if (selectedPack.price >= 2500) {
-          document.getElementById('payAmtSuper').innerText = '₹' + exactPayableAmount.toFixed(2);
-          if (data.superMoneyUpi) {
-            document.getElementById('superMoneyIdBox').value = data.superMoneyUpi;
-          }
-          document.getElementById('timerTextSuper').innerText = "05:00";
-          document.getElementById('modalSuperMoney').style.display = 'flex';
-          startTimer('timerTextSuper');
+          // --- नए बड़े प्लान्स: पहले सुंदर रिमाइंडर पॉपअप दिखाएं ---
+          document.getElementById('modalSuperMoneyNotice').style.display = 'flex';
         } else {
-          var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
-          var gpayUpi = "gpay-12208814600@okbizaxis";        
-          var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
-          var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
-          
-          document.getElementById('payAmtQR').innerText = '₹' + exactPayableAmount.toFixed(2);
-          document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(upi);
-          document.getElementById('timerText').innerText = "05:00";
-          document.getElementById('modalQR').style.display = 'flex';
-          startTimer('timerText');
+          // --- छोटे प्लान्स: पुराना हूबहू Payment Instructions पॉपअप दिखाएं ---
+          document.getElementById('modalNotice').style.display = 'flex';
         }
-
-        startPolling();
       });
+    }
+
+    // जब यूजर बड़े प्लान के नोटिस पर "OK, Got It" दबाए
+    function showSuperMoneyUPI() {
+      document.getElementById('modalSuperMoneyNotice').style.display = 'none';
+      
+      document.getElementById('payAmtSuperBox').value = '₹' + exactPayableAmount.toFixed(2);
+      if (backendData && backendData.superMoneyUpi) {
+        document.getElementById('superMoneyIdBox').value = backendData.superMoneyUpi;
+      }
+      
+      document.getElementById('timerTextSuper').innerText = "05:00";
+      document.getElementById('modalSuperMoney').style.display = 'flex';
+      startTimer('timerTextSuper');
+      startPolling();
+    }
+
+    // जब यूजर छोटे प्लान के नोटिस पर "OK, Got It" दबाए
+    function showQR() {
+      document.getElementById('modalNotice').style.display = 'none';
+      
+      var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
+      var gpayUpi = "gpay-12208814600@okbizaxis";        
+      var selectedUpi = (backendData && backendData.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
+      var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+      
+      document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
+      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(upi);
+      document.getElementById('timerText').innerText = "05:00";
+      document.getElementById('modalQR').style.display = 'flex';
+      
+      startTimer('timerText');
+      startPolling();
+    }
+
+    function copyAmount() {
+      var copyText = document.getElementById("payAmtSuperBox");
+      navigator.clipboard.writeText(exactPayableAmount.toFixed(2));
+      alert("Exact Amount Copied: ₹" + exactPayableAmount.toFixed(2));
     }
 
     function copySuperMoneyUpi() {
       var copyText = document.getElementById("superMoneyIdBox");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(copyText.value);
       alert("Super Money UPI ID Copied: " + copyText.value);
+    }
+
+    // मैन्युअल वेरीफाई बटन क्लिक करने पर
+    function manualCheckStatus() {
+      fetch('/api/check-order-status?orderId=' + orderId)
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && d.status === 'PAID') {
+            hideAllModals();
+            var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स भेज दिए गए हैं।</p>`;
+            showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
+          } else {
+            alert("Payment not detected yet. If you have paid, please wait a few seconds or contact support.");
+          }
+        }).catch(function(){
+          alert("Error checking status. Please try again.");
+        });
     }
 
     function startTimer(elemId) {
@@ -523,6 +623,7 @@
       clearInterval(pollObj);
       document.getElementById('modalQR').style.display = 'none';
       document.getElementById('modalSuperMoney').style.display = 'none';
+      document.getElementById('modalSuperMoneyNotice').style.display = 'none';
       
       document.getElementById('successIcon').innerText = icon;
       document.getElementById('successTitle').innerText = title;
@@ -538,6 +639,7 @@
       clearInterval(pollObj);
       document.getElementById('modalQR').style.display = 'none';
       document.getElementById('modalSuperMoney').style.display = 'none';
+      document.getElementById('modalSuperMoneyNotice').style.display = 'none';
     }
   </script>
 </body>
