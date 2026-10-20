@@ -15,7 +15,7 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // सुपर मनी की यूपीआई आईडी
 const SUPER_MONEY_UPI = "ali.vasim@superyes";
 
-// सभी प्लान्स की सख्त मैपिंग (छोटे प्लान्स + टेस्ट प्लान ₹20 + नए बड़े प्लान्स)
+// सभी प्लान्स की सख्त मैपिंग (छोटे प्लान्स + नया ₹850 पैक + नए बड़े प्लान्स)
 const COIN_PLANS = {
     // छोटे प्लान्स (BharatPe / GPay - 3:1 रोटेशन)
     151: 11000,
@@ -23,20 +23,16 @@ const COIN_PLANS = {
     330: 24100,
     440: 32100,
     685: 50000,
+    850: 62000,       // नया जोड़ा गया पैक
     1370: 100000,
     1999: 146000,
     
-    // टेस्टिंग प्लान (Super Money UPI)
-    20: 1400,
-
     // नए बड़े प्लान्स (Super Money UPI)
-    2500: 182500,
-    3500: 255500,
+    3000: 219000,
     4500: 328500,
-    6000: 438000,
-    8000: 584000,
-    12000: 876000,
-    15000: 1095000
+    6500: 474500,
+    9000: 657000,
+    13000: 949000
 };
 
 const activeOrders = new Map();
@@ -96,9 +92,9 @@ app.post('/api/create-order', (req, res) => {
         paiseCounter = (paiseCounter % 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // ₹20 या ₹2500+ के लिए सुपर मनी गेटवे, बाकी के लिए 3:1 रोटेशन
+        // ₹3000+ या नए ₹850 वाले के लिए सुपर मनी गेटवे, बाकी के लिए 3:1 रोटेशन
         paymentCounter = (paymentCounter + 1) % 4;
-        const assignedGateway = (baseAmt >= 2500 || baseAmt === 20) ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
+        const assignedGateway = (baseAmt >= 3000 || baseAmt === 850) ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
 
         const cleanUid = uid.toString().trim();
 
