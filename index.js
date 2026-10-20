@@ -12,23 +12,25 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-const KWIK_GATEWAY = {
-    apiKey: "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       
-    apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", 
-    apiUrl: "https://kwikupi.com/api/create-payment"   
-};
-
+// नए 7 प्लान्स की सख्त मैपिंग (Amount -> Coins, 1 = 73 के हिसाब से)
 const COIN_PLANS = {
-    20: 1400,         // टेस्टिंग प्लान
-    3000: 219000,
-    5000: 365000,
+    2500: 182500,
+    3500: 255500,
+    4500: 328500,
     6000: 438000,
-    10000: 730000,
-    12000: 876000
+    8000: 584000,
+    12000: 876000,
+    15000: 1095000
 };
 
+// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
 const activeOrders = new Map();
+
+// यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
 let paiseCounter = 1;
+
+// ऑर्डर की लाइफ: 5 मिनट (300 सेकंड)
+const ORDER_VALIDITY_MS = 300 * 1000;
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -61,8 +63,8 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create & KwikUPI Integration
-app.post('/api/create-order', async (req, res) => {
+// 2. Order Create (नए प्लान्स और सुपर मनी UPI के साथ)
+app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
         if (!uid || !amount || !orderId) {
@@ -71,55 +73,24 @@ app.post('/api/create-order', async (req, res) => {
 
         const baseAmt = Math.round(Number(amount));
 
+        // सुरक्षा ताला: अमाउंट वैलिडेशन
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] अमान्य प्लान या छेड़छाड़: ₹${amount} | UID: ${uid}`);
-            return res.status(400).json({ success: false, message: "अमान्य प्लान!" });
+            console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
+            return res.status(400).json({ 
+                success: false, 
+                message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
+            });
         }
 
         const coins = COIN_PLANS[baseAmt];
         
+        // 1 से 90 पैसे तक डायनामिक असाइनमेंट
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
+
+        // सटीक फ्लोटिंग अमाउंट (जैसे 2500.01)
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
-
         const cleanUid = uid.toString().trim();
-
-        let paymentUrl = "";
-        let upiVpa = "";
-        let upiIntent = "";
-
-        try {
-            const kwikPayload = {
-                amount: exactAmount,
-                order_id: orderId,
-                customer_name: "Ali Dreamwork User",
-                customer_email: "support@alidreamwork.com",
-                redirect_url: `https://${req.get('host')}/`
-            };
-
-            const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
-                headers: { 
-                    'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),
-                    'X-API-SECRET': KWIK_GATEWAY.apiSecret.trim(),
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log("KwikUPI Full Response:", kwikResponse.data);
-
-            const resData = kwikResponse.data.data || kwikResponse.data;
-
-            paymentUrl = resData.payment_url || resData.payment_link || resData.url || resData.payment_page;
-            upiVpa = resData.vpa || resData.upi_id || resData.upi || "merchant.upi@icici";
-            upiIntent = resData.intent_url || resData.upi_intent || resData.deeplink || `upi://pay?pa=${upiVpa}&pn=AliDreamwork&am=${exactAmount}&tr=${orderId}&cu=INR`;
-
-        } catch (kwikErr) {
-            console.error("Kwik API Error:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
-        }
-
-        if (!paymentUrl && !upiIntent) {
-            return res.status(500).json({ success: false, message: "Payment gateway connection failed. Check API keys." });
-        }
 
         activeOrders.set(orderId, {
             uid: cleanUid,
@@ -130,18 +101,9 @@ app.post('/api/create-order', async (req, res) => {
             createdAt: Date.now()
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ 
-            success: true, 
-            orderId: orderId, 
-            exactAmount: exactAmount, 
-            paymentUrl: paymentUrl,
-            upiIntent: upiIntent,
-            upiVpa: upiVpa,
-            upiName: "Ali Dreamwork"
-        });
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount });
     } catch (error) {
-        console.error("Order creation error:", error);
         return res.status(500).json({ success: false, message: "Server error" });
     }
 });
@@ -174,37 +136,59 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. KwikUPI Webhook
-app.post('/api/kwik-webhook', async (req, res) => {
+// 4. Webhook (सुपर मनी या SMS ऑटोमेशन से आने वाले नोटिफिकेशन के लिए)
+app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
-        console.log("================== KWIK WEBHOOK HIT ==================");
-        console.log("Payload:", req.body);
+        console.log("================== PAYMENT WEBHOOK HIT ==================");
+        
+        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        const titleText = req.body.title || req.body.not_title || "";
 
-        const eventData = req.body;
-        const incomingOrderId = eventData.order_id || eventData.orderId;
-        const incomingStatus = eventData.status || eventData.payment_status;
-        const detectedAmount = Number(eventData.amount || eventData.paid_amount || 0);
+        console.log("Notification Message:", messageText);
+        console.log("Notification Title:", titleText);
 
-        if (!incomingOrderId) return res.status(400).json({ status: false, message: "Missing order_id" });
+        const combinedText = `${titleText} ${messageText}`;
+        if (!combinedText.trim()) return res.status(200).json({ status: false });
 
-        if (activeOrders.has(incomingOrderId)) {
-            const ordData = activeOrders.get(incomingOrderId);
-            if (ordData.status === 'PENDING') {
-                if (incomingStatus === 'SUCCESS' || incomingStatus === 'PAID' || eventData.success === true || Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
-                    ordData.status = 'PAID';
-                    console.log(`[MATCH FOUND] Order: ${incomingOrderId} (UID: ${ordData.uid}) verified via KwikWebhook!`);
-                    
-                    await deliverCoinsToUser(ordData.uid, ordData.coins, incomingOrderId);
-                    activeOrders.delete(incomingOrderId);
+        let detectedAmount = 0;
+        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
+                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
+                      
+        if (amtMatch) {
+            detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
+        }
+
+        console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
+        const now = Date.now();
+
+        if (detectedAmount > 0) {
+            for (let [ordId, ordData] of activeOrders.entries()) {
+                if (ordData.status === 'PENDING') {
+                    if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
+                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
+                            console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
+                            ordData.status = 'PAID';
+                            
+                            await deliverCoinsToUser(ordData.uid, ordData.coins, ordId);
+                            break;
+                        }
+                    }
                 }
             }
         }
 
-        return res.status(200).json({ status: true, message: "Webhook processed successfully" });
+        return res.status(200).json({ status: true, amount: detectedAmount });
     } catch (err) {
         console.error("Webhook processing error:", err);
         return res.status(500).json({ status: false });
     }
+});
+
+// 5. Polling Endpoint
+app.get('/api/check-order-status', (req, res) => {
+    const { orderId } = req.query;
+    if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
+    return res.json({ status: activeOrders.get(orderId).status });
 });
 
 const PORT = process.env.PORT || 10000;
