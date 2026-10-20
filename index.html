@@ -177,6 +177,21 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+    
+    .upi-app-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -217,14 +232,12 @@
 
           <div class="section-title">SELECT HIGH VALUE COIN PLANS</div>
           <div class="plans-grid">
-            <!-- टेस्टिंग प्लान -->
             <div class="coin-card" onclick="setPack(this, 1400, 20)">
               <div class="coin-number">1,400</div>
               <div class="coin-label">Test Coins</div>
               <div class="coin-divider"></div>
               <div class="coin-price">₹20</div>
             </div>
-            <!-- बड़े प्लान्स -->
             <div class="coin-card" onclick="setPack(this, 219000, 3000)">
               <div class="coin-number">219,000</div>
               <div class="coin-label">Coins</div>
@@ -307,26 +320,19 @@
     </div>
   </div>
 
-  <div id="modalNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
-    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:18px;text-align:center;max-height:92vh;overflow-y:auto;">
-      <div style="font-size:26px;margin-bottom:2px;">⚠️</div>
-      <b style="color:#1e40af;font-size:16px;">Payment Instructions / पेमेंट निर्देश</b>
-      <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
-        <p style="margin-bottom:6px;font-weight:bold;">English:</p>
-        <ol style="margin:0 0 10px 18px;padding:0;">
-          <li>Click Proceed to open direct UPI payment apps.</li>
-          <li>Complete payment using PhonePe, Google Pay or Paytm.</li>
-          <li>Coins will be credited <b>automatically within 5 seconds</b> after payment!</li>
-        </ol>
-        <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
-        <ol style="margin:0 0 0 18px;padding:0;">
-          <li>आगे बढ़ें पर क्लिक करके सीधे यूपीआई ऐप खोलें।</li>
-          <li>PhonePe, Google Pay या Paytm से भुगतान पूरा करें।</li>
-          <li>पेमेंट होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
-        </ol>
-      </div>
-      <button type="button" onclick="proceedToPayment()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Proceed / आगे बढ़ें</button>
-      <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
+  <!-- डायरेक्ट ऐप पेमेंट चॉइस Modal -->
+  <div id="paymentChoiceModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
+    <div style="background:#fff;width:100%;max-width:365px;border-radius:14px;padding:20px;text-align:center;">
+      <div style="font-size:26px;margin-bottom:5px;">⚡</div>
+      <b style="color:#1e40af;font-size:17px;">Select Payment App / ऐप चुनें</b>
+      <p style="font-size:12px;color:#6b7280;margin:8px 0 16px 0;">अपनी पसंदीदा यूपीआई ऐप से सीधे पेमेंट करें:</p>
+      
+      <a id="btnPhonePe" href="#" class="upi-app-btn" style="background:#5f259f;">Pay via PhonePe (फोनपे)</a>
+      <a id="btnGPay" href="#" class="upi-app-btn" style="background:#1a73e8;">Pay via Google Pay (गूगल पे)</a>
+      <a id="btnPaytm" href="#" class="upi-app-btn" style="background:#00b9f5;">Pay via Paytm (पेटीएम)</a>
+      <a id="btnGenericUpi" href="#" class="upi-app-btn" style="background:#059669;">Other UPI Apps (अन्य ऐप्स)</a>
+
+      <button type="button" onclick="hidePaymentChoiceModal()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:10px;border-radius:8px;cursor:pointer;font-size:12px;margin-top:10px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
@@ -399,12 +405,6 @@
       if (!isUidValid) { alert('Please verify User ID first / पहले User ID वेरीफाई करें'); return; }
       if (!termsChecked) { alert('Please accept Terms & Conditions / कृपया नियम व शर्तें स्वीकार करें'); return; }
 
-      document.getElementById('modalNotice').style.display = 'flex';
-    }
-
-    function proceedToPayment() {
-      document.getElementById('modalNotice').style.display = 'none';
-      var uid = document.getElementById('userId').value.trim();
       orderId = "ORD" + Date.now();
 
       fetch('/api/create-order', {
@@ -414,19 +414,31 @@
       })
       .then(function(res){ return res.json(); })
       .then(function(data){
-        if (data.success && data.paymentUrl) {
-          // KwikUPI पेमेंट पेज पर रीडायरेक्ट करें जहाँ मोबाइल पर डायरेक्ट ऐप ऑपशंस मिल जाएंगे
-          window.location.href = data.paymentUrl;
+        if (data.success && data.upiIntent) {
+          // सीधे यूपीआई इंटेंट लिंक सेट करें
+          var upiLink = data.upiIntent;
+          
+          document.getElementById('btnPhonePe').href = "phonepe://pay?pa=" + encodeURIComponent(data.upiVpa || "") + "&pn=" + encodeURIComponent(data.upiName || "Ali Dreamwork") + "&am=" + selectedPack.price + "&tr=" + orderId + "&cu=INR";
+          document.getElementById('btnGPay').href = "tez://upi/pay?pa=" + encodeURIComponent(data.upiVpa || "") + "&pn=" + encodeURIComponent(data.upiName || "Ali Dreamwork") + "&am=" + selectedPack.price + "&tr=" + orderId + "&cu=INR";
+          document.getElementById('btnPaytm').href = "paytmmp://pay?pa=" + encodeURIComponent(data.upiVpa || "") + "&pn=" + encodeURIComponent(data.upiName || "Ali Dreamwork") + "&am=" + selectedPack.price + "&tr=" + orderId + "&cu=INR";
+          document.getElementById('btnGenericUpi').href = upiLink;
+
+          document.getElementById('paymentChoiceModal').style.display = 'flex';
         } else {
-          alert("Payment gateway error: " + (data.message || "Failed to create order"));
+          // अगर इंटेंट न मिले तो पेमेंट पेज खोलें
+          if (data.paymentUrl) {
+            window.location.href = data.paymentUrl;
+          } else {
+            alert("Payment error: " + (data.message || "Failed to create order"));
+          }
         }
       }).catch(function(err){
         alert("Network error. Please try again.");
       });
     }
 
-    function hideAllModals() {
-      document.getElementById('modalNotice').style.display = 'none';
+    function hidePaymentChoiceModal() {
+      document.getElementById('paymentChoiceModal').style.display = 'none';
     }
   </script>
 </body>
