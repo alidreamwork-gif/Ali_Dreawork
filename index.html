@@ -339,13 +339,12 @@
       <!-- छोटा और साफ रिमाइंडर पॉपअप संदेश -->
       <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;margin-bottom:12px;text-align:left;font-size:11.5px;color:#1e3a8a;line-height:1.4;">
         <b>⚠️ महत्वपूर्ण निर्देश / Important:</b><br>
-        कृपया अपने Google Pay, PhonePe या Paytm से <b>पॉइंट सहित ठीक उतना ही अमाउंट (जैसे .01, .02 पैसे जोड़कर)</b> पे करें जितना ऊपर दिया गया है। शार्ट पेमेंट या बिना पैसे के पेमेंट करने पर कॉइन ऑटोमैटिक डिलीवर नहीं हो पाएंगे!<br><br>
-        <i>Please pay the exact amount including paise. Short payments will not be detected automatically.</i>
+        कृपया अपने Google Pay, PhonePe या Paytm से <b>पॉइंट सहित ठीक उतना ही अमाउंट (जैसे .01, .02 पैसे जोड़कर)</b> पे करें जितना ऊपर दिया गया है। शार्ट पेमेंट या बिना पैसे के पेमेंट करने पर कॉइन ऑटोमैटिक डिलीवर नहीं हो पाएंगे!
       </div>
 
       <label style="text-align:left;margin-bottom:4px;font-size:12px;">Super Money UPI ID:</label>
       <div style="display:flex;gap:6px;margin-bottom:12px;">
-        <input type="text" id="superMoneyIdBox" readonly style="background:#f3f4f6;font-weight:bold;text-align:center;color:#374151;" value="supermoney@okicici">
+        <input type="text" id="superMoneyIdBox" readonly style="background:#f3f4f6;font-weight:bold;text-align:center;color:#374151;" value="ali.vasim@superyes">
         <button type="button" onclick="copySuperMoneyUpi()" style="background:#059669;color:#white;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy UPI</button>
       </div>
 
@@ -456,15 +455,15 @@
       .then(function(data){
         exactPayableAmount = data.exactAmount || selectedPack.price;
         
-        // चेक करें कि प्लान छोटा है या ₹2500 से बड़ा नया प्लान है
         if (selectedPack.price >= 2500) {
-          // --- सुपर मनी यूपीआई (डायरेक्ट कॉपी ऑप्शन वाला मॉडल) ---
           document.getElementById('payAmtSuper').innerText = '₹' + exactPayableAmount.toFixed(2);
+          if (data.superMoneyUpi) {
+            document.getElementById('superMoneyIdBox').value = data.superMoneyUpi;
+          }
           document.getElementById('timerTextSuper').innerText = "05:00";
           document.getElementById('modalSuperMoney').style.display = 'flex';
           startTimer('timerTextSuper');
         } else {
-          // --- छोटे प्लान्स के लिए पुराना QR कोड सिस्टम (BharatPe/GPay 3:1) ---
           var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
           var gpayUpi = "gpay-12208814600@okbizaxis";        
           var selectedUpi = (data.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
