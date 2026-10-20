@@ -13,12 +13,12 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 🚨 KwikUPI (HudUPI) की असली की (Keys):
+// 💡 KwikUPI (KwikGateway) की असली डिटेल्स:
 // ==========================================
 const KWIK_GATEWAY = {
-    apiKey: "pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       // Public API Key
+    apiKey: "Pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       // Public API Key (पुराने कोड के अनुसार सही केस)
     apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", // Secret Private Key
-    apiUrl: "https://hudupi.com/api/create-payment"
+    apiUrl: "https://kwikupi.com/api/create-payment"   // सही और आधिकारिक API Endpoint URL
 };
 
 // केवल बड़े प्लान्स और ₹20 टेस्ट प्लान की सख्त मैपिंग (Amount -> Coins)
@@ -102,7 +102,7 @@ app.post('/api/create-order', async (req, res) => {
             };
 
             console.log("Sending to KwikUPI URL:", KWIK_GATEWAY.apiUrl);
-            console.log("Sending Payload:", kwikPayload);
+            console.log("Payload:", kwikPayload);
 
             const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
                 headers: { 
@@ -112,18 +112,17 @@ app.post('/api/create-order', async (req, res) => {
                 }
             });
 
-            console.log("FULL KwikUPI Response Data:", JSON.stringify(kwikResponse.data, null, 2));
+            console.log("KwikUPI Response Data:", kwikResponse.data);
 
-            // KwikUPI API रिस्पॉन्स से पेमेंट पेज का लिंक निकालना
-            paymentUrl = kwikResponse.data.payment_page || 
-                         kwikResponse.data.payment_url || 
-                         kwikResponse.data.link || 
-                         kwikResponse.data.url ||
-                         (kwikResponse.data.data && (kwikResponse.data.data.payment_page || kwikResponse.data.data.payment_url || kwikResponse.data.data.link || kwikResponse.data.data.url));
+            // पुराने और नए दोनों तरीकों से लिंक कैच करना
+            paymentUrl = kwikResponse.data.payment_url || 
+                         kwikResponse.data.payment_link || 
+                         kwikResponse.data.url || 
+                         kwikResponse.data.payment_page ||
+                         (kwikResponse.data.data && (kwikResponse.data.data.payment_url || kwikResponse.data.data.payment_link || kwikResponse.data.data.url));
 
         } catch (kwikErr) {
-            console.error("🔴 Kwik API Error Status:", kwikErr.response ? kwikErr.response.status : "No Response");
-            console.error("🔴 Kwik API Error Full Data:", kwikErr.response ? JSON.stringify(kwikErr.response.data, null, 2) : kwikErr.message);
+            console.error("Kwik API Error:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
         }
 
         if (!paymentUrl) {
@@ -181,25 +180,27 @@ app.post('/api/kwik-webhook', async (req, res) => {
         console.log("================== KWIK WEBHOOK HIT ==================");
         console.log("Payload:", req.body);
 
-        const incomingOrderId = req.body.order_id || req.body.orderId;
-        const incomingStatus = req.body.status || req.body.payment_status;
-        const detectedAmount = Number(req.body.amount || req.body.paid_amount || 0);
+        const eventData = req.body;
+        const incomingOrderId = eventData.order_id || eventData.orderId;
+        const incomingStatus = eventData.status || eventData.payment_status;
+        const detectedAmount = Number(eventData.amount || eventData.paid_amount || 0);
 
         if (!incomingOrderId) return res.status(400).json({ status: false, message: "Missing order_id" });
 
         if (activeOrders.has(incomingOrderId)) {
             const ordData = activeOrders.get(incomingOrderId);
             if (ordData.status === 'PENDING') {
-                if (incomingStatus === 'SUCCESS' || incomingStatus === 'PAID' || Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
+                if (incomingStatus === 'SUCCESS' || incomingStatus === 'PAID' || eventData.success === true || Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
                     ordData.status = 'PAID';
                     console.log(`[MATCH FOUND] Order: ${incomingOrderId} (UID: ${ordData.uid}) verified via KwikWebhook!`);
                     
                     await deliverCoinsToUser(ordData.uid, ordData.coins, incomingOrderId);
+                    activeOrders.delete(incomingOrderId);
                 }
             }
         }
 
-        return res.json({ status: true });
+        return res.status(200).json({ status: true, message: "Webhook processed successfully" });
     } catch (err) {
         console.error("Webhook processing error:", err);
         return res.status(500).json({ status: false });
