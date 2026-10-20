@@ -314,15 +314,15 @@
       <div style="text-align:left;font-size:11.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;color:#1e3a8a;">
         <p style="margin-bottom:6px;font-weight:bold;">English:</p>
         <ol style="margin:0 0 10px 18px;padding:0;">
-          <li>A Secure Payment window will open with the exact payable amount.</li>
-          <li>Complete the payment using your preferred UPI app.</li>
-          <li>Coins will be credited <b>automatically within 5 seconds</b> after payment verification!</li>
+          <li>Click Proceed to open direct UPI payment apps.</li>
+          <li>Complete payment using PhonePe, Google Pay or Paytm.</li>
+          <li>Coins will be credited <b>automatically within 5 seconds</b> after payment!</li>
         </ol>
         <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
         <ol style="margin:0 0 0 18px;padding:0;">
-          <li>सटीक रकम के साथ सुरक्षित पेमेंट विंडो खुलेगी।</li>
-          <li>अपने यूपीआई ऐप के जरिए भुगतान पूरा करें।</li>
-          <li>पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
+          <li>आगे बढ़ें पर क्लिक करके सीधे यूपीआई ऐप खोलें।</li>
+          <li>PhonePe, Google Pay या Paytm से भुगतान पूरा करें।</li>
+          <li>पेमेंट होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
         </ol>
       </div>
       <button type="button" onclick="proceedToPayment()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Proceed / आगे बढ़ें</button>
@@ -415,6 +415,7 @@
       .then(function(res){ return res.json(); })
       .then(function(data){
         if (data.success && data.paymentUrl) {
+          // KwikUPI पेमेंट पेज पर रीडायरेक्ट करें जहाँ मोबाइल पर डायरेक्ट ऐप ऑपशंस मिल जाएंगे
           window.location.href = data.paymentUrl;
         } else {
           alert("Payment gateway error: " + (data.message || "Failed to create order"));
