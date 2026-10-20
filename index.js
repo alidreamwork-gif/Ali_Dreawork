@@ -13,17 +13,11 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 🚨 यहाँ ध्यान से अपनी KwikUPI (HudUPI) की असली की (Keys) डालें:
+// 🚨 KwikUPI (HudUPI) की असली की (Keys):
 // ==========================================
 const KWIK_GATEWAY = {
-    
-    // 1️⃣ यहाँ अपनी 'Public API Key' डालें (जो pk_live_ से शुरू होती है)
-    apiKey: "pk_live_5n5Ipy5CauIlzMCT5UhkNpbe", 
-    
-    // 2️⃣ यहाँ अपनी 'Secret API Private Key' डालें (डॉट-डॉट वाली सीक्रेट की)
-    apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", 
-    
-    // KwikUPI का आधिकारिक API Endpoint URL (इसे न बदलें)
+    apiKey: "pk_live_5n5Ipy5CauIlzMCT5UhkNpbe",       // Public API Key
+    apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", // Secret Private Key
     apiUrl: "https://hudupi.com/api/create-payment"
 };
 
@@ -112,8 +106,8 @@ app.post('/api/create-order', async (req, res) => {
 
             const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
                 headers: { 
-                    'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),        // यहाँ ऊपर दी गई Public API Key अपने आप आ जाएगी
-                    'X-API-SECRET': KWIK_GATEWAY.apiSecret.trim(), // यहाँ ऊपर दी गई Secret Private Key अपने आप आ जाएगी
+                    'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),
+                    'X-API-SECRET': KWIK_GATEWAY.apiSecret.trim(),
                     'Content-Type': 'application/json'
                 }
             });
@@ -181,7 +175,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. KwikUPI Webhook (पेमेंट सफलता का नोटिफिकेशन रिसीव करेगा)
+// 4. KwikUPI Webhook
 app.post('/api/kwik-webhook', async (req, res) => {
     try {
         console.log("================== KWIK WEBHOOK HIT ==================");
