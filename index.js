@@ -13,11 +13,18 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 💡 KwikUPI (HudUPI) की डिटेल्स:
+// 🚨 यहाँ ध्यान से अपनी KwikUPI (HudUPI) की असली की (Keys) डालें:
 // ==========================================
 const KWIK_GATEWAY = {
-    apiKey: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh",  // <-- यहाँ अपनी KwikUPI की Secret API Key डालें
-    apiUrl: "https://hudupi.com/api/create-payment" // <-- आधिकारिक API Endpoint URL
+    
+    // 1️⃣ यहाँ अपनी 'Public API Key' डालें (जो pk_live_ से शुरू होती है)
+    apiKey: "pk_live_5n5Ipy5CauIlzMCT5UhkNpbe", 
+    
+    // 2️⃣ यहाँ अपनी 'Secret API Private Key' डालें (डॉट-डॉट वाली सीक्रेट की)
+    apiSecret: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh", 
+    
+    // KwikUPI का आधिकारिक API Endpoint URL (इसे न बदलें)
+    apiUrl: "https://hudupi.com/api/create-payment"
 };
 
 // केवल बड़े प्लान्स और ₹20 टेस्ट प्लान की सख्त मैपिंग (Amount -> Coins)
@@ -95,23 +102,27 @@ app.post('/api/create-order', async (req, res) => {
             const kwikPayload = {
                 amount: exactAmount,
                 order_id: orderId,
-                customer_name: "Verified User",
+                customer_name: "Ali Dreamwork User",
                 customer_email: "support@alidreamwork.com",
                 redirect_url: `https://${req.get('host')}/`
             };
 
+            console.log("Sending to KwikUPI:", kwikPayload);
+
             const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
                 headers: { 
-                    'X-API-KEY': KWIK_GATEWAY.apiKey,        // KwikUPI दस्तावेज़ के अनुसार हेडर
-                    'X-API-SECRET': KWIK_GATEWAY.apiSecret,     // सीक्रेट की
+                    'X-API-KEY': KWIK_GATEWAY.apiKey.trim(),        // यहाँ Public API Key जाएगी
+                    'X-API-SECRET': KWIK_GATEWAY.apiSecret.trim(), // यहाँ Secret Private Key जाएगी
                     'Content-Type': 'application/json'
                 }
             });
 
+            console.log("KwikUPI Response:", kwikResponse.data);
+
             // KwikUPI API रिस्पॉन्स से पेमेंट पेज का लिंक निकालना
-            paymentUrl = kwikResponse.data.payment_page || kwikResponse.data.payment_url || kwikResponse.data.link;
+            paymentUrl = kwikResponse.data.payment_page || kwikResponse.data.payment_url || kwikResponse.data.link || (kwikResponse.data.data && kwikResponse.data.data.payment_page);
         } catch (kwikErr) {
-            console.error("Kwik API Error:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
+            console.error("Kwik API Error Details:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
         }
 
         if (!paymentUrl) {
@@ -180,7 +191,7 @@ app.post('/api/kwik-webhook', async (req, res) => {
             if (ordData.status === 'PENDING') {
                 if (incomingStatus === 'SUCCESS' || incomingStatus === 'PAID' || Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
                     ordData.status = 'PAID';
-                    console.log(`[MATCH FOUND] Order: ${incomingOrderId} (UID: ${ordData.uid}) verified via Kwik Webhook!`);
+                    console.log(`[MATCH FOUND] Order: ${incomingOrderId} (UID: ${ordData.uid}) verified via KwikWebhook!`);
                     
                     await deliverCoinsToUser(ordData.uid, ordData.coins, incomingOrderId);
                 }
