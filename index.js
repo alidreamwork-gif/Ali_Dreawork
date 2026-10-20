@@ -12,9 +12,14 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
+// ==========================================
+// 💡 सुपर मनी की यूपीआई आईडी यहाँ सेट है:
+// ==========================================
+const SUPER_MONEY_UPI = "ali.vasim@superyes";
+
 // सभी प्लान्स की सख्त मैपिंग (छोटे प्लान्स + नए बड़े प्लान्स)
 const COIN_PLANS = {
-    // छोटे प्लान्स (BharatPe / GPay)
+    // छोटे प्लान्स (BharatPe / GPay - 3:1 रोटेशन)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -22,6 +27,7 @@ const COIN_PLANS = {
     685: 50000,
     1370: 100000,
     1999: 146000,
+    
     // नए बड़े प्लान्स (Super Money UPI)
     2500: 182500,
     3500: 255500,
@@ -96,7 +102,7 @@ app.post('/api/create-order', (req, res) => {
         paiseCounter = (paiseCounter % 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // छोटे प्लान्स के लिए रोटेशन, बड़े प्लान्स के लिए सुपर मनी गेटवे असाइन करना
+        // छोटे प्लान्स के लिए रोटेशन, ₹2500 या उससे ऊपर के लिए सुपर मनी गेटवे
         paymentCounter = (paymentCounter + 1) % 4;
         const assignedGateway = baseAmt >= 2500 ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
 
@@ -113,7 +119,13 @@ app.post('/api/create-order', (req, res) => {
         });
 
         console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
+        return res.json({ 
+            success: true, 
+            orderId: orderId, 
+            exactAmount: exactAmount, 
+            gateway: assignedGateway,
+            superMoneyUpi: SUPER_MONEY_UPI 
+        });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
     }
@@ -147,7 +159,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook (Super Money, SMS, BharatPe और Google Pay सभी के लिए)
+// 4. Unified Webhook
 app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
