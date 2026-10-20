@@ -12,31 +12,29 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// अधिकृत प्लान्स की सख्त मैपिंग (Amount -> Coins)
-const COIN_PLANS = {
-    20: 1400,     // टेस्टिंग प्लान
-    151: 11000,
-    220: 16100,
-    330: 24100,
-    440: 32100,
-    685: 50000,
-    1370: 100000,
-    1999: 146000,
-    3000: 219000,
-    4500: 328500
+// ==========================================
+// 💡 एकमात्र Kwik गेटवे की डिटेल्स यहाँ डालें:
+// ==========================================
+const KWIK_GATEWAY = {
+    apiKey: "sk_live_07yLG7sfCWnzgVfFbRyVXtkrYrFvMxrhqjkJiTRlMYNREaWh",       // <-- यहाँ अपनी Kwik गेटवे की असली API Key / Token डालें
+    apiUrl: "https://hudupi.com/api/create-payment"// <-- यहाँ Kwik का असली API Endpoint URL डालें
 };
 
-// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt, gateway }
+// केवल बड़े प्लान्स और ₹20 टेस्ट प्लान की सख्त मैपिंग (Amount -> Coins)
+const COIN_PLANS = {
+    20: 1400,         // टेस्टिंग प्लान
+    3000: 219000,
+    5000: 365000,
+    6000: 438000,
+    10000: 730000,
+    12000: 876000
+};
+
+// activeOrders: orderId -> { uid, baseAmount, exactAmount, coins, status, createdAt }
 const activeOrders = new Map();
 
-// यूनिक पैसे असाइन करने के लिए काउंटर (1 से 90 पैसे)
+// 1 से 90 पैसे तक डायनामिक असाइनमेंट
 let paiseCounter = 1;
-
-// 3:1 सर्कुलेशन काउंटर (छोटे अमाउंट्स के लिए BharatPe और Google Pay)
-let paymentCounter = 0;
-
-// ऑर्डर की लाइफ: 5 मिनट (300 सेकंड)
-const ORDER_VALIDITY_MS = 300 * 1000;
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -69,8 +67,8 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create
-app.post('/api/create-order', (req, res) => {
+// 2. Order Create & Single Kwik Gateway Integration
+app.post('/api/create-order', async (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
         if (!uid || !amount || !orderId) {
@@ -80,30 +78,39 @@ app.post('/api/create-order', (req, res) => {
         const baseAmt = Math.round(Number(amount));
 
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] फर्जी अमाउंट से छेड़छाड़ पकड़ी गई: ₹${amount} | UID: ${uid}`);
-            return res.status(400).json({ 
-                success: false, 
-                message: "अमान्य प्लान! अमाउंट के साथ छेड़छाड़ पकड़ी गई।" 
-            });
+            console.warn(`[SECURITY ALERT] अमान्य प्लान या छेड़छाड़: ₹${amount} | UID: ${uid}`);
+            return res.status(400).json({ success: false, message: "अमान्य प्लान!" });
         }
 
         const coins = COIN_PLANS[baseAmt];
         
         const paise = paiseCounter;
         paiseCounter = (paiseCounter % 90) + 1;
-
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // गेटवे चयन लॉजिक: ₹100 से कम (₹20 टेस्ट प्लान) और ₹2000+ के लिए 'SUPER_MONEY', बीच वालों के लिए BharatPe/GPay
-        let assignedGateway = 'BHARATPE';
-        if (baseAmt <= 100 || baseAmt >= 2000) {
-            assignedGateway = 'SUPER_MONEY';
-        } else {
-            paymentCounter = (paymentCounter + 1) % 4;
-            assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
-        }
-
         const cleanUid = uid.toString().trim();
+
+        let paymentUrl = "";
+        try {
+            const kwikPayload = {
+                order_id: orderId,
+                amount: exactAmount,
+                customer_phone: req.body.phone || "9690118011",
+                redirect_url: `https://${req.get('host')}/`
+            };
+
+            const kwikResponse = await axios.post(KWIK_GATEWAY.apiUrl, kwikPayload, {
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${KWIK_GATEWAY.apiKey}`
+                }
+            });
+
+            paymentUrl = kwikResponse.data.payment_url || kwikResponse.data.link || "https://kwikgateway.com/pay/dummy-link";
+        } catch (kwikErr) {
+            console.error("Kwik API Error:", kwikErr.response ? kwikErr.response.data : kwikErr.message);
+            paymentUrl = "https://kwikgateway.com/pay/" + orderId;
+        }
 
         activeOrders.set(orderId, {
             uid: cleanUid,
@@ -111,13 +118,13 @@ app.post('/api/create-order', (req, res) => {
             exactAmount: exactAmount,
             coins: coins,
             status: 'PENDING',
-            createdAt: Date.now(),
-            gateway: assignedGateway
+            createdAt: Date.now()
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Base: ₹${baseAmt} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
-        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, gateway: assignedGateway });
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        return res.json({ success: true, orderId: orderId, exactAmount: exactAmount, paymentUrl: paymentUrl });
     } catch (error) {
+        console.error("Order creation error:", error);
         return res.status(500).json({ success: false, message: "Server error" });
     }
 });
@@ -150,59 +157,35 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook
-app.post(['/api/sms-webhook', '/api/payment-webhook'], async (req, res) => {
+// 4. Single Kwik Payment Webhook
+app.post('/api/kwik-webhook', async (req, res) => {
     try {
-        console.log("================== PAYMENT WEBHOOK HIT ==================");
-        
-        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        const titleText = req.body.title || req.body.not_title || "";
+        console.log("================== KWIK WEBHOOK HIT ==================");
+        console.log("Payload:", req.body);
 
-        console.log("Notification Message:", messageText);
-        console.log("Notification Title:", titleText);
+        const incomingOrderId = req.body.order_id || req.body.orderId;
+        const incomingStatus = req.body.status || req.body.payment_status;
+        const detectedAmount = Number(req.body.amount || req.body.paid_amount || 0);
 
-        const combinedText = `${titleText} ${messageText}`;
-        if (!combinedText.trim()) return res.status(200).json({ status: false });
+        if (!incomingOrderId) return res.status(400).json({ status: false, message: "Missing order_id" });
 
-        let detectedAmount = 0;
-        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
-                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
-                      
-        if (amtMatch) {
-            detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
-        }
-
-        console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
-        const now = Date.now();
-
-        if (detectedAmount > 0) {
-            for (let [ordId, ordData] of activeOrders.entries()) {
-                if (ordData.status === 'PENDING') {
-                    if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
-                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
-                            console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
-                            ordData.status = 'PAID';
-                            
-                            await deliverCoinsToUser(ordData.uid, ordData.coins, ordId);
-                            break;
-                        }
-                    }
+        if (activeOrders.has(incomingOrderId)) {
+            const ordData = activeOrders.get(incomingOrderId);
+            if (ordData.status === 'PENDING') {
+                if (incomingStatus === 'SUCCESS' || incomingStatus === 'PAID' || Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
+                    ordData.status = 'PAID';
+                    console.log(`[MATCH FOUND] Order: ${incomingOrderId} (UID: ${ordData.uid}) verified via Kwik Webhook!`);
+                    
+                    await deliverCoinsToUser(ordData.uid, ordData.coins, incomingOrderId);
                 }
             }
         }
 
-        return res.json({ status: true, amount: detectedAmount });
+        return res.json({ status: true });
     } catch (err) {
         console.error("Webhook processing error:", err);
         return res.status(500).json({ status: false });
     }
-});
-
-// 5. Polling Endpoint
-app.get('/api/check-order-status', (req, res) => {
-    const { orderId } = req.query;
-    if (!orderId || !activeOrders.has(orderId)) return res.json({ status: 'NOT_FOUND' });
-    return res.json({ status: activeOrders.get(orderId).status });
 });
 
 const PORT = process.env.PORT || 10000;
