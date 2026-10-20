@@ -12,10 +12,9 @@ app.use(express.static(path.join(__dirname)));
 const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
-// सुपर मनी की यूपीआई आईडी
 const SUPER_MONEY_UPI = "ali.vasim@superyes";
 
-// सभी प्लान्स की सख्त मैपिंग (छोटे प्लान्स + नया ₹850 पैक + नए बड़े प्लान्स)
+// अपडेटेड प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
     // छोटे प्लान्स (BharatPe / GPay - 3:1 रोटेशन)
     151: 11000,
@@ -23,11 +22,10 @@ const COIN_PLANS = {
     330: 24100,
     440: 32100,
     685: 50000,
-    850: 62000,       // नया जोड़ा गया पैक
     1370: 100000,
     1999: 146000,
     
-    // नए बड़े प्लान्स (Super Money UPI)
+    // नए बड़े प्लान्स (Super Money UPI) - ₹3000 से शुरू
     3000: 219000,
     4500: 328500,
     6500: 474500,
@@ -92,9 +90,9 @@ app.post('/api/create-order', (req, res) => {
         paiseCounter = (paiseCounter % 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        // ₹3000+ या नए ₹850 वाले के लिए सुपर मनी गेटवे, बाकी के लिए 3:1 रोटेशन
+        // ₹3000 या उससे अधिक के लिए सुपर मनी गेटवे, बाकी के लिए 3:1 रोटेशन
         paymentCounter = (paymentCounter + 1) % 4;
-        const assignedGateway = (baseAmt >= 3000 || baseAmt === 850) ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
+        const assignedGateway = baseAmt >= 3000 ? 'SUPER_MONEY' : (paymentCounter === 0 ? 'GPAY' : 'BHARATPE');
 
         const cleanUid = uid.toString().trim();
 
@@ -149,7 +147,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook (Super Money, SMS, BharatPe और Google Pay सभी के लिए)
+// 4. Unified Webhook
 app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
