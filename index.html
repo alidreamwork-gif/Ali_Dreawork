@@ -425,7 +425,7 @@
     </div>
   </div>
 
-  <!-- सफलता या टाइमआउट का पॉपअप (जब तक यूजर OK/Home page पर क्लिक न करे तब तक रहेगा) -->
+  <!-- सफलता या टाइमआउट का पॉपअप -->
   <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;">
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
@@ -546,7 +546,9 @@
       var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
       var gpayUpi = "gpay-12208814600@okbizaxis";        
       var selectedUpi = (backendData && backendData.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
-      var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR&tn=CoinPurchase";
+      
+      // यहाँ से &tn=CoinPurchase पूरी तरह हटा दिया गया है ताकि कोई नोट न आए
+      var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR";
       
       document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
       document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(upi);
