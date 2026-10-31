@@ -17,7 +17,7 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // ==========================================
 const SUPER_MONEY_UPIS = [
     "ali.vasim@superyes", // पहली यूपीआई आईडी
-    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी ( अपनी जरूरत के अनुसार बदल लें)
+    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी
 ];
 let superMoneyIndex = 0;
 
@@ -102,7 +102,6 @@ app.post('/api/create-order', (req, res) => {
 
         if (baseAmt >= 3000) {
             assignedGateway = 'SUPER_MONEY';
-            // 1:1 रोटेशन (बारी-बारी से दोनों सुपर मनी यूपीआई चुनना)
             selectedSuperMoneyUpi = SUPER_MONEY_UPIS[superMoneyIndex];
             superMoneyIndex = (superMoneyIndex + 1) % SUPER_MONEY_UPIS.length;
         } else {
@@ -164,8 +163,8 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook
-app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
+// 4. Unified Webhook (अब MacroDroid का /webhook भी सपोर्ट करेगा)
+app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
         
