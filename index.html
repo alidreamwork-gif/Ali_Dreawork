@@ -382,15 +382,11 @@
       <b style="color:#1e40af;font-size:16px;">Super Money Direct Payment</b>
       
       <div style="background:#eff6ff;border:2px solid #3b82f6;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#1e3a8a;line-height:1.4;font-weight:bold;">
-        <!-- महत्वपूर्ण चेतावनी (इंग्लिश ऊपर, हिंदी नीचे) -->
-      <div style="background:#eff6ff;border:2px solid #3b82f6;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#1e3a8a;line-height:1.4;font-weight:bold;">
-        <!-- इंग्लिश ऊपर -->
         <span style="font-size:11px; font-weight:900; color:#1d4ed8; display:block; margin-bottom:2px;">⚠️ IMPORTANT NOTE:</span>
         <span style="font-size:11px; font-weight:normal; color:#0f172a; display:block; margin-bottom:8px;">If your paid amount does not match the exact amount given here, coins will not be delivered automatically.</span>
         
         <hr style="border:0; border-top:1px solid #cbd5e1; margin:6px 0;">
 
-        <!-- हिंदी नीचे -->
         <span style="font-size:12px; font-weight:900; color:#1d4ed8; display:block; margin-bottom:2px;">⚠️ महत्वपूर्ण सूचना:</span>
         <span style="font-size:12px; font-weight:bold; color:#0f172a; display:block;">यदि आपका पेमेंट किया गया अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा!</span>
       </div>
@@ -429,14 +425,14 @@
     </div>
   </div>
 
-  <!-- सफलता या टाइमआउट का पॉपअप -->
+  <!-- सफलता या टाइमआउट का पॉपअप (जब तक यूजर OK/Home page पर क्लिक न करे तब तक रहेगा) -->
   <div id="modalSuccess" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:16px;padding:20px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;">
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
       <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
       <div id="successDesc" style="font-size:12px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;"></div>
       <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 WhatsApp पर संपर्क करें (+91 9690118011)</a>
-      <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Home page</button>
+      <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Home page / ठीक है (OK)</button>
     </div>
   </div>
 
@@ -579,7 +575,7 @@
         .then(function(d){
           if (d && d.status === 'PAID') {
             hideAllModals();
-            var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स भेज दिए गए हैं।</p>`;
+            var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स सफलतापूर्वक आपकी आईडी में भेज दिए गए हैं।</p>`;
             showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
           } else {
             document.getElementById('statusCheckIcon').innerText = "⏳";
@@ -620,7 +616,7 @@
           .then(function(d){
             if (d && d.status === 'PAID') {
               hideAllModals();
-              var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स भेज दिए गए हैं।</p>`;
+              var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स सफलतापूर्वक आपकी आईडी में भेज दिए गए हैं।</p>`;
               showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
             }
           }).catch(function(){});
