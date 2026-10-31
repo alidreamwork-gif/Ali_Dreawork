@@ -17,7 +17,7 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // ==========================================
 const SUPER_MONEY_UPIS = [
     "ali.vasim@superyes", // पहली यूपीआई आईडी
-    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी (इसे अपनी जरूरत के अनुसार बदल लें)
+    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी ( अपनी जरूरत के अनुसार बदल लें)
 ];
 let superMoneyIndex = 0;
 
