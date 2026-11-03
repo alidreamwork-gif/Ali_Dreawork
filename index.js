@@ -23,7 +23,7 @@ let superMoneyIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (BharatPe / GPay - 3:1 रोटेशन)
+    // छोटे प्लान्स (BharatPe / GPay - 3:2 रोटेशन)
     151: 11000,
     220: 16100,
     330: 24100,
