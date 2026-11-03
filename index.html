@@ -543,11 +543,11 @@
 
     function showQR() {
       document.getElementById('modalNotice').style.display = 'none';
-      var bharatPeUpi = "gpay-12208814600@okbizaxis";  
-      var gpayUpi = "s4345806770371644@slc";        
-      var selectedUpi = (backendData && backendData.gateway === 'GPAY') ? gpayUpi : bharatPeUpi;
+      var gpayUpi = "gpay-12208814600@okbizaxis";  
+      var sliceUpi = "s4345806770371644@slc";        
+      var selectedUpi = (backendData && backendData.gateway === 'SLICE') ? sliceUpi : gpayUpi;
       
-      // यहाँ से &tn=CoinPurchase पूरी तरह हटा दिया गया है ताकि कोई नोट न आए
+      // बिना किसी ट्रांजैक्शन नोट (&tn=...) के सादा यूपीआई लिंक
       var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR";
       
       document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
