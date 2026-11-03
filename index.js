@@ -23,7 +23,7 @@ let superMoneyIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (BharatPe / GPay - 3:2 रोटेशन)
+    // छोटे प्लान्स (Google Pay / Slice - 3:2 रोटेशन)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -76,7 +76,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create
+// 2. Order Create (3:2 Ratio Logic: 3 GPay, 2 Slice)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -97,7 +97,7 @@ app.post('/api/create-order', (req, res) => {
         paiseCounter = (paiseCounter % 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        let assignedGateway = 'BHARATPE';
+        let assignedGateway = 'GPAY';
         let selectedSuperMoneyUpi = '';
 
         if (baseAmt >= 3000) {
@@ -105,8 +105,9 @@ app.post('/api/create-order', (req, res) => {
             selectedSuperMoneyUpi = SUPER_MONEY_UPIS[superMoneyIndex];
             superMoneyIndex = (superMoneyIndex + 1) % SUPER_MONEY_UPIS.length;
         } else {
-            paymentCounter = (paymentCounter + 1) % 4;
-            assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
+            // 3:2 रोटेशन: 0, 1, 2 (GPAY - 3 बार) और 3, 4 (SLICE - 2 बार), कुल चक्र 5 का
+            paymentCounter = (paymentCounter + 1) % 5;
+            assignedGateway = paymentCounter < 3 ? 'GPAY' : 'SLICE';
         }
 
         const cleanUid = uid.toString().trim();
@@ -122,7 +123,7 @@ app.post('/api/create-order', (req, res) => {
             upiUsed: selectedSuperMoneyUpi
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedSuperMoneyUpi || 'GPay/BharatPe'} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedSuperMoneyUpi || assignedGateway} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ 
             success: true, 
             orderId: orderId, 
@@ -163,7 +164,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook (अब MacroDroid का /webhook भी सपोर्ट करेगा)
+// 4. Unified Webhook
 app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
