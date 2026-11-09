@@ -104,7 +104,6 @@ app.post('/api/create-order', (req, res) => {
 
         if (baseAmt >= 3000) {
             assignedGateway = 'LARGE_UPI';
-            // 4 UPIs rotation for large payments
             selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
             largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
@@ -167,13 +166,33 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook
-app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
+// फैंसी/स्टाइलिश फोंट्स और सिंबल्स को नॉर्मल नंबर में बदलने के लिए हेल्पर फंक्शन
+function normalizeFancyText(text) {
+    if (!text) return "";
+    return text.replace(/[\s\S]/g, (char) => {
+        const code = char.codePointAt(0);
+        // Mathematical Alphanumeric Symbols mapping to normal ASCII
+        if (code >= 0x1D400 && code <= 0x1D419) return String.fromCharCode(code - 0x1D400 + 65); // Bold A-Z
+        if (code >= 0x1D41A && code <= 0x1D433) return String.fromCharCode(code - 0x1D41A + 97); // Bold a-z
+        if (code >= 0x1D7CE && code <= 0x1D7D7) return String.fromCharCode(code - 0x1D7CE + 48); // Bold 0-9
+        if (code >= 0x1D560 && code <= 0x1D579) return String.fromCharCode(code - 0x1D560 + 65); // Sans-serif Bold A-Z
+        if (code >= 0x1D57A && code <= 0x1D593) return String.fromCharCode(code - 0x1D57A + 97); // Sans-serif Bold a-z
+        if (code >= 0x1D7EC && code <= 0x1D7F5) return String.fromCharCode(code - 0x1D7EC + 48); // Sans-serif Bold 0-9
+        return char;
+    });
+}
+
+// 4. Unified Webhook (Advanced Fancy Font & Symbol Parser)
+app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (resObj, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
         
-        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        const titleText = req.body.title || req.body.not_title || "";
+        const rawMessage = resObj.body.message || resObj.body.text || resObj.body.body || resObj.body.msg || resObj.body.key || resObj.body.content || "";
+        const rawTitle = resObj.body.title || resObj.body.not_title || "";
+
+        // फैंसी फोंट्स को नॉर्मल टेक्स्ट में बदलना
+        const messageText = normalizeFancyText(rawMessage);
+        const titleText = normalizeFancyText(rawTitle);
 
         console.log("Notification Message:", messageText);
         console.log("Notification Title:", titleText);
@@ -183,20 +202,19 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
 
         let detectedAmount = 0;
         
-        const cleanTextForAmount = combinedText.replace(/[\u20B9\s,]/g, (match) => match === ',' ? '' : match);
-        
-        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)?\s*([\d,]+(?:\.\d{1,2})?)/i) 
-                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i)
-                      || cleanTextForAmount.match(/([\d]+\.\d{2})/);
-
-        if (amtMatch) {
-            detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
+        // सभी तरह के फॉर्मेट (Rs.151.25, ₹151.25 आदि) को ढूंढने के लिए
+        const matches = combinedText.match(/([\d]+[.,]\d{2})/g);
+        if (matches && matches.length > 0) {
+            // जो सबसे आखिरी या सटीक डेसिमल नंबर हो उसे उठाएं
+            const cleanStr = matches[matches.length - 1].replace(',', '.');
+            detectedAmount = parseFloat(cleanStr);
         }
 
+        // यदि ऊपर वाले से न मिले तो जनरल अल्टरनेटिव पैटर्न ट्राई करें
         if (!detectedAmount || isNaN(detectedAmount)) {
-            const allNumbers = combinedText.match(/\d+\.\d{2}/g);
-            if (allNumbers && allNumbers.length > 0) {
-                detectedAmount = parseFloat(allNumbers[allNumbers.length - 1]);
+            const altMatch = combinedText.match(/(?:[₹]|rs\.?|inr)?\s*([\d,]+\.\d{2})/i);
+            if (altMatch) {
+                detectedAmount = parseFloat(altMatch[1].replace(/,/g, ''));
             }
         }
 
