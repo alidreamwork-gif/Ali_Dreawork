@@ -13,7 +13,7 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 💡 बड़े प्लान्स के लिए 4 यूपीआई आईडी (2 Paytm और 2 Super Money - 1:1:1:1 रोटेशन)
+// 💡 bade plans ke liye 4 UPI IDs (2 Paytm aur 2 Super Money - 1:1:1:1 rotation)
 // ==========================================
 const LARGE_PAYMENT_UPIS = [
     "ali.vasim@superyes",
@@ -23,9 +23,9 @@ const LARGE_PAYMENT_UPIS = [
 ];
 let largePaymentIndex = 0;
 
-// सभी प्लान्स की सख्त मैपिंग
+// Sabhi plans ki strict mapping
 const COIN_PLANS = {
-    // छोटे प्लान्स (7-Step Interleaved Rotation)
+    // Chhote plans (3-Step Rotation: BharatPe, Slice, GPay)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -34,7 +34,7 @@ const COIN_PLANS = {
     1370: 100000,
     1999: 146000,
     
-    // नए बड़े प्लान्स (Paytm & Super Money - 4 UPIs Rotation)
+    // Naye bade plans (Paytm & Super Money - 4 UPIs Rotation)
     3000: 219000,
     4500: 328500,
     6500: 474500,
@@ -78,7 +78,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create
+// 2. Order Create (3-Step Rotation: BharatPe -> Slice -> GPay)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -89,8 +89,8 @@ app.post('/api/create-order', (req, res) => {
         const baseAmt = Math.round(Number(amount));
 
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] अमान्य प्लान: ₹${amount} | UID: ${uid}`);
-            return res.status(400).json({ success: false, message: "अमान्य प्लान!" });
+            console.warn(`[SECURITY ALERT] Amanya plan: ₹${amount} | UID: ${uid}`);
+            return res.status(400).json({ success: false, message: "Amanya plan!" });
         }
 
         const coins = COIN_PLANS[baseAmt];
@@ -107,7 +107,8 @@ app.post('/api/create-order', (req, res) => {
             selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
             largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            const rotationSequence = ['BHARATPE', 'SLICE', 'PHONEPE', 'GPAY', 'BHARATPE', 'SLICE', 'GPAY'];
+            // 3-Step Rotation: BharatPe, Slice, GPay
+            const rotationSequence = ['BHARATPE', 'SLICE', 'GPAY'];
             assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
             paymentCounter = (paymentCounter + 1) % rotationSequence.length;
         }
@@ -138,7 +139,7 @@ app.post('/api/create-order', (req, res) => {
     }
 });
 
-// 3. Helper: कॉइन डिलीवरी
+// 3. Helper: Coin Delivery
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -166,28 +167,25 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// फैंसी/स्टाइलिश यूनिकोड कैरेक्टर्स को नॉर्मल टेक्स्ट में बदलने का फंक्शन
+// Fancy/Stylish unicode characters ko normal text me badalne ka function
 function normalizeFancyText(text) {
     if (!text) return "";
-    // यूनिकोड मैपिंग और सभी तरह के छिपे हुए स्पेस या सिंबल्स को हटाना
     let normalized = "";
     for (let char of text) {
         const code = char.codePointAt(0);
-        // Mathematical Sans-serif / Bold / Italic Digits & Letters mapping
         if (code >= 0x1D400 && code <= 0x1D419) normalized += String.fromCharCode(code - 0x1D400 + 65);
         else if (code >= 0x1D41A && code <= 0x1D433) normalized += String.fromCharCode(code - 0x1D41A + 97);
         else if (code >= 0x1D7CE && code <= 0x1D7D7) normalized += String.fromCharCode(code - 0x1D7CE + 48);
         else if (code >= 0x1D560 && code <= 0x1D579) normalized += String.fromCharCode(code - 0x1D560 + 65);
         else if (code >= 0x1D57A && code <= 0x1D593) normalized += String.fromCharCode(code - 0x1D57A + 97);
         else if (code >= 0x1D7EC && code <= 0x1D7F5) normalized += String.fromCharCode(code - 0x1D7EC + 48);
-        // Fullwidth digits (０-９)
         else if (code >= 0xFF10 && code <= 0xFF19) normalized += String.fromCharCode(code - 0xFF10 + 48);
         else normalized += char;
     }
     return normalized;
 }
 
-// 4. Unified Webhook (Universal Fancy Font & Amount Parser)
+// 4. Unified Webhook
 app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
@@ -205,13 +203,10 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
         if (!combinedText.trim()) return res.status(200).json({ status: false });
 
         let detectedAmount = 0;
-        
-        // किसी भी फॉर्मेट (Rs.151.03, ₹151.03, 151.03) को ढूँढने के लिए फ्लेक्सिबल तरीका
         const cleanStr = combinedText.replace(/[,]/g, '.');
         const matches = cleanStr.match(/(\d+\.\d{2})/g);
 
         if (matches && matches.length > 0) {
-            // नोटिफिकेशन में मिले आखिरी डेसिमल अमाउंट को पिक करना सबसे सुरक्षित होता है
             detectedAmount = parseFloat(matches[matches.length - 1]);
         }
 
