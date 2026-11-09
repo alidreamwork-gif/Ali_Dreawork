@@ -13,7 +13,7 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 💡 bade plans ke liye 4 UPI IDs (2 Paytm aur 2 Super Money - 1:1:1:1 rotation)
+// 💡 बड़े प्लान्स के लिए 4 यूपीआई आईडी (2 Paytm और 2 Super Money - 1:1:1:1 रोटेशन)
 // ==========================================
 const LARGE_PAYMENT_UPIS = [
     "ali.vasim@superyes",
@@ -23,9 +23,9 @@ const LARGE_PAYMENT_UPIS = [
 ];
 let largePaymentIndex = 0;
 
-// Sabhi plans ki strict mapping
+// सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // Chhote plans (3-Step Rotation: BharatPe, Slice, GPay)
+    // छोटे प्लान्स (3-Step Rotation: BharatPe, Slice, GPay)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -34,7 +34,7 @@ const COIN_PLANS = {
     1370: 100000,
     1999: 146000,
     
-    // Naye bade plans (Paytm & Super Money - 4 UPIs Rotation)
+    // नए बड़े प्लान्स (Paytm & Super Money - 4 UPIs Rotation)
     3000: 219000,
     4500: 328500,
     6500: 474500,
@@ -78,7 +78,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (3-Step Rotation: BharatPe -> Slice -> GPay)
+// 2. Order Create
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -89,8 +89,8 @@ app.post('/api/create-order', (req, res) => {
         const baseAmt = Math.round(Number(amount));
 
         if (!COIN_PLANS.hasOwnProperty(baseAmt)) {
-            console.warn(`[SECURITY ALERT] Amanya plan: ₹${amount} | UID: ${uid}`);
-            return res.status(400).json({ success: false, message: "Amanya plan!" });
+            console.warn(`[SECURITY ALERT] अमान्य प्लान: ₹${amount} | UID: ${uid}`);
+            return res.status(400).json({ success: false, message: "अमान्य प्लान!" });
         }
 
         const coins = COIN_PLANS[baseAmt];
@@ -139,7 +139,7 @@ app.post('/api/create-order', (req, res) => {
     }
 });
 
-// 3. Helper: Coin Delivery
+// 3. Helper: कॉइन डिलीवरी
 async function deliverCoinsToUser(uid, coins, orderId) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
@@ -167,7 +167,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// Fancy/Stylish unicode characters ko normal text me badalne ka function
+// फैंसी/स्टाइलिश यूनिकोड कैरेक्टर्स को नॉर्मल टेक्स्ट में बदलने का फंक्शन
 function normalizeFancyText(text) {
     if (!text) return "";
     let normalized = "";
@@ -185,7 +185,7 @@ function normalizeFancyText(text) {
     return normalized;
 }
 
-// 4. Unified Webhook
+// 4. Unified Webhook (Advanced Flexible Amount Parser)
 app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
@@ -203,10 +203,13 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
         if (!combinedText.trim()) return res.status(200).json({ status: false });
 
         let detectedAmount = 0;
-        const cleanStr = combinedText.replace(/[,]/g, '.');
-        const matches = cleanStr.match(/(\d+\.\d{2})/g);
+        
+        // सभी तरह के फॉर्मेट्स (जैसे 1370.2, 1370.18, 1,370.20) को पकड़ने के लिए फ्लेक्सिबल रेगुलर एक्सप्रेसर
+        const cleanStr = combinedText.replace(/[,]/g, '');
+        const matches = cleanStr.match(/(\d+\.\d{1,2})/g);
 
         if (matches && matches.length > 0) {
+            // नोटिफिकेशन में जो आखिरी सटीक डेसिमल अमाउंट होगा उसे उठाएगा
             detectedAmount = parseFloat(matches[matches.length - 1]);
         }
 
@@ -217,7 +220,8 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
             for (let [ordId, ordData] of activeOrders.entries()) {
                 if (ordData.status === 'PENDING') {
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
-                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
+                        // 0.01 का मार्جن ताकि .2 और .20 पूरी तरह मैच हो सकें
+                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.01) {
                             console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
                             
