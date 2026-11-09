@@ -13,17 +13,19 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 💡 सुपर मनी की दो यूपीआई आईडी (1:1 रोटेशन के लिए)
+// 💡 बड़े प्लान्स के लिए 4 यूपीआई आईडी (2 Paytm और 2 Super Money - 1:1:1:1 रोटेशन)
 // ==========================================
-const SUPER_MONEY_UPIS = [
-    "ali.vasim@superyes", // पहली यूपीआई आईडी
-    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी (इसे अपनी जरूरत के अनुसार बदल लें)
+const LARGE_PAYMENT_UPIS = [
+    "ali.vasim@superyes",
+    "akhtar.84@superyes",
+    "paytm.s2zq023@pty",
+    "paytm.s2xzdht@pty"
 ];
-let superMoneyIndex = 0;
+let largePaymentIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (BharatPe / GPay - 3:1 रोटेशन)
+    // छोटे प्लान्स (3-Step Rotation: BharatPe, Slice, GPay)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -32,7 +34,7 @@ const COIN_PLANS = {
     1370: 100000,
     1999: 146000,
     
-    // नए बड़े प्लान्स (Super Money UPI - 1:1 रोटेशन)
+    // नए बड़े प्लान्स (Paytm & Super Money - 4 UPIs Rotation)
     3000: 219000,
     4500: 328500,
     6500: 474500,
@@ -76,7 +78,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create
+// 2. Order Create (3-Step Rotation: BharatPe -> Slice -> GPay)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -98,16 +100,17 @@ app.post('/api/create-order', (req, res) => {
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
         let assignedGateway = 'BHARATPE';
-        let selectedSuperMoneyUpi = '';
+        let selectedLargeUpi = '';
 
         if (baseAmt >= 3000) {
-            assignedGateway = 'SUPER_MONEY';
-            // 1:1 रोटेशन (बारी-बारी से दोनों सुपर मनी यूपीआई चुनना)
-            selectedSuperMoneyUpi = SUPER_MONEY_UPIS[superMoneyIndex];
-            superMoneyIndex = (superMoneyIndex + 1) % SUPER_MONEY_UPIS.length;
+            assignedGateway = 'LARGE_UPI';
+            selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
+            largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            paymentCounter = (paymentCounter + 1) % 4;
-            assignedGateway = paymentCounter === 0 ? 'GPAY' : 'BHARATPE';
+            // 3-Step Rotation: BharatPe, Slice, GPay
+            const rotationSequence = ['BHARATPE', 'SLICE', 'GPAY'];
+            assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
+            paymentCounter = (paymentCounter + 1) % rotationSequence.length;
         }
 
         const cleanUid = uid.toString().trim();
@@ -120,16 +123,16 @@ app.post('/api/create-order', (req, res) => {
             status: 'PENDING',
             createdAt: Date.now(),
             gateway: assignedGateway,
-            upiUsed: selectedSuperMoneyUpi
+            upiUsed: selectedLargeUpi
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedSuperMoneyUpi || 'GPay/BharatPe'} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedLargeUpi || assignedGateway} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ 
             success: true, 
             orderId: orderId, 
             exactAmount: exactAmount, 
             gateway: assignedGateway,
-            superMoneyUpi: selectedSuperMoneyUpi || SUPER_MONEY_UPIS[0]
+            largeUpi: selectedLargeUpi || LARGE_PAYMENT_UPIS[0]
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
@@ -164,13 +167,34 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
+// फैंसी/स्टाइलिश यूनिकोड कैरेक्टर्स को नॉर्मल टेक्स्ट में बदलने का फंक्शन
+function normalizeFancyText(text) {
+    if (!text) return "";
+    let normalized = "";
+    for (let char of text) {
+        const code = char.codePointAt(0);
+        if (code >= 0x1D400 && code <= 0x1D419) normalized += String.fromCharCode(code - 0x1D400 + 65);
+        else if (code >= 0x1D41A && code <= 0x1D433) normalized += String.fromCharCode(code - 0x1D41A + 97);
+        else if (code >= 0x1D7CE && code <= 0x1D7D7) normalized += String.fromCharCode(code - 0x1D7CE + 48);
+        else if (code >= 0x1D560 && code <= 0x1D579) normalized += String.fromCharCode(code - 0x1D560 + 65);
+        else if (code >= 0x1D57A && code <= 0x1D593) normalized += String.fromCharCode(code - 0x1D57A + 97);
+        else if (code >= 0x1D7EC && code <= 0x1D7F5) normalized += String.fromCharCode(code - 0x1D7EC + 48);
+        else if (code >= 0xFF10 && code <= 0xFF19) normalized += String.fromCharCode(code - 0xFF10 + 48);
+        else normalized += char;
+    }
+    return normalized;
+}
+
 // 4. Unified Webhook
-app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
+app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
         
-        const messageText = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
-        const titleText = req.body.title || req.body.not_title || "";
+        const rawMessage = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        const rawTitle = req.body.title || req.body.not_title || "";
+
+        const messageText = normalizeFancyText(rawMessage);
+        const titleText = normalizeFancyText(rawTitle);
 
         console.log("Notification Message:", messageText);
         console.log("Notification Title:", titleText);
@@ -179,11 +203,11 @@ app.post(['/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook']
         if (!combinedText.trim()) return res.status(200).json({ status: false });
 
         let detectedAmount = 0;
-        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
-                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
-                      
-        if (amtMatch) {
-            detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
+        const cleanStr = combinedText.replace(/[,]/g, '.');
+        const matches = cleanStr.match(/(\d+\.\d{2})/g);
+
+        if (matches && matches.length > 0) {
+            detectedAmount = parseFloat(matches[matches.length - 1]);
         }
 
         console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
