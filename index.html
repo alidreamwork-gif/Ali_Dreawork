@@ -568,7 +568,6 @@
       else if (backendData && backendData.gateway === 'PHONEPE') selectedUpi = phonePeUpi;
       else if (backendData && backendData.gateway === 'GPAY') selectedUpi = gpayUpi;
       
-      // बिना किसी ट्रांजैक्शन नोट के सादा यूपीआई लिंक
       var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR";
       
       document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
