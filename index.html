@@ -341,8 +341,16 @@
           <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
           <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
         </ol>
+        <p style="margin-bottom:6px;font-weight:bold;">हिंदी:</p>
+        <ol style="margin:0 0 0 18px;padding:0;">
+          <li>आगे 5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
+          <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
+          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
+        </ol>
       </div>
-      <button type="button" onclick="showQR()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
@@ -358,36 +366,72 @@
         <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
         <span id="timerText" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
       </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:8px;border-radius:6px;margin-bottom:8px;text-align:left;font-size:11px;color:#1e3a8a;">
+        📸 <b>Take a screenshot:</b> Take a screenshot of this barcode, select it from the 'Gallery' in your UPI app, and pay the <b>exact amount</b>.
+      </div>
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:8px;border-radius:6px;margin-bottom:10px;text-align:left;font-size:11px;color:#065f46;">
+        🔄 <b>Auto-detection is on:</b> As soon as payment is made, coins will be credited within 5 seconds!
+      </div>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
-  <!-- स्टेप 1: बड़े प्लान्स के लिए नोटिस पॉपअप -->
+  <!-- स्टेप 1: बड़े प्लान्स के लिए नोटिस पॉपअप (इंग्लिश ऊपर, हिंदी नीचे) -->
   <div id="modalSuperMoneyNotice" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #1e40af;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
       <b style="color:#1e40af;font-size:17px;text-transform:uppercase;letter-spacing:0.5px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
-      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
+      
+      <div style="text-align:left;font-size:13px;margin:14px 0;line-height:1.5;background:#eff6ff;border:2px solid #3b82f6;padding:14px;border-radius:10px;color:#1e3a8a;">
+        <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">English:</p>
+        <p style="margin-bottom:12px;font-weight:900;color:#0f172a;font-size:13px;">Please copy the exact amount with paise and UPI ID as shown on the next page, then pay via GPay, PhonePe, Paytm, or any other app. If you pay the correct amount, coins will be delivered automatically.</p>
+        
+        <hr style="border:0; border-top:1px solid #cbd5e1; margin:10px 0;">
+
+        <p style="margin-bottom:4px;font-weight:900;color:#1d4ed8;font-size:13.5px;">हिंदी:</p>
+        <p style="font-weight:900;color:#0f172a;font-size:13px;">आपको जो अमाउंट आगे शो होगा, वही सटीक अमाउंट आप कॉपी किए गए यूपीआई आईडी पर पे करें, तभी कॉइन डिलीवर्ड होगा।</p>
+      </div>
+
+      <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 10px rgba(5,150,105,0.3);">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:9px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
 
-  <!-- स्टेप 2: बड़े प्लान्स डायरेक्ट पेमेंट स्क्रीन -->
+  <!-- स्टेप 2: बड़े प्लान्स (Paytm / Super Money) डायरेक्ट पेमेंट स्क्रीन -->
   <div id="modalSuperMoney" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;justify-content:center;align-items:center;padding:15px;">
     <div style="background:#fff;width:100%;max-width:370px;border-radius:18px;padding:20px;text-align:center;max-height:96vh;overflow-y:auto;">
       <div style="font-size:26px;margin-bottom:2px;">⚡</div>
       <b style="color:#1e40af;font-size:16px;">Direct Payment / डायरेक्ट पेमेंट</b>
+      
+      <div style="background:#eff6ff;border:2px solid #3b82f6;padding:10px;border-radius:8px;margin:10px 0;text-align:left;font-size:12px;color:#1e3a8a;line-height:1.4;font-weight:bold;">
+        <span style="font-size:11px; font-weight:900; color:#1d4ed8; display:block; margin-bottom:2px;">⚠️ IMPORTANT NOTE:</span>
+        <span style="font-size:11px; font-weight:normal; color:#0f172a; display:block; margin-bottom:8px;">If your paid amount does not match the exact amount given here, coins will not be delivered automatically.</span>
+        
+        <hr style="border:0; border-top:1px solid #cbd5e1; margin:6px 0;">
+
+        <span style="font-size:12px; font-weight:900; color:#1d4ed8; display:block; margin-bottom:2px;">⚠️ महत्वपूर्ण सूचना:</span>
+        <span style="font-size:12px; font-weight:bold; color:#0f172a; display:block;">यदि आपका पेमेंट किया गया अमाउंट यहाँ दिए गए अमाउंट से मैच नहीं होता है, तो ऑटोमैटिक कॉइन डिलीवर नहीं होगा!</span>
+      </div>
+
       <label style="text-align:left;margin-bottom:3px;font-size:12px;color:#374151;font-weight:bold;">Exact Payable Amount (सटीक रकम):</label>
       <div style="display:flex;gap:6px;margin-bottom:10px;">
         <input type="text" id="payAmtSuperBox" readonly style="background:#f0fdf4;font-weight:bold;text-align:center;color:#059669;font-size:18px;" value="₹0.00">
         <button type="button" onclick="copyAmount()" style="background:#2563eb;color:#fff;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy Amount</button>
       </div>
+
       <label style="text-align:left;margin-bottom:3px;font-size:12px;color:#374151;font-weight:bold;">UPI ID:</label>
       <div style="display:flex;gap:6px;margin-bottom:14px;">
         <input type="text" id="superMoneyIdBox" readonly style="background:#f3f4f6;font-weight:bold;text-align:center;color:#374151;" value="">
         <button type="button" onclick="copySuperMoneyUpi()" style="background:#059669;color:#fff;border:none;padding:0 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">Copy UPI</button>
       </div>
-      <button type="button" onclick="manualCheckStatus()" style="width:100%;background:#f59e0b;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:10px;">🔄 Check Payment Status / पेमेंट वेरीफाई करें</button>
+
+      <div style="background:#fee2e2;border:1px solid #f87171;padding:6px;border-radius:6px;margin-bottom:10px;">
+        <span style="font-size:11px;color:#991b1b;font-weight:bold;">समय शेष / Time Left: </span>
+        <span id="timerTextSuper" style="font-size:18px;font-weight:800;color:#dc2626;">05:00</span>
+      </div>
+
+      <button type="button" onclick="manualCheckStatus()" style="width:100%;background:#f59e0b;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);">🔄 Check Payment Status / पेमेंट वेरीफाई करें</button>
+
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:8px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
   </div>
@@ -398,6 +442,7 @@
       <div style="font-size:32px;margin-bottom:6px;" id="statusCheckIcon">⏳</div>
       <b style="color:#1e40af;font-size:17px;" id="statusCheckTitle">Payment Status</b>
       <div style="font-size:12.5px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;" id="statusCheckDesc"></div>
+      <a id="statusWhatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20and%20time%20is%20over.%20Here%20is%20my%20payment%20screenshot%20and%20ID.%20Order%20ID:" target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 WhatsApp पर संपर्क करें (+91 9690118011)</a>
       <button type="button" onclick="document.getElementById('modalStatusCheck').style.display='none'" style="width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;">OK / बंद करें</button>
     </div>
   </div>
@@ -408,6 +453,7 @@
       <div id="successIcon" style="font-size:38px;margin-bottom:6px;">🎉</div>
       <b id="successTitle" style="color:#059669;font-size:18px;">Payment Verified!</b>
       <div id="successDesc" style="font-size:12px;color:#4b5563;margin:12px 0;line-height:1.5;text-align:left;"></div>
+      <a id="whatsappBtn" href="https://wa.me/919690118011?text=Hello%20Sir,%20My%20payment%20is%20done%20but%20coins%20not%20received." target="_blank" style="display:none;width:100%;background:#25d366;color:#fff;text-decoration:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:8px;text-align:center;">💬 WhatsApp पर संपर्क करें (+91 9690118011)</a>
       <button type="button" onclick="location.reload()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;">🔙 Home page / ठीक है (OK)</button>
     </div>
   </div>
