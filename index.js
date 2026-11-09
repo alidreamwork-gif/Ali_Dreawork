@@ -16,14 +16,14 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // 💡 सुपर मनी की दो यूपीआई आईडी (1:1 रोटेशन के लिए)
 // ==========================================
 const SUPER_MONEY_UPIS = [
-    "ali.vasim@superyes", // पहली यूपीआई आईडी
-    "akhtar.84@superyes"  // दूसरी यूपीआई आईडी
+    "ali.vasim@superyes", 
+    "akhtar.84@superyes"  
 ];
 let superMoneyIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (Google Pay / Slice - 3:2 रोटेशन)
+    // छोटे प्लान्स (6-Step Rotation: 2 BharatPe, 2 Slice, 1 PhonePe, 1 GPay)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -76,7 +76,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (3:2 Ratio Logic: 3 GPay, 2 Slice)
+// 2. Order Create (6-Step Ratio Logic)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -97,7 +97,7 @@ app.post('/api/create-order', (req, res) => {
         paiseCounter = (paiseCounter % 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        let assignedGateway = 'GPAY';
+        let assignedGateway = 'BHARATPE';
         let selectedSuperMoneyUpi = '';
 
         if (baseAmt >= 3000) {
@@ -105,9 +105,21 @@ app.post('/api/create-order', (req, res) => {
             selectedSuperMoneyUpi = SUPER_MONEY_UPIS[superMoneyIndex];
             superMoneyIndex = (superMoneyIndex + 1) % SUPER_MONEY_UPIS.length;
         } else {
-            // 3:2 रोटेशन: 0, 1, 2 (GPAY - 3 बार) और 3, 4 (SLICE - 2 बार), कुल चक्र 5 का
-            paymentCounter = (paymentCounter + 1) % 5;
-            assignedGateway = paymentCounter < 3 ? 'GPAY' : 'SLICE';
+            // 6-Step Rotation: 
+            // 0, 1 -> BHARATPE (2)
+            // 2, 3 -> SLICE (2)
+            // 4 -> PHONEPE (1)
+            // 5 -> GPAY (1)
+            paymentCounter = (paymentCounter + 1) % 6;
+            if (paymentCounter < 2) {
+                assignedGateway = 'BHARATPE';
+            } else if (paymentCounter < 4) {
+                assignedGateway = 'SLICE';
+            } else if (paymentCounter === 4) {
+                assignedGateway = 'PHONEPE';
+            } else {
+                assignedGateway = 'GPAY';
+            }
         }
 
         const cleanUid = uid.toString().trim();
@@ -123,7 +135,7 @@ app.post('/api/create-order', (req, res) => {
             upiUsed: selectedSuperMoneyUpi
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedSuperMoneyUpi || assignedGateway} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ 
             success: true, 
             orderId: orderId, 
@@ -164,7 +176,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook
+// 4. Unified Webhook (Enhanced for Fancy Amount Parsing)
 app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
@@ -179,11 +191,25 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
         if (!combinedText.trim()) return res.status(200).json({ status: false });
 
         let detectedAmount = 0;
-        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) 
-                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i);
-                      
+        
+        // फैंसी सिंबल्स (₹, Rs, INR आदि या बिना सिंबल के सीधे दशमलव वाली रकम) को कैच करने का सुधरा हुआ तरीका
+        const cleanTextForAmount = combinedText.replace(/[\u20B9\s,]/g, (match) => match === ',' ? '' : match);
+        
+        const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)?\s*([\d,]+(?:\.\d{1,2})?)/i) 
+                      || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i)
+                      // फोनपे के विशेष फॉर्मेट्स के लिए अतिरिक्त पैटर्न
+                      || cleanTextForAmount.match(/([\d]+\.\d{2})/);
+
         if (amtMatch) {
             detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
+        }
+
+        // यदि ऊपर वाले से न मिले तो टेक्स्ट के अंदर से डेसिमल अमाउंट ढूंढें
+        if (!detectedAmount || isNaN(detectedAmount)) {
+            const allNumbers = combinedText.match(/\d+\.\d{2}/g);
+            if (allNumbers && allNumbers.length > 0) {
+                detectedAmount = parseFloat(allNumbers[allNumbers.length - 1]);
+            }
         }
 
         console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
