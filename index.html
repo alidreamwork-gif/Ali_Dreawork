@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
     
     .top-navbar { 
       background: #1e40af; 
@@ -63,7 +63,7 @@
     }
     .nav-btn.active { background: #fff; color: #1e40af; }
 
-    .container { padding: 12px; }
+    .container { padding: 12px; flex: 1; }
     .page-section { display: none; }
 
     .banner-wrapper { margin: 2px 0 12px 0; text-align: center; }
@@ -177,6 +177,16 @@
 
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
+
+    /* Footer Style */
+    .site-footer {
+      text-align: center;
+      padding: 15px 10px;
+      font-size: 11px;
+      color: #6b7280;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
   </style>
 </head>
 <body>
@@ -292,6 +302,11 @@
         <p>WhatsApp: +919690118011</p>
         <p>Email: alidreamwork@gmail.com</p>
       </div>
+    </div>
+
+    <!-- Footer Copyright Section -->
+    <div class="site-footer">
+      &copy; 2026 Ali Dreamwork. All Rights Reserved.
     </div>
   </div>
 
@@ -543,11 +558,17 @@
 
     function showQR() {
       document.getElementById('modalNotice').style.display = 'none';
-      var gpayUpi = "gpay-12208814600@okbizaxis";  
+      var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
       var sliceUpi = "s4345806770371644@slc";        
-      var selectedUpi = (backendData && backendData.gateway === 'SLICE') ? sliceUpi : gpayUpi;
+      var phonePeUpi = "Q519007092@ybl";
+      var gpayUpi = "gpay-12208814600@okbizaxis";
+
+      var selectedUpi = bharatPeUpi;
+      if (backendData && backendData.gateway === 'SLICE') selectedUpi = sliceUpi;
+      else if (backendData && backendData.gateway === 'PHONEPE') selectedUpi = phonePeUpi;
+      else if (backendData && backendData.gateway === 'GPAY') selectedUpi = gpayUpi;
       
-      // बिना किसी ट्रांजैक्शन नोट (&tn=...) के सादा यूपीआई लिंक
+      // बिना किसी ट्रांजैक्शन नोट के सादा यूपीआई लिंक
       var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR";
       
       document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
