@@ -166,31 +166,35 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// फैंसी/स्टाइलिश फोंट्स और सिंबल्स को नॉर्मल नंबर में बदलने के लिए हेल्पर फंक्शन
+// फैंसी/स्टाइलिश यूनिकोड कैरेक्टर्स को नॉर्मल टेक्स्ट में बदलने का फंक्शन
 function normalizeFancyText(text) {
     if (!text) return "";
-    return text.replace(/[\s\S]/g, (char) => {
+    // यूनिकोड मैपिंग और सभी तरह के छिपे हुए स्पेस या सिंबल्स को हटाना
+    let normalized = "";
+    for (let char of text) {
         const code = char.codePointAt(0);
-        // Mathematical Alphanumeric Symbols mapping to normal ASCII
-        if (code >= 0x1D400 && code <= 0x1D419) return String.fromCharCode(code - 0x1D400 + 65); // Bold A-Z
-        if (code >= 0x1D41A && code <= 0x1D433) return String.fromCharCode(code - 0x1D41A + 97); // Bold a-z
-        if (code >= 0x1D7CE && code <= 0x1D7D7) return String.fromCharCode(code - 0x1D7CE + 48); // Bold 0-9
-        if (code >= 0x1D560 && code <= 0x1D579) return String.fromCharCode(code - 0x1D560 + 65); // Sans-serif Bold A-Z
-        if (code >= 0x1D57A && code <= 0x1D593) return String.fromCharCode(code - 0x1D57A + 97); // Sans-serif Bold a-z
-        if (code >= 0x1D7EC && code <= 0x1D7F5) return String.fromCharCode(code - 0x1D7EC + 48); // Sans-serif Bold 0-9
-        return char;
-    });
+        // Mathematical Sans-serif / Bold / Italic Digits & Letters mapping
+        if (code >= 0x1D400 && code <= 0x1D419) normalized += String.fromCharCode(code - 0x1D400 + 65);
+        else if (code >= 0x1D41A && code <= 0x1D433) normalized += String.fromCharCode(code - 0x1D41A + 97);
+        else if (code >= 0x1D7CE && code <= 0x1D7D7) normalized += String.fromCharCode(code - 0x1D7CE + 48);
+        else if (code >= 0x1D560 && code <= 0x1D579) normalized += String.fromCharCode(code - 0x1D560 + 65);
+        else if (code >= 0x1D57A && code <= 0x1D593) normalized += String.fromCharCode(code - 0x1D57A + 97);
+        else if (code >= 0x1D7EC && code <= 0x1D7F5) normalized += String.fromCharCode(code - 0x1D7EC + 48);
+        // Fullwidth digits (０-９)
+        else if (code >= 0xFF10 && code <= 0xFF19) normalized += String.fromCharCode(code - 0xFF10 + 48);
+        else normalized += char;
+    }
+    return normalized;
 }
 
-// 4. Unified Webhook (Advanced Fancy Font & Symbol Parser)
-app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (resObj, res) => {
+// 4. Unified Webhook (Universal Fancy Font & Amount Parser)
+app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
         
-        const rawMessage = resObj.body.message || resObj.body.text || resObj.body.body || resObj.body.msg || resObj.body.key || resObj.body.content || "";
-        const rawTitle = resObj.body.title || resObj.body.not_title || "";
+        const rawMessage = req.body.message || req.body.text || req.body.body || req.body.msg || req.body.key || req.body.content || "";
+        const rawTitle = req.body.title || req.body.not_title || "";
 
-        // फैंसी फोंट्स को नॉर्मल टेक्स्ट में बदलना
         const messageText = normalizeFancyText(rawMessage);
         const titleText = normalizeFancyText(rawTitle);
 
@@ -202,20 +206,13 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
 
         let detectedAmount = 0;
         
-        // सभी तरह के फॉर्मेट (Rs.151.25, ₹151.25 आदि) को ढूंढने के लिए
-        const matches = combinedText.match(/([\d]+[.,]\d{2})/g);
-        if (matches && matches.length > 0) {
-            // जो सबसे आखिरी या सटीक डेसिमल नंबर हो उसे उठाएं
-            const cleanStr = matches[matches.length - 1].replace(',', '.');
-            detectedAmount = parseFloat(cleanStr);
-        }
+        // किसी भी फॉर्मेट (Rs.151.03, ₹151.03, 151.03) को ढूँढने के लिए फ्लेक्सिबल तरीका
+        const cleanStr = combinedText.replace(/[,]/g, '.');
+        const matches = cleanStr.match(/(\d+\.\d{2})/g);
 
-        // यदि ऊपर वाले से न मिले तो जनरल अल्टरनेटिव पैटर्न ट्राई करें
-        if (!detectedAmount || isNaN(detectedAmount)) {
-            const altMatch = combinedText.match(/(?:[₹]|rs\.?|inr)?\s*([\d,]+\.\d{2})/i);
-            if (altMatch) {
-                detectedAmount = parseFloat(altMatch[1].replace(/,/g, ''));
-            }
+        if (matches && matches.length > 0) {
+            // नोटिफिकेशन में मिले आखिरी डेसिमल अमाउंट को पिक करना सबसे सुरक्षित होता है
+            detectedAmount = parseFloat(matches[matches.length - 1]);
         }
 
         console.log(`[DETECTED AMOUNT] ₹${detectedAmount}`);
