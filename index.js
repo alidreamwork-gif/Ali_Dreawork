@@ -13,17 +13,19 @@ const SELLER_ID = "4851724";
 const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 
 // ==========================================
-// 💡 सुपर मनी की दो यूपीआई आईडी (1:1 रोटेशन के लिए)
+// 💡 बड़े प्लान्स के लिए 4 यूपीआई आईडी (2 Paytm और 2 Super Money - 1:1:1:1 रोटेशन)
 // ==========================================
-const SUPER_MONEY_UPIS = [
-    "ali.vasim@superyes", 
-    "akhtar.84@superyes"  
+const LARGE_PAYMENT_UPIS = [
+    "paytm.s2zq023@pty",
+    "ali.vasim@superyes",
+    "paytm.s2xzdht@pty",
+    "akhtar.84@superyes"
 ];
-let superMoneyIndex = 0;
+let largePaymentIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (6-Step Rotation: 2 BharatPe, 2 Slice, 1 PhonePe, 1 GPay)
+    // छोटे प्लान्स (7-Step Interleaved Rotation)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -32,7 +34,7 @@ const COIN_PLANS = {
     1370: 100000,
     1999: 146000,
     
-    // नए बड़े प्लान्स (Super Money UPI - 1:1 रोटेशन)
+    // नए बड़े प्लान्स (Paytm & Super Money - 4 UPIs Rotation)
     3000: 219000,
     4500: 328500,
     6500: 474500,
@@ -76,7 +78,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (6-Step Ratio Logic)
+// 2. Order Create (7-Step Interleaved Rotation for Small, 4-Step for Large)
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -98,28 +100,18 @@ app.post('/api/create-order', (req, res) => {
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
         let assignedGateway = 'BHARATPE';
-        let selectedSuperMoneyUpi = '';
+        let selectedLargeUpi = '';
 
         if (baseAmt >= 3000) {
-            assignedGateway = 'SUPER_MONEY';
-            selectedSuperMoneyUpi = SUPER_MONEY_UPIS[superMoneyIndex];
-            superMoneyIndex = (superMoneyIndex + 1) % SUPER_MONEY_UPIS.length;
+            assignedGateway = 'LARGE_UPI';
+            selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
+            largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            // 6-Step Rotation: 
-            // 0, 1 -> BHARATPE (2)
-            // 2, 3 -> SLICE (2)
-            // 4 -> PHONEPE (1)
-            // 5 -> GPAY (1)
-            paymentCounter = (paymentCounter + 1) % 6;
-            if (paymentCounter < 2) {
-                assignedGateway = 'BHARATPE';
-            } else if (paymentCounter < 4) {
-                assignedGateway = 'SLICE';
-            } else if (paymentCounter === 4) {
-                assignedGateway = 'PHONEPE';
-            } else {
-                assignedGateway = 'GPAY';
-            }
+            // 7-Step Interleaved Rotation (2 BharatPe, 2 Slice, 2 GPay, 1 PhonePe - no consecutive duplicates)
+            // Sequence: BHARATPE, SLICE, PHONEPE, GPAY, BHARATPE, SLICE, GPAY
+            const rotationSequence = ['BHARATPE', 'SLICE', 'PHONEPE', 'GPAY', 'BHARATPE', 'SLICE', 'GPAY'];
+            assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
+            paymentCounter = (paymentCounter + 1) % rotationSequence.length;
         }
 
         const cleanUid = uid.toString().trim();
@@ -132,16 +124,16 @@ app.post('/api/create-order', (req, res) => {
             status: 'PENDING',
             createdAt: Date.now(),
             gateway: assignedGateway,
-            upiUsed: selectedSuperMoneyUpi
+            upiUsed: selectedLargeUpi
         });
 
-        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
+        console.log(`[ORDER CREATED] ID: ${orderId} | UID: ${cleanUid} | Gateway: ${assignedGateway} | UPI: ${selectedLargeUpi || assignedGateway} | Pay Amount: ₹${exactAmount} | Coins: ${coins}`);
         return res.json({ 
             success: true, 
             orderId: orderId, 
             exactAmount: exactAmount, 
             gateway: assignedGateway,
-            superMoneyUpi: selectedSuperMoneyUpi || SUPER_MONEY_UPIS[0]
+            largeUpi: selectedLargeUpi || LARGE_PAYMENT_UPIS[0]
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
@@ -192,19 +184,16 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
 
         let detectedAmount = 0;
         
-        // फैंसी सिंबल्स (₹, Rs, INR आदि या बिना सिंबल के सीधे दशमलव वाली रकम) को कैच करने का सुधरा हुआ तरीका
         const cleanTextForAmount = combinedText.replace(/[\u20B9\s,]/g, (match) => match === ',' ? '' : match);
         
         const amtMatch = combinedText.match(/(?:[₹]|rs\.?|inr)?\s*([\d,]+(?:\.\d{1,2})?)/i) 
                       || combinedText.match(/(?:Received\s*)?([\d,]+(?:\.\d{1,2})?)\s*(?:Rupees|Rs|INR)/i)
-                      // फोनपे के विशेष फॉर्मेट्स के लिए अतिरिक्त पैटर्न
                       || cleanTextForAmount.match(/([\d]+\.\d{2})/);
 
         if (amtMatch) {
             detectedAmount = parseFloat(amtMatch[1].replace(/,/g, ''));
         }
 
-        // यदि ऊपर वाले से न मिले तो टेक्स्ट के अंदर से डेसिमल अमाउंट ढूंढें
         if (!detectedAmount || isNaN(detectedAmount)) {
             const allNumbers = combinedText.match(/\d+\.\d{2}/g);
             if (allNumbers && allNumbers.length > 0) {
