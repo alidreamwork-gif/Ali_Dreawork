@@ -16,10 +16,10 @@ const API_KEY = "DUOOa49Jeyu8Zx7AKei6";
 // 💡 बड़े प्लान्स के लिए 4 यूपीआई आईडी (2 Paytm और 2 Super Money - 1:1:1:1 रोटेशन)
 // ==========================================
 const LARGE_PAYMENT_UPIS = [
-    "paytm.s2zq023@pty",
     "ali.vasim@superyes",
-    "paytm.s2xzdht@pty",
-    "akhtar.84@superyes"
+    "akhtar.84@superyes",
+    "paytm.s2zq023@pty",
+    "paytm.s2xzdht@pty"
 ];
 let largePaymentIndex = 0;
 
@@ -78,7 +78,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (7-Step Interleaved Rotation for Small, 4-Step for Large)
+// 2. Order Create
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -104,11 +104,10 @@ app.post('/api/create-order', (req, res) => {
 
         if (baseAmt >= 3000) {
             assignedGateway = 'LARGE_UPI';
+            // 4 UPIs rotation for large payments
             selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
             largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            // 7-Step Interleaved Rotation (2 BharatPe, 2 Slice, 2 GPay, 1 PhonePe - no consecutive duplicates)
-            // Sequence: BHARATPE, SLICE, PHONEPE, GPAY, BHARATPE, SLICE, GPAY
             const rotationSequence = ['BHARATPE', 'SLICE', 'PHONEPE', 'GPAY', 'BHARATPE', 'SLICE', 'GPAY'];
             assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
             paymentCounter = (paymentCounter + 1) % rotationSequence.length;
@@ -168,7 +167,7 @@ async function deliverCoinsToUser(uid, coins, orderId) {
     }
 }
 
-// 4. Unified Webhook (Enhanced for Fancy Amount Parsing)
+// 4. Unified Webhook
 app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
