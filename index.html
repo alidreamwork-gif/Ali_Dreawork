@@ -9,9 +9,9 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; touch-action: manipulation; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transform: translateZ(0); }
     
-    /* Fixed Top Navbar (Transparent background for text/button without extra white boxes) */
+    /* Fixed Top Navbar (Classic Blue Background) */
     .top-navbar { 
-      background: linear-gradient(135deg, #d4ebd0 0%, #b5e3af 50%, #e2eed1 100%); 
+      background: #1e40af; 
       padding: 10px 14px; 
       display: flex; 
       align-items: center; 
@@ -19,8 +19,7 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-bottom: 2px solid #8fc988;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
     .nav-brand-left {
       display: flex;
@@ -38,24 +37,25 @@
       background: #fff;
     }
     .nav-brand-title {
-      color: #000000;
-      font-size: 15px; /* Slightly increased font size */
+      color: #fbbf24;
+      font-size: 13.5px; /* Logo ki height (40px) se thoda sa kam */
       font-weight: 900;
       line-height: 1.1;
       white-space: nowrap;
-      background: transparent; /* Removed white background box */
+      background: transparent;
       padding: 0;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
 
-    /* Hamburger Menu Button (Transparent background without white box) */
+    /* Hamburger Menu Button */
     .menu-toggle-btn {
-      background: transparent;
-      border: none;
-      color: #000000;
-      padding: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      padding: 6px 10px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 24px;
+      font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -298,7 +298,7 @@
   </div>
 
   <div class="app-wrapper">
-    <!-- Fixed Top Navbar without extra white background boxes -->
+    <!-- Fixed Top Navbar (Classic Blue) -->
     <div class="top-navbar">
       <div class="nav-brand-left" onclick="tab('coins')" title="Go to Topup Home">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
@@ -487,6 +487,9 @@
     <div style="background:#fff;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.3);border:3px solid #1e40af;">
       <div style="font-size:32px;margin-bottom:4px;">💡</div>
       <b style="color:#1e40af;font-size:17px;text-transform:uppercase;letter-spacing:0.5px;">Important Payment Notice / महत्वपूर्ण निर्देश</b>
+      <div style="text-align:left;font-size:12.5px;margin:12px 0;line-height:1.45;background:#eff6ff;border:1px solid #bfdbfe;padding:10px;border-radius:8px;color:#1e3a8a;">
+        Please copy the exact amount with paise and UPI ID on the next page, then pay via any app. Coins will be delivered automatically.
+      </div>
       <button type="button" onclick="showSuperMoneyUPI()" style="width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;margin-bottom:8px;">✅ OK, Got It / समझ गया, आगे बढ़ें</button>
       <button type="button" onclick="hideAllModals()" style="width:100%;background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563;padding:9px;border-radius:8px;cursor:pointer;font-size:12px;">Cancel / रद्द करें</button>
     </div>
