@@ -58,23 +58,23 @@
       justify-content: center;
     }
 
-    /* Sidebar Styles */
+    /* Sidebar Styles (RHS Slide-in) */
     #sidebar {
       position: fixed;
       top: 0;
-      left: -280px;
+      right: -280px;
       width: 270px;
       height: 100vh;
       background: #ffffff;
       z-index: 99999;
-      box-shadow: 5px 0 25px rgba(0,0,0,0.3);
-      transition: left 0.3s ease;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+      transition: right 0.3s ease;
       display: flex;
       flex-direction: column;
       padding: 20px 15px;
     }
     #sidebar.open {
-      left: 0;
+      right: 0;
     }
     .sidebar-header {
       display: flex;
@@ -278,7 +278,7 @@
   <!-- Sidebar Overlay -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-  <!-- Slide-out Sidebar -->
+  <!-- Slide-out Sidebar (RHS) -->
   <div id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-title">📂 Menu / मेनू</div>
@@ -547,7 +547,7 @@
       document.body.style.overflow = 'auto';
     }
 
-    // Sidebar Controller Functions
+    // Sidebar Controller Functions (RHS)
     function openSidebar() {
       document.getElementById('sidebar').classList.add('open');
       document.getElementById('sidebarOverlay').style.display = 'block';
