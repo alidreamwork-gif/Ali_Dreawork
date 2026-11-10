@@ -43,7 +43,6 @@ const COIN_PLANS = {
 };
 
 const activeOrders = new Map();
-let paiseCounter = 1;
 let paymentCounter = 0;
 const ORDER_VALIDITY_MS = 300 * 1000;
 
@@ -95,8 +94,8 @@ app.post('/api/create-order', (req, res) => {
 
         const coins = COIN_PLANS[baseAmt];
         
-        const paise = paiseCounter;
-        paiseCounter = (paiseCounter % 90) + 1;
+        // 1 से 90 के बीच रैंडम पैसे (Paise) जनरेट करने का फॉर्मूला
+        const paise = Math.floor(Math.random() * 90) + 1;
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
         let assignedGateway = 'BHARATPE';
