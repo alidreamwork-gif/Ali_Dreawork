@@ -78,7 +78,7 @@ app.post('/api/verify-user', async (req, res) => {
     }
 });
 
-// 2. Order Create (3-Step Rotation: BharatPe -> Slice -> GPay)
+// 2. Order Create
 app.post('/api/create-order', (req, res) => {
     try {
         const { uid, amount, orderId } = req.body;
@@ -185,7 +185,7 @@ function normalizeFancyText(text) {
     return normalized;
 }
 
-// 4. Unified Webhook
+// 4. Unified Webhook (Advanced Flexible Amount Parser)
 app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermoney-webhook'], async (req, res) => {
     try {
         console.log("================== PAYMENT WEBHOOK HIT ==================");
@@ -203,10 +203,13 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
         if (!combinedText.trim()) return res.status(200).json({ status: false });
 
         let detectedAmount = 0;
-        const cleanStr = combinedText.replace(/[,]/g, '.');
-        const matches = cleanStr.match(/(\d+\.\d{2})/g);
+        
+        // सभी तरह के फॉर्मेट्स (जैसे 1370.2, 1370.18, 1,370.20) को पकड़ने के लिए फ्लेक्सिबल रेगुलर एक्सप्रेसर
+        const cleanStr = combinedText.replace(/[,]/g, '');
+        const matches = cleanStr.match(/(\d+\.\d{1,2})/g);
 
         if (matches && matches.length > 0) {
+            // नोटिफिकेशन में जो आखिरी सटीक डेसिमल अमाउंट होगा उसे उठाएगा
             detectedAmount = parseFloat(matches[matches.length - 1]);
         }
 
@@ -217,7 +220,8 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
             for (let [ordId, ordData] of activeOrders.entries()) {
                 if (ordData.status === 'PENDING') {
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
-                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.001) {
+                        // 0.01 का मार्جن ताकि .2 और .20 पूरी तरह मैच हो सकें
+                        if (Math.abs(ordData.exactAmount - detectedAmount) < 0.01) {
                             console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
                             
