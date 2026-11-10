@@ -9,9 +9,9 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; touch-action: manipulation; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transform: translateZ(0); }
     
-    /* Fixed Top Navbar (White background, Black text/icons) */
+    /* Fixed Top Navbar (Tiranga Theme: Saffron, White, Green Gradient) */
     .top-navbar { 
-      background: #ffffff; 
+      background: linear-gradient(90deg, #ff9933 0%, #ffffff 50%, #138808 100%); 
       padding: 10px 12px; 
       display: flex; 
       align-items: center; 
@@ -19,8 +19,8 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-bottom: 1px solid #e5e7eb;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border-bottom: 2px solid #000080;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
     .nav-brand-left {
       display: flex;
@@ -43,12 +43,13 @@
       font-weight: 900;
       line-height: 1.1;
       white-space: nowrap;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.8);
     }
 
-    /* Hamburger Menu Button (Black color) */
+    /* Hamburger Menu Button */
     .menu-toggle-btn {
-      background: #f3f4f6;
-      border: 1px solid #d1d5db;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #333333;
       color: #000000;
       padding: 8px 10px;
       border-radius: 8px;
@@ -57,6 +58,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      font-weight: bold;
     }
 
     /* Sidebar Styles (RHS Slide-in) */
@@ -295,7 +297,7 @@
   </div>
 
   <div class="app-wrapper">
-    <!-- Fixed Top Navbar with Clickable Logo/Title to Home -->
+    <!-- Fixed Top Navbar with Tiranga Gradient and Clickable Logo/Title -->
     <div class="top-navbar">
       <div class="nav-brand-left" onclick="tab('coins')" title="Go to Topup Home">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
@@ -440,7 +442,7 @@
         <ol style="margin:0 0 10px 18px;padding:0;">
           <li>A <b>Barcode</b> will open with a 5-minute timer and the exact payable amount.</li>
           <li>Take a <b>Screenshot</b> of the barcode.</li>
-          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Open <b>Google Pay or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
           <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
           <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
         </ol>
@@ -448,7 +450,7 @@
         <ol style="margin:0 0 0 18px;padding:0;">
           <li>आगे 5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
           <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
-          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>अपने <b>Google Pay या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
           <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसों सहित) पे करें।</li>
           <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
         </ol>
@@ -755,7 +757,7 @@
       document.getElementById('successIcon').innerText = icon;
       document.getElementById('successTitle').innerText = title;
       document.getElementById('successTitle').style.color = color;
-      document.getElementById('successDesc').innerHTML = descUrl = descHtml;
+      document.getElementById('successDesc').innerHTML = descHtml;
       
       document.getElementById('whatsappBtn').style.display = showWaBtn ? 'block' : 'none';
       document.getElementById('modalSuccess').style.display = 'flex';
