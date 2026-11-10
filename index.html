@@ -9,9 +9,9 @@
     body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; touch-action: manipulation; }
     .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transform: translateZ(0); }
     
-    /* Fixed Top Navbar (Tiranga Theme: Saffron, White, Green Gradient) */
+    /* Fixed Top Navbar (Tiranga Horizontal Stripes: Top Saffron, Middle White, Bottom Green) */
     .top-navbar { 
-      background: linear-gradient(90deg, #ff9933 0%, #ffffff 50%, #138808 100%); 
+      background: linear-gradient(180deg, #ff9933 0%, #ff9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%, #138808 100%); 
       padding: 10px 12px; 
       display: flex; 
       align-items: center; 
@@ -43,7 +43,9 @@
       font-weight: 900;
       line-height: 1.1;
       white-space: nowrap;
-      text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+      background: rgba(255, 255, 255, 0.65);
+      padding: 2px 6px;
+      border-radius: 4px;
     }
 
     /* Hamburger Menu Button */
@@ -297,7 +299,7 @@
   </div>
 
   <div class="app-wrapper">
-    <!-- Fixed Top Navbar with Tiranga Gradient and Clickable Logo/Title -->
+    <!-- Fixed Top Navbar with Horizontal Tiranga Stripes -->
     <div class="top-navbar">
       <div class="nav-brand-left" onclick="tab('coins')" title="Go to Topup Home">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
@@ -587,190 +589,4 @@
       document.getElementById('sumPrice').innerText = "₹" + price;
     }
     function verifyUID() {
-      var uid = document.getElementById('userId').value.trim();
-      var res = document.getElementById('verifyResult');
-      if (!uid) { alert('Please enter User ID'); return; }
-      res.style.display = "flex";
-      res.innerHTML = "Verifying...";
-
-      fetch('/api/verify-user', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid })
-      }).then(function(r){ return r.json(); }).then(function(d){
-        if (d.code === 200 || d.status === 200 || d.success === true || d.nick) {
-          isUidValid = true;
-          var info = d.data || d;
-          var name = info.nick || info.nickName || info.name || "Verified User";
-          var avatar = info.avatar || info.img || info.headImg || "https://i.ibb.co/21P3nGZR/logo.jpg";
-          res.innerHTML = '<img src="' + avatar + '" class="user-avatar"> <div><b>' + name + '</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
-        } else {
-          isUidValid = false;
-          res.innerHTML = "<span style='color:red;'>❌ Invalid User ID</span>";
-        }
-      }).catch(function(){
-        isUidValid = true;
-        res.innerHTML = '<img src="https://i.ibb.co/21P3nGZR/logo.jpg" class="user-avatar"> <div><b>Verified User</b><br><small style="color:#059669;">ID: ' + uid + ' (Verified ✅)</small></div>';
-      });
-    }
-
-    function startBuy() {
-      var uid = document.getElementById('userId').value.trim();
-      var termsChecked = document.getElementById('termsAgree').checked;
-
-      if (!uid) { alert('Please enter User ID'); return; }
-      if (!selectedPack) { alert('Please select a coin pack'); return; }
-      if (!isUidValid) { alert('Please verify User ID first'); return; }
-      if (!termsChecked) { alert('Please accept Terms & Conditions'); return; }
-
-      orderId = "ORD" + Date.now();
-      leftTime = 300;
-
-      fetch('/api/create-order', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: uid, amount: selectedPack.price, orderId: orderId })
-      })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        backendData = data;
-        exactPayableAmount = data.exactAmount || selectedPack.price;
-        
-        if (selectedPack.price >= 3000) {
-          document.getElementById('modalSuperMoneyNotice').style.display = 'flex';
-        } else {
-          document.getElementById('modalNotice').style.display = 'flex';
-        }
-      });
-    }
-
-    function showSuperMoneyUPI() {
-      document.getElementById('modalSuperMoneyNotice').style.display = 'none';
-      document.getElementById('payAmtSuperBox').value = '₹' + exactPayableAmount.toFixed(2);
-      if (backendData && backendData.largeUpi) {
-        document.getElementById('superMoneyIdBox').value = backendData.largeUpi;
-      }
-      document.getElementById('timerTextSuper').innerText = "05:00";
-      document.getElementById('modalSuperMoney').style.display = 'flex';
-      startTimer('timerTextSuper');
-      startPolling();
-    }
-
-    function showQR() {
-      document.getElementById('modalNotice').style.display = 'none';
-      var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
-      var sliceUpi = "s4345806770371644@slc";        
-      var gpayUpi = "gpay-12208814600@okbizaxis";
-
-      var selectedUpi = bharatPeUpi;
-      if (backendData && backendData.gateway === 'SLICE') {
-        selectedUpi = sliceUpi;
-      } else if (backendData && backendData.gateway === 'GPAY') {
-        selectedUpi = gpayUpi;
-      }
-      
-      var upi = "upi://pay?pa=" + selectedUpi + "&pn=VASIM%20ALI&am=" + exactPayableAmount + "&cu=INR";
-      
-      document.getElementById('payAmt').innerText = '₹' + exactPayableAmount.toFixed(2);
-      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(upi);
-      document.getElementById('timerText').innerText = "05:00";
-      document.getElementById('modalQR').style.display = 'flex';
-      startTimer('timerText');
-      startPolling();
-    }
-
-    function copyAmount() {
-      navigator.clipboard.writeText(exactPayableAmount.toFixed(2));
-      alert("Exact Amount Copied: ₹" + exactPayableAmount.toFixed(2));
-    }
-
-    function copySuperMoneyUpi() {
-      var copyText = document.getElementById("superMoneyIdBox");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999);
-      navigator.clipboard.writeText(copyText.value);
-      alert("UPI ID Copied: " + copyText.value);
-    }
-
-    function manualCheckStatus() {
-      fetch('/api/check-order-status?orderId=' + orderId)
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          if (d && d.status === 'PAID') {
-            hideAllModals();
-            var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स सफलतापूर्वक आपकी आईडी में भेज दिए गए हैं।</p>`;
-            showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
-          } else {
-            document.getElementById('statusCheckIcon').innerText = "⏳";
-            document.getElementById('statusCheckTitle').innerText = "Payment Not Detected / पेमेंट डिटेक्ट नहीं हुआ";
-            document.getElementById('statusCheckDesc').innerHTML = `
-              <b>English:</b> Payment not detected yet. If your payment has been cut and the time limit has expired, please contact us via WhatsApp below, sharing your payment screenshot and ID number.<br><br>
-              <b>हिंदी:</b> आपका पेमेंट अभी डिटेक्ट नहीं हुआ है। यदि आपका पैसा कट गया है और समय सीमा भी समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें। (Order ID: ${orderId})
-            `;
-            document.getElementById('statusWhatsappBtn').style.display = 'block';
-            document.getElementById('statusCheckTitle').style.color = '#d97706';
-            document.getElementById('modalStatusCheck').style.display = 'flex';
-          }
-        }).catch(function(){
-          alert("Error checking status. Please try again.");
-        });
-    }
-
-    function startTimer(elemId) {
-      clearInterval(timerObj);
-      timerObj = setInterval(function(){
-        leftTime--;
-        var m = Math.floor(leftTime / 60);
-        var s = leftTime % 60;
-        document.getElementById(elemId).innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-        if (leftTime <= 0) {
-          hideAllModals();
-          var timeoutHtml = `<p style="color:#dc2626;font-weight:bold;">⏳ Time Expired / समय समाप्त</p><p>5 मिनट का समय समाप्त हो गया है। यदि आपका पैसा कट गया है और समय सीमा समाप्त हो गई है, तो कृपया नीचे दिए गए WhatsApp बटन को दबाकर संपर्क करें और अपना पेमेंट स्क्रीनशॉट तथा आईडी नंबर शेयर करें। (Order ID: ${orderId})</p>`;
-          showCompletionModal('Time Out / समय समाप्त', timeoutHtml, '#dc2626', '⏳', true);
-        }
-      }, 1000);
-    }
-
-    function startPolling() {
-      clearInterval(pollObj);
-      pollObj = setInterval(function(){
-        fetch('/api/check-order-status?orderId=' + orderId)
-          .then(function(r){ return r.json(); })
-          .then(function(d){
-            if (d && d.status === 'PAID') {
-              hideAllModals();
-              var successHtml = `<p style="color:#059669;font-weight:bold;">🎉 Payment Verified & Coins Delivered!</p><p>बधाई हो! आपका पेमेंट वेरिफ़ाई हो गया है और कॉइन्स सफलतापूर्वक आपकी आईडी में भेज दिए गए हैं।</p>`;
-              showCompletionModal('Success / सफल', successHtml, '#059669', '🎉', false);
-            }
-          }).catch(function(){});
-      }, 2500);
-    }
-
-    function showCompletionModal(title, descHtml, color, icon, showWaBtn) {
-      clearInterval(timerObj);
-      clearInterval(pollObj);
-      document.getElementById('modalQR').style.display = 'none';
-      document.getElementById('modalSuperMoney').style.display = 'none';
-      document.getElementById('modalSuperMoneyNotice').style.display = 'none';
-      document.getElementById('modalStatusCheck').style.display = 'none';
-      
-      document.getElementById('successIcon').innerText = icon;
-      document.getElementById('successTitle').innerText = title;
-      document.getElementById('successTitle').style.color = color;
-      document.getElementById('successDesc').innerHTML = descHtml;
-      
-      document.getElementById('whatsappBtn').style.display = showWaBtn ? 'block' : 'none';
-      document.getElementById('modalSuccess').style.display = 'flex';
-    }
-
-    function hideAllModals() {
-      clearInterval(timerObj);
-      clearInterval(pollObj);
-      document.getElementById('modalQR').style.display = 'none';
-      document.getElementById('modalSuperMoney').style.display = 'none';
-      document.getElementById('modalSuperMoneyNotice').style.display = 'none';
-      document.getElementById('modalStatusCheck').style.display = 'none';
-    }
-  </script>
-</body>
-</html>
+      var uid =
