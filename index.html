@@ -26,6 +26,7 @@
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
+      cursor: pointer;
     }
     .nav-brand-left img {
       width: 38px;
@@ -294,9 +295,9 @@
   </div>
 
   <div class="app-wrapper">
-    <!-- Fixed Top Navbar with Hamburger -->
+    <!-- Fixed Top Navbar with Clickable Logo/Title to Home -->
     <div class="top-navbar">
-      <div class="nav-brand-left">
+      <div class="nav-brand-left" onclick="tab('coins')" title="Go to Topup Home">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
         <div class="nav-brand-title">𝐀𝐥𝐢_𝐃𝐫𝐞𝐚𝐦𝐰𝐨𝐫𝐤</div>
       </div>
@@ -448,7 +449,7 @@
           <li>आगे 5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
           <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
           <li>अपने <b>Google Pay या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
-          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसों सहित) पे करें।</li>
           <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
         </ol>
       </div>
@@ -547,7 +548,7 @@
       document.body.style.overflow = 'auto';
     }
 
-    // Sidebar Controller Functions (RHS)
+    // Sidebar Controller Functions (RHS Slide-in)
     function openSidebar() {
       document.getElementById('sidebar').classList.add('open');
       document.getElementById('sidebarOverlay').style.display = 'block';
