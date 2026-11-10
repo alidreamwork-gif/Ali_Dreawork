@@ -43,9 +43,26 @@ const COIN_PLANS = {
 };
 
 const activeOrders = new Map();
-let paiseCounter = 1;
 let paymentCounter = 0;
 const ORDER_VALIDITY_MS = 300 * 1000;
+
+// ==========================================
+// 💡 Non-Repeating Random Pool (1 से 50 तक बिना रिपीट हुए रैंडम नंबर जनरेटर)
+// ==========================================
+let paisePool = [];
+function getNextRandomPaise() {
+    if (paisePool.length === 0) {
+        // 1 से 50 तक की लिस्ट बनाओ
+        paisePool = Array.from({ length: 50 }, (_, i) => i + 1);
+        // इसे रैंडमली शफल (मिक्स) करो (Fisher-Yates Shuffle)
+        for (let i = paisePool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [paisePool[i], paisePool[j]] = [paisePool[j], paisePool[i]];
+        }
+    }
+    // लिस्ट में से एक नंबर निकालकर बाहर कर दो ताकि जब तक सारे 50 खत्म न हों, यह दोबारा न आए
+    return paisePool.pop();
+}
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -95,8 +112,8 @@ app.post('/api/create-order', (req, res) => {
 
         const coins = COIN_PLANS[baseAmt];
         
-        const paise = paiseCounter;
-        paiseCounter = (paiseCounter % 90) + 1;
+        // 1 से 50 के बीच बिना रिपीट होने वाले यूनिक रैंडम पैसे प्राप्त करें
+        const paise = getNextRandomPaise();
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
         let assignedGateway = 'BHARATPE';
