@@ -5,23 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ali Dreamwork</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; }
-    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; touch-action: manipulation; }
+    .app-wrapper { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; padding-bottom: 30px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transform: translateZ(0); }
     
+    /* Fixed Top Navbar */
     .top-navbar { 
       background: #1e40af; 
-      padding: 8px 10px; 
+      padding: 10px 14px; 
       display: flex; 
       align-items: center; 
       justify-content: space-between; 
-      gap: 6px; 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
     .nav-brand-left {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 10px;
       flex-shrink: 0;
+      cursor: pointer;
     }
     .nav-brand-left img {
       width: 40px;
@@ -33,35 +38,101 @@
     }
     .nav-brand-title {
       color: #fbbf24;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 900;
       line-height: 1.1;
       white-space: nowrap;
       text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
-    .nav-buttons-right { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 4px; 
-      align-items: flex-end; 
-    }
-    .nav-row {
+
+    /* Hamburger Menu Button */
+    .menu-toggle-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
       display: flex;
-      gap: 4px;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
     }
-    .nav-btn { 
-      background: rgba(255,255,255,0.25); 
-      border: 1px solid rgba(255,255,255,0.4); 
-      color: white; 
-      padding: 4px 7px; 
-      border-radius: 12px; 
-      font-size: 10px; 
-      cursor: pointer; 
-      font-weight: bold; 
-      white-space: nowrap;
+
+    /* Sidebar Styles (RHS Slide-in) */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 270px;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 99999;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 15px;
     }
-    .nav-btn.active { background: #fff; color: #1e40af; }
+    #sidebar.open {
+      right: 0;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1e40af;
+    }
+    .sidebar-back-btn {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      color: #374151;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .sidebar-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sidebar-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #1e3a8a;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1d4ed8;
+    }
+    #sidebarOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 99998;
+    }
 
     .container { padding: 12px; flex: 1; }
     .page-section { display: none; }
@@ -178,7 +249,21 @@
     .static-page h2 { color: #1e40af; font-size: 18px; margin-bottom: 10px; }
     .static-page p { font-size: 13px; color: #4b5563; line-height: 1.6; margin-bottom: 8px; }
 
-    /* Footer Style */
+    /* Footer Support Details */
+    .footer-support-box {
+      margin-top: 20px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #475569;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .footer-support-box b { color: #1e40af; }
+    .footer-support-box a { color: #2563eb; text-decoration: underline; font-weight: bold; }
+
     .site-footer {
       width: 100%;
       text-align: center;
@@ -193,23 +278,34 @@
 </head>
 <body>
 
+  <!-- Sidebar Overlay -->
+  <div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Slide-out Sidebar (RHS) -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">📂 Menu / मेनू</div>
+      <button type="button" class="sidebar-back-btn" onclick="closeSidebar()">✕ Back / बंद</button>
+    </div>
+    <div class="sidebar-menu-list">
+      <button type="button" class="sidebar-item active" id="sb-coins" onclick="tab('coins')">🌐 Duoo & Doran Coins</button>
+      <button type="button" class="sidebar-item" id="sb-terms" onclick="tab('terms')">📜 Terms & Conditions</button>
+      <button type="button" class="sidebar-item" id="sb-privacy" onclick="tab('privacy')">🔒 Privacy Policy</button>
+      <button type="button" class="sidebar-item" id="sb-refund" onclick="tab('refund')">🔄 Refund & Cancellation</button>
+      <button type="button" class="sidebar-item" id="sb-contact" onclick="tab('contact')">🎧 Contact Us</button>
+    </div>
+  </div>
+
   <div class="app-wrapper">
+    <!-- Fixed Top Navbar with Clickable Logo/Title to Home -->
     <div class="top-navbar">
-      <div class="nav-brand-left">
+      <div class="nav-brand-left" onclick="tab('coins')" title="Go to Topup Home">
         <img src="https://i.ibb.co/21P3nGZR/logo.jpg" alt="Logo">
         <div class="nav-brand-title">𝐀𝐥𝐢_𝐃𝐫𝐞𝐚𝐦𝐰𝐨𝐫𝐤</div>
       </div>
-      <div class="nav-buttons-right">
-        <div class="nav-row">
-          <button type="button" class="nav-btn active" id="b-coins" onclick="tab('coins')">Duoo & Doran Coins</button>
-          <button type="button" class="nav-btn" id="b-terms" onclick="tab('terms')">Terms</button>
-        </div>
-        <div class="nav-row">
-          <button type="button" class="nav-btn" id="b-privacy" onclick="tab('privacy')">Privacy</button>
-          <button type="button" class="nav-btn" id="b-refund" onclick="tab('refund')">Refund</button>
-          <button type="button" class="nav-btn" id="b-contact" onclick="tab('contact')">Contact</button>
-        </div>
-      </div>
+      <button type="button" class="menu-toggle-btn" onclick="openSidebar()">
+        ☰
+      </button>
     </div>
 
     <div class="container">
@@ -284,6 +380,13 @@
           </div>
 
           <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
+        </div>
+
+        <!-- Footer Support Details Box with WhatsApp Link -->
+        <div class="footer-support-box">
+          Official coins seller for <b>Duoo & Doran</b>. Payments processed securely by Ali Dreamwork.<br>
+          <b>Support WhatsApp:</b> <a href="https://wa.me/919690118011" target="_blank">+91 9690118011</a><br>
+          <b>Support Timing:</b> Morning 10:00 AM to Night 11:00 PM
         </div>
       </div>
 
@@ -428,8 +531,8 @@
 
       <div id="p-contact" class="page-section static-page">
         <h2>🎧 Contact Us</h2>
-        <p>WhatsApp: +919690118011</p>
-        <p>Email: alidreamwork@gmail.com</p>
+        <p>WhatsApp: <a href="https://wa.me/919690118011" target="_blank" style="color:#2563eb;text-decoration:underline;font-weight:bold;">+919690118011</a></p>
+        <p>Email: <a href="mailto:alidreamwork@gmail.com" style="color:#2563eb;text-decoration:underline;font-weight:bold;">alidreamwork@gmail.com</a></p>
       </div>
 
     </div>
@@ -460,7 +563,7 @@
         <ol style="margin:0 0 10px 18px;padding:0;">
           <li>A <b>Barcode</b> will open with a 5-minute timer and the exact payable amount.</li>
           <li>Take a <b>Screenshot</b> of the barcode.</li>
-          <li>Open <b>Google Pay, PhonePe, or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
+          <li>Open <b>Google Pay or Paytm</b> scanner and select the <b>Gallery</b> option.</li>
           <li>Choose the screenshot and pay the <b>exact amount</b> (do not alter paise).</li>
           <li>Return to this page—your payment will be detected and coins credited <b>automatically within 5 seconds</b>!</li>
         </ol>
@@ -468,8 +571,8 @@
         <ol style="margin:0 0 0 18px;padding:0;">
           <li>आगे 5 मिनट के टाइमर के साथ एक <b>बारकोड</b> खुलेगा।</li>
           <li>उस बारकोड का <b>स्क्रीनशॉट लें</b>।</li>
-          <li>अपने <b>Google Pay, PhonePe या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
-          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसे सहित) पे करें।</li>
+          <li>अपने <b>Google Pay या Paytm</b> का स्कैनर खेलकर <b>गैलरी</b> विकल्प चुनें।</li>
+          <li>स्क्रीनशॉट चुनकर <b>सटीक रकम</b> (पैसों सहित) पे करें।</li>
           <li>पेमेंट के बाद इस पेज पर वापस आएं—पेमेंट कन्फर्म होते ही <b>5 सेकंड में ऑटोमैटिक</b> कॉइन आपके आईडी में आ जाएंगे!</li>
         </ol>
       </div>
@@ -599,14 +702,30 @@
       document.getElementById('appLinksModal').style.display = 'none';
       document.body.style.overflow = 'auto';
     }
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
     function tab(key) {
+      closeSidebar();
       var arr = ['coins', 'terms', 'privacy', 'refund', 'contact'];
       for (var i = 0; i < arr.length; i++) {
-        document.getElementById('p-' + arr[i]).style.display = 'none';
-        document.getElementById('b-' + arr[i]).classList.remove('active');
+        var sec = document.getElementById('p-' + arr[i]);
+        var btn = document.getElementById('sb-' + arr[i]);
+        if (sec) sec.style.display = 'none';
+        if (btn) btn.classList.remove('active');
       }
-      document.getElementById('p-' + key).style.display = 'block';
-      document.getElementById('b-' + key).classList.add('active');
+      var targetSec = document.getElementById('p-' + key);
+      var targetBtn = document.getElementById('sb-' + key);
+      if (targetSec) targetSec.style.display = 'block';
+      if (targetBtn) targetBtn.classList.add('active');
+      window.scrollTo(0, 0);
     }
     function setPack(el, coins, price) {
       var all = document.querySelectorAll('.coin-card');
@@ -692,7 +811,6 @@
       var sliceUpi = "s4345806770371644@slc";        
       var gpayUpi = "gpay-12208814600@okbizaxis";
 
-      // Rotation between BharatPe, Slice, and Google Pay (PhonePe Q519007092@ybl removed completely)
       var selectedUpi = bharatPeUpi;
       if (backendData && backendData.gateway === 'SLICE') {
         selectedUpi = sliceUpi;
