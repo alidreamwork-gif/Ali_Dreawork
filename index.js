@@ -52,15 +52,12 @@ const ORDER_VALIDITY_MS = 300 * 1000;
 let paisePool = [];
 function getNextRandomPaise() {
     if (paisePool.length === 0) {
-        // 1 से 50 तक की लिस्ट बनाओ
         paisePool = Array.from({ length: 50 }, (_, i) => i + 1);
-        // इसे रैंडमली शफल (मिक्स) करो (Fisher-Yates Shuffle)
         for (let i = paisePool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [paisePool[i], paisePool[j]] = [paisePool[j], paisePool[i]];
         }
     }
-    // लिस्ट में से एक नंबर निकालकर बाहर कर दो ताकि जब तक सारे 50 खत्म न हों, यह दोबारा न आए
     return paisePool.pop();
 }
 
@@ -112,7 +109,6 @@ app.post('/api/create-order', (req, res) => {
 
         const coins = COIN_PLANS[baseAmt];
         
-        // 1 से 50 के बीच बिना रिपीट होने वाले यूनिक रैंडम पैसे प्राप्त करें
         const paise = getNextRandomPaise();
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
@@ -124,7 +120,6 @@ app.post('/api/create-order', (req, res) => {
             selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
             largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            // 3-Step Rotation: BharatPe, Slice, GPay
             const rotationSequence = ['BHARATPE', 'SLICE', 'GPAY'];
             assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
             paymentCounter = (paymentCounter + 1) % rotationSequence.length;
@@ -156,8 +151,8 @@ app.post('/api/create-order', (req, res) => {
     }
 });
 
-// 3. Helper: कॉइन डिलीवरी
-async function deliverCoinsToUser(uid, coins, orderId) {
+// 3. Helper: कॉइन डिलीवरी (Auto-Retry Mechanism for 'Too Frequent' errors)
+async function deliverCoinsToUser(uid, coins, orderId, retries = 3) {
     const cleanUid = Number(uid);
     const numCoins = Number(coins);
 
@@ -172,15 +167,28 @@ async function deliverCoinsToUser(uid, coins, orderId) {
         sign: sign
     };
 
-    try {
-        const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        console.log("Coins Delivered Successfully:", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Coin delivery failed:", error.response ? error.response.data : error.message);
-        return error.response ? error.response.data : { status: 400, message: "Delivery failed" };
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            const response = await axios.post('https://api.duoo.live/api/finance/v1/coinSale', payload, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            console.log("Coins Delivered Successfully:", response.data);
+            return response.data;
+        } catch (error) {
+            const errData = error.response ? error.response.data : error.message;
+            console.error(`Coin delivery attempt ${attempt} failed:`, errData);
+
+            // Agar error "too frequent" ya status 400/500 hai aur attempts baaki hain, toh 2 second ruk kar dobara try karega
+            const isTooFrequent = error.response && error.response.data && 
+                JSON.stringify(error.response.data).includes('too frequent');
+
+            if (attempt < retries && (isTooFrequent || (error.response && error.response.status >= 400))) {
+                console.log(`Retrying delivery in 2 seconds (Attempt ${attempt + 1}/${retries})...`);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            } else {
+                return error.response ? error.response.data : { status: 400, message: "Delivery failed" };
+            }
+        }
     }
 }
 
@@ -221,12 +229,10 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
 
         let detectedAmount = 0;
         
-        // सभी तरह के फॉर्मेट्स (जैसे 1370.2, 1370.18, 1,370.20) को पकड़ने के लिए फ्लेक्सिबल रेगुलर एक्सप्रेसर
         const cleanStr = combinedText.replace(/[,]/g, '');
         const matches = cleanStr.match(/(\d+\.\d{1,2})/g);
 
         if (matches && matches.length > 0) {
-            // नोटिफिकेशन में जो आखिरी सटीक डेसिमल अमाउंट होगा उसे उठाएगा
             detectedAmount = parseFloat(matches[matches.length - 1]);
         }
 
@@ -237,7 +243,6 @@ app.post(['/webhook', '/api/sms-webhook', '/api/payment-webhook', '/api/supermon
             for (let [ordId, ordData] of activeOrders.entries()) {
                 if (ordData.status === 'PENDING') {
                     if ((now - ordData.createdAt) <= ORDER_VALIDITY_MS) {
-                        // 0.01 का मार्جن ताकि .2 और .20 पूरी तरह मैच हो सकें
                         if (Math.abs(ordData.exactAmount - detectedAmount) < 0.01) {
                             console.log(`[MATCH FOUND] Order: ${ordId} (UID: ${ordData.uid}) verified with ₹${detectedAmount}`);
                             ordData.status = 'PAID';
