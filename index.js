@@ -25,7 +25,7 @@ let largePaymentIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (3-Step Rotation: BharatPe, Slice, GPay)
+    // छोटे प्लान्स (2-Step Rotation: Slice, GPay)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -112,7 +112,7 @@ app.post('/api/create-order', (req, res) => {
         const paise = getNextRandomPaise();
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        let assignedGateway = 'BHARATPE';
+        let assignedGateway = 'SLICE';
         let selectedLargeUpi = '';
 
         if (baseAmt >= 3000) {
@@ -120,7 +120,8 @@ app.post('/api/create-order', (req, res) => {
             selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
             largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            const rotationSequence = ['BHARATPE', 'SLICE', 'GPAY'];
+            // 2-Step Rotation: Slice, GPay
+            const rotationSequence = ['SLICE', 'GPAY'];
             assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
             paymentCounter = (paymentCounter + 1) % rotationSequence.length;
         }
@@ -178,7 +179,6 @@ async function deliverCoinsToUser(uid, coins, orderId, retries = 3) {
             const errData = error.response ? error.response.data : error.message;
             console.error(`Coin delivery attempt ${attempt} failed:`, errData);
 
-            // Agar error "too frequent" ya status 400/500 hai aur attempts baaki hain, toh 2 second ruk kar dobara try karega
             const isTooFrequent = error.response && error.response.data && 
                 JSON.stringify(error.response.data).includes('too frequent');
 
