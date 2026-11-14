@@ -382,7 +382,7 @@
           <button type="button" class="main-buy-btn" onclick="startBuy()">BUY NOW</button>
         </div>
 
-        <!-- Footer Support Details Box with WhatsApp Link -->
+        <!-- Footer Support Details Box -->
         <div class="footer-support-box">
           Official coins seller for <b>Duoo & Doran</b>. Payments processed securely by Ali Dreamwork.<br>
           <b>Support WhatsApp:</b> <a href="https://wa.me/919690118011" target="_blank">+91 9690118011</a><br>
@@ -807,14 +807,12 @@
 
     function showQR() {
       document.getElementById('modalNotice').style.display = 'none';
-      var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";  
       var sliceUpi = "s4345806770371644@slc";        
       var gpayUpi = "gpay-12208814600@okbizaxis";
 
-      var selectedUpi = bharatPeUpi;
-      if (backendData && backendData.gateway === 'SLICE') {
-        selectedUpi = sliceUpi;
-      } else if (backendData && backendData.gateway === 'GPAY') {
+      // Rotation between Slice and Google Pay only (BharatPe removed completely)
+      var selectedUpi = sliceUpi;
+      if (backendData && backendData.gateway === 'GPAY') {
         selectedUpi = gpayUpi;
       }
       
