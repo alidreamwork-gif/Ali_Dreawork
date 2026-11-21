@@ -25,7 +25,7 @@ let largePaymentIndex = 0;
 
 // सभी प्लान्स की सख्त मैपिंग
 const COIN_PLANS = {
-    // छोटे प्लान्स (2-Step Rotation: Slice, GPay)
+    // छोटे प्लान्स (4-Step Rotation: 2 BharatPe, 1 Slice, 1 GPay)
     151: 11000,
     220: 16100,
     330: 24100,
@@ -112,7 +112,7 @@ app.post('/api/create-order', (req, res) => {
         const paise = getNextRandomPaise();
         const exactAmount = Number((baseAmt + (paise / 100)).toFixed(2));
 
-        let assignedGateway = 'SLICE';
+        let assignedGateway = 'BHARATPE';
         let selectedLargeUpi = '';
 
         if (baseAmt >= 3000) {
@@ -120,8 +120,8 @@ app.post('/api/create-order', (req, res) => {
             selectedLargeUpi = LARGE_PAYMENT_UPIS[largePaymentIndex];
             largePaymentIndex = (largePaymentIndex + 1) % LARGE_PAYMENT_UPIS.length;
         } else {
-            // 2-Step Rotation: Slice, GPay
-            const rotationSequence = ['SLICE', 'GPAY'];
+            // 4-Step Rotation: 2 BharatPe, 1 Slice, 1 GPay
+            const rotationSequence = ['BHARATPE', 'BHARATPE', 'SLICE', 'GPAY'];
             assignedGateway = rotationSequence[paymentCounter % rotationSequence.length];
             paymentCounter = (paymentCounter + 1) % rotationSequence.length;
         }
