@@ -807,14 +807,12 @@
 
     function showQR() {
       document.getElementById('modalNotice').style.display = 'none';
-      var bharatPeUpi = "BHARATPE2Z0P0L0B8I71717@unitype";
       var sliceUpi = "s4345806770371644@slc";        
       var gpayUpi = "gpay-12208814600@okbizaxis";
 
-      var selectedUpi = bharatPeUpi;
-      if (backendData && backendData.gateway === 'SLICE') {
-        selectedUpi = sliceUpi;
-      } else if (backendData && backendData.gateway === 'GPAY') {
+      // Rotation between Slice and Google Pay only (BharatPe removed completely)
+      var selectedUpi = sliceUpi;
+      if (backendData && backendData.gateway === 'GPAY') {
         selectedUpi = gpayUpi;
       }
       
